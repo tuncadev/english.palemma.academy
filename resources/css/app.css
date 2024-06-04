@@ -1,3 +1,42 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.dsection {
+  background-image: url("../../public/images/bg/lessons/section-1.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.menu-bar {
+  max-width: 720px;
+}
+
+.l1_top {
+  background-image: url('../../public/images/bg/section-bg.svg');
+}
+.bubble
+{
+   background: #fcfcfc;
+   -webkit-border-radius: 10px;
+   -moz-border-radius: 10px;
+   border-radius: 10px;
+    border-color: #FF1493;
+  border-width: 0 0 0 10px;
+}
+
+.bubble:after
+{
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 20px 20px 0;
+    border-color: #fcfcfc transparent;
+    display: block;
+    width: 0;
+    z-index: 1;
+    bottom: -15px;
+    right: 20px;
+}
+.bg-50 {
+  background-color: rgba(219, 219, 219, 0.5);
+}
