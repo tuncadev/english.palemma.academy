@@ -18,7 +18,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-
 Route::get('/course/{course_id}', [CourseController::class, 'index'])->name('course.index');
 Route::get('/course/{course_id}/section/{section_id}', [CourseController::class, 'show'])->name('course.show');
 Route::get('/dashboard/course-{course_id}', [CourseController::class, 'dashboard'])->name('course.dashboard');
@@ -27,7 +26,5 @@ Route::post('/course/{course_id}/section/{section_id}/update-practice', [CourseC
 Route::get('/course/{course_id}/section/{section_id}/quiz', [CourseController::class, 'quiz'])->name('course.quiz');
 Route::post('/course/{course_id}/section/{section_id}/update-quiz', [CourseController::class, 'updateQuizScore'])->name('course.updateQuizScore');
 Route::post('/course/{course_id}/section/{section_id}/complete', [CourseController::class, 'completeSection'])->name('course.complete');
-
-
 
 require __DIR__.'/auth.php';
