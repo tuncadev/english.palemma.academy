@@ -15,6 +15,15 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            backgroundImage: {
+                'btn_purple' : 'linear-gradient(180deg, rgba(184, 152, 253, 1) 0%, rgba(137, 91, 235, 1) 100%)',
+            },
+            width: {
+                'btn_purple' : '300px'
+            },
+            height: {
+                'btn_purple' : '75px'
+            },
         },
         colors: {
 
@@ -28,6 +37,7 @@ export default {
             'top_bar' : '#eff5ff',
             'bermuda': '#78dcca',
             'deeppink' : '#FF1493',
+
           },
     },
 

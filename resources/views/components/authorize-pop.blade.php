@@ -1,5 +1,5 @@
 <!-- Main modal -->
-<div id="authentication-modal" tabindex="-1" aria-hidden="true" class="bg-black/75 hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+<div id="authentication-modal" tabindex="-1" aria-hidden="false" class="bg-black/75 hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
   <div class="relative p-4 w-full max-w-md max-h-full">
       <!-- Modal content -->
       <div class="relative bg-white rounded-lg shadow">
@@ -13,7 +13,7 @@
           <div class="p-4 md:p-5">
               <form class="space-y-4" action="{{ route('login') }}" method="POST">
                   @csrf
-                  
+
                   <!-- Display Errors -->
                   @if ($errors->any())
                       <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
@@ -64,7 +64,7 @@
         modal.classList.remove('hidden');
         modal.classList.add('flex');
       }
-  
+
       document.querySelectorAll('[data-modal-hide="authentication-modal"]').forEach((el) => {
           el.addEventListener('click', () => {
               document.getElementById('authentication-modal').classList.add('hidden');
@@ -72,4 +72,3 @@
       });
   });
   </script>
-  

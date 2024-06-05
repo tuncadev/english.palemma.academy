@@ -1,8 +1,8 @@
-<?php 
+<?php
 
 return [
     'mycourses' => 'мои курсы',
-    'profilesettings' => 'налаштування профілю',
+    'profilesettings' => 'настройки профиля',
     'mypayments' => 'мои платежи',
 ];
 

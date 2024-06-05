@@ -3,8 +3,8 @@ $active = $course->active == 1;
 $opacity = $active ? "opacity-100" : "opacity-50";
 $cursor = $active ? "hover:cursor-pointer" : "hover:cursor-default";
 $courseName = $course['course_name_' . $locale];
-
 $courseDescription = $course['course_description_' . $locale];
+$hidden = $active ? "" : "hidden";
 @endphp
 
 <div class="{{$cursor }} hover:opacity-100 {{ $active ? 'opacity-90' : '' }} container relative flex flex-col m-auto overflow-hidden border border-teal-300 rounded-lg max-w-96">
@@ -36,8 +36,8 @@ $courseDescription = $course['course_description_' . $locale];
     <div class="text-gray-900 text-sm w-3/5">
       {{ $courseDescription }}
     </div>
-    <div class="btn w-2/5 flex items-center justify-center">
-      <a href="{{ route('course.index', ['course_id' => $course->id]) }}" class="font-bold bg-green-400 rounded-lg text-gray-900 py-2 px-6 hover:text-white hover:bg-blue-500">
+    <div class="btn w-2/5 flex items-center justify-center {{$hidden}}">
+      <a {{$attributes->merge(['class' => 'font-bold bg-green-400 rounded-lg text-gray-900 py-2 px-6 hover:text-white hover:bg-blue-500', 'href' => ''])}}>
         @lang('general.more')
       </a>
     </div>

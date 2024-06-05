@@ -20,7 +20,7 @@ class Course extends Model
   }
   public function subscriptions()
   {
-      return $this->hasMany(Subscription::class);
+      return $this->hasMany(Subscribtion::class);
   }
 }
 

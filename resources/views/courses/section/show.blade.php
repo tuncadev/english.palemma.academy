@@ -1,19 +1,17 @@
 @extends('layouts.layout')
-
 @auth
-
   @section('content')
     <div class="flex w-full justify-center p-4 max-w-md flex-col items-end min-h-60 dsection rounded-lg border-gray-300 border shadow-lg">
         <h1  id="top" class="text-xl">
-            {{ $courseName }}
+            {{ $courseName }} -
         </h1>
-        <h2 class="text-xl font-bold bg-blue-600/25 px-4 py-2 rounded-xl capitalize shadow-md">
+        <h2 class="{{$colorClass}} text-gray-200 text-xl font-bold  px-4 py-2 rounded-xl capitalize shadow-md">
             {{ $section_id }} - {{ $sectionName }}
         </h2>
-        <ul class="text-xs mt-4 max-w-80 list-outside bg-blue-200 p-4 rounded-xl shadow-md">
-            <li><i class="fa-solid fa-language mr-1" style="color: #2583cb;"></i>@lang('lesson.click')</li>
-            <li><i class="mr-2 fa-regular fa-circle-check mr-1" style="color: #2583cb;"></i>@lang('lesson.check')</li>
-            <li><i class="fa-solid fa-check-double mr-1" style="color: #2583cb;"></i>@lang('lesson.all_done')</li>
+        <ul class="text-xs mt-4 max-w-80 list-outside {{$colorClass}}  p-4 rounded-xl shadow-md">
+            <li><i class="fa-solid fa-language mr-1" style="color: #e7e7e7;"></i>@lang('lesson.click')</li>
+            <li><i class="mr-2 fa-regular fa-circle-check mr-1" style="color: #e7e7e7;"></i>@lang('lesson.check')</li>
+            <li><i class="fa-solid fa-check-double mr-1" style="color: #e7e7e7;"></i>@lang('lesson.all_done')</li>
         </ul>
     </div>
     <div id="warn" class="hidden w-full md:w-10/12 flex items-center p-4 mb-4 text-red-800 border-t-4 border-red-300 bg-red-50 dark:text-red-400 dark:bg-gray-800 dark:border-red-800" role="alert">
@@ -24,10 +22,31 @@
         @lang('lesson.not_checked')
       </div>
     </div>
+    <div class="flex flex-col justify-end flex-wrap   gap-2">
+        <!-- Settings Dropdown -->
+        <div class="flex  items-center justify-end">
+            <x-dropdown align="right" width="48">
+                <x-slot  name="trigger">
+                    <button class="  shadow-md border-1 border-gray-300 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4  rounded-md text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
+                        @lang('lesson.othercompleted')
+                    </button>
+                </x-slot>
+
+                    <x-slot name="content">
+                        @foreach ( $completedSectionNames as  $completedSectionName )
+                            <x-dropdown-link class="text-xs border-x-4 hover:border-x-4 hover:border-x-green-400 w-full m-auto p-2 hover:cursor-pointer hover:bg-gray-200  flex items-center justify-center" :href="route('profile.edit')">
+                                {{ $completedSectionName }}
+                            </x-dropdown-link>
+                            @endforeach
+                    </x-slot>
+
+            </x-dropdown>
+        </div>
+    </div>
     <form class="w-full md:w-10/12 pb-20" id="phrases-form" action="{{ route('course.practice', ['course_id' => $course_id, 'section_id' => $section_id]) }}" method="GET" onsubmit="return validateForm()">
         <ul>
             @foreach ($localizedPhrases as $phrase)
-            <x-phrase-card :phrase="$phrase" class="max-w-96"/>
+                <x-phrase-card :phrase="$phrase" class="max-w-96 {{$colorClass}} text-gray-200"/>
             @endforeach
         </ul>
         <div class="flex justify-between items-center">
