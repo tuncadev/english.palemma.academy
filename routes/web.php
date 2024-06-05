@@ -22,7 +22,7 @@ Route::get('/dashboard/paid/courses', [DashboardController::class, 'subscribtion
 //Route::get('/dashboard/paid/course-{course_id}', [DashboardController::class, 'dashboard'])->name('course.dashboard');
 
 
-Route::get('/guest/course/{course_id}', [CourseController::class, 'index'])->middleware(['auth', 'verified'])->name('course.index');
+Route::get('/guest/course/{course_id}', [CourseController::class, 'index'])->name('course.index');
 Route::get('/course/{course_id}/sections', [CourseController::class, 'sections'])->middleware(['auth', 'verified'])->name('course.sections');
 Route::get('/course/{course_id}/section/{section_id}', [CourseController::class, 'show'])->middleware(['auth', 'verified'])->name('course.show');
 Route::get('/course/{course_id}/section/{section_id}/practice', [CourseController::class, 'practice'])->middleware(['auth', 'verified'])->name('course.practice');
