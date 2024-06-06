@@ -24,7 +24,7 @@
         </div>
       </nav>
     </div>
-    <main class="relative flex flex-col m-auto justify-center sm:items-center p-4 gap-y-6 ">
+    <main class="">
       @yield('content')
     </main>
     @unless (auth()->check())
