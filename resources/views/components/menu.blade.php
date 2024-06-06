@@ -12,11 +12,6 @@
       </a>
     </li>
     <li class="ml-1">
-      <a href="#" class="flex flex-col items-center text-xs py-2 px-4  text-gray-600 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
-        <i class="fa-solid fa-book"></i> @lang('menu.courses')
-      </a>
-    </li>
-    <li class="ml-1">
       <a href="#" class="flex flex-col items-center text-xs py-2 px-4 text-gray-600 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
         <i class="fa-solid fa-address-card"></i> @lang('menu.contacts')
       </a>

@@ -1,8 +1,7 @@
 @extends('layouts.layout')
 @auth
   @section('content')
-
-  <div class="flex flex-col text-center w-full justify-center pb-4 border-b-2 border-gray-300">
+  <div class="flex flex-col text-center w-full justify-center pb-4 border-b-2 border-gray-300 md:max-w-3xl">
     <h1 class="shadow-md p-4 rounded-md text-white bg-s_card-rose text-3xl font-bold mb-6">{{ $courseName }}</h1>
     <p class="flex">
       Description about the course. What it aims, who it is for, what will the user gain after complating....
@@ -31,7 +30,7 @@
       </button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 justify-items-center pt-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 justify-items-center pt-4">
       @foreach ($localizedSections as $index => $section)
         @php
 

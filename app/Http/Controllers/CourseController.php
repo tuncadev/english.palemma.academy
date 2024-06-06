@@ -228,7 +228,7 @@ class CourseController extends Controller
         $sectionID = "0" . $section->id;
         $course = Course::where('id', $course_id)->firstOrFail();
         $phrases = Phrase::where('section_id', $section_id)->get();
-
+        $allSections = Section::where('course_id', $course_id)->get();
 
 
         // Determine the course name and section name based on the current locale
@@ -268,7 +268,7 @@ class CourseController extends Controller
                 break;
         }
 
-        return view('courses.section.show', compact('completedSectionNames', 'colorClass', 'locked','section_id', 'phrases', 'sectionName', 'localizedPhrases', 'courseName', 'course_id'));
+        return view('courses.section.show', compact('locale', 'allSections', 'completedSections', 'completedSectionNames', 'colorClass', 'locked','section_id', 'phrases', 'sectionName', 'localizedPhrases', 'courseName', 'course_id'));
     }
 
     public function practice($course_id, $section_id)

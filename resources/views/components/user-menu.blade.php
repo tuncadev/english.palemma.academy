@@ -23,12 +23,12 @@
     </div>
     <ul class="py-2" aria-labelledby="user-menu-button">
       <li>
-        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+        <a href="{{ route('dashboard.courses') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
           @lang('usermenu.mycourses')
         </a>
       </li>
       <li>
-        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+        <a href="{{ route('profile.edit')}}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
           @lang('usermenu.profilesettings')
         </a>
       </li>
@@ -43,7 +43,7 @@
             <button type="submit" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
               @lang('auth.logout')
             </button>
-            
+
         </form>
       </li>
     </ul>
