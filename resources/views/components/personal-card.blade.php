@@ -1,4 +1,4 @@
-<div class="flex flex-col items-center md:flex-row md:max-w-96 gap-6">
+<div class="flex flex-col items-center md:flex-row md:max-w-96 p-4 m-auto gap-6">
   <div class="rounded rounded-full max-w-40 overflow-hidden drop-shadow-lg">
     <img class="" src="{{asset('images/emma.jpg')}}" alt="Emma Palchevskaya">
   </div>

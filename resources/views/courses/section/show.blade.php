@@ -22,7 +22,7 @@
                         @php
                             $colors = [
                                 'bg-s_card-blue text-white',
-                                'bg-s_card-gray text-gray-100',
+                                'bg-s_card-gray text-gray-800',
                                 'bg-s_card-green text-gray-200',
                                 'bg-s_card-rose text-gray-200',
                                 'bg-s_card-yellow text-gray-700',
