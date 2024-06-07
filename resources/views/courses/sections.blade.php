@@ -1,7 +1,7 @@
 @extends('layouts.layout')
 @auth
   @section('content')
-  <div class="flex flex-col text-center w-full justify-center pb-4 border-b-2 border-gray-300 md:max-w-3xl">
+  <div class="flex flex-col text-center w-full justify-center pb-4 border-b-2 border-gray-300 md:max-w-3xl m-auto pt-6">
     <h1 class="shadow-md p-4 rounded-md text-white bg-s_card-rose text-3xl font-bold mb-6">{{ $courseName }}</h1>
     <p class="flex">
       Description about the course. What it aims, who it is for, what will the user gain after complating....
