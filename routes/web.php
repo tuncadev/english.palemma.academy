@@ -23,6 +23,9 @@ Route::get('/dashboard/paid/courses', [DashboardController::class, 'subscribtion
 
 
 Route::get('/guest/course/{course_id}', [CourseController::class, 'index'])->name('course.index');
+Route::patch('/video/{filename}', [CourseController::class, 'serveVideo'])->name('video.serve')->middleware('cache.video');
+
+
 Route::get('/course/{course_id}/sections', [CourseController::class, 'sections'])->middleware(['auth', 'verified'])->name('course.sections');
 Route::get('/course/{course_id}/section/{section_id}', [CourseController::class, 'show'])->middleware(['auth', 'verified'])->name('course.show');
 Route::get('/course/{course_id}/section/{section_id}/practice', [CourseController::class, 'practice'])->middleware(['auth', 'verified'])->name('course.practice');

@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\App;
 use App\Models\CompletedSection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\File;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class CourseController extends Controller
 {
@@ -156,6 +157,22 @@ class CourseController extends Controller
         return view('courses.dashboard', compact('localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
 
     }
+
+    public function serveVideo($filename)
+    {
+        $path = public_path('video/' . $filename);
+
+        if (!File::exists($path)) {
+            abort(404);
+        }
+
+        $response = new BinaryFileResponse($path);
+        $response->headers->set('Cache-Control', 'public, max-age=31536000');
+        Log::info('Headers set in controller', ['headers' => $response->headers->all()]);
+
+        return $response;
+    }
+
     public function index($course_id, Request $request)
     {
         $colorClass = $request->query('colorClass', null);
@@ -242,7 +259,9 @@ class CourseController extends Controller
                         'en' => $phrase->phrase_en,
                         'id' => $phrase->id,
                     ];
-                });
+                });       // Log::info('Completing section', [
+       //     'correctAnswers' => $correctAnswers,
+       // ]);
                 break;
             case 'ru':
                 $courseName = $course->course_name_ru;
