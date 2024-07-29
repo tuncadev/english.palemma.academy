@@ -69,7 +69,7 @@
     function validateForm() {
         var checkboxes = document.querySelectorAll('.phrase-checkbox');
         var allChecked = true;
-
+/*
         checkboxes.forEach(function(checkbox) {
             if (!checkbox.checked) {
                 allChecked = false;
@@ -83,7 +83,8 @@
           location.href = "#top";
           return false;
         }
-
+*/
+return true
     }
     </script>
   @endsection
