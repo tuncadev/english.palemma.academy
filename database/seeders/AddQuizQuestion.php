@@ -10,8 +10,7 @@ class AddQuizQuestion extends Seeder
 {
   public function run(): void
   {
-    {
-      DB::table('quiz')->insert([
+    $questions = [
         [
             'course_id' => 1,
             'section_id' => 1,
@@ -1685,7 +1684,11 @@ class AddQuizQuestion extends Seeder
             'created_at' => now(),
         ],
 
-    ]);
+    ];
+    $chunks = array_chunk($questions, 500); // Adjust chunk size as necessary
+
+    foreach ($chunks as $chunk) {
+        DB::table('quiz')->insert($chunk);
     }
   }
 }
