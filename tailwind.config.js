@@ -1,32 +1,32 @@
-import defaultTheme from 'tailwindcss/defaultTheme';
+/** @type {import('tailwindcss').Config} */
+
 import forms from '@tailwindcss/forms';
 
-/** @type {import('tailwindcss').Config} */
 export default {
-    content: [
-        './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
-        './storage/framework/views/*.php',
-        './resources/views/**/*.blade.php',
-        "./node_modules/flowbite/**/*.js",
-    ],
+  content: [
+    './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
+    './storage/framework/views/*.php',
+    './resources/views/**/*.blade.php',
+    "./node_modules/flowbite/**/*.js",
+  ],
+  theme: {
+    extend: {
+        fontFamily: {
 
-    theme: {
-        extend: {
-            fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
-            },
-            backgroundImage: {
-                'btn_purple' : 'linear-gradient(180deg, rgba(184, 152, 253, 1) 0%, rgba(137, 91, 235, 1) 100%)',
-            },
-            width: {
-                'btn_purple' : '300px'
-            },
-            height: {
-                'btn_purple' : '75px'
-            },
+        },
+        backgroundImage: {
+            'btn_purple' : 'linear-gradient(180deg, rgba(184, 152, 253, 1) 0%, rgba(137, 91, 235, 1) 100%)',
+            'btn_green' : 'linear-gradient(180deg, rgb(127 237 126) 0%, rgb(0 147 11) 100%)',
+
+        },
+        width: {
+            'btn_purple' : '300px'
+        },
+        height: {
+            'btn_purple' : '75px'
         },
         colors: {
-
+            'btn_active' : 'sky-blue-300',
             's_card-blue' : '#3b71ca',
             's_card-gray' : '#9fa6b2',
             's_card-green' : '#14a44d',
@@ -41,8 +41,10 @@ export default {
           },
     },
 
-    plugins: [
-        forms,
-        require('flowbite/plugin'),
-    ],
-};
+  },
+  plugins: [
+    forms,
+    require('flowbite/plugin'),
+  ],
+}
+

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Practice;
 use App\Models\Section;
+use App\Models\Score;
 use App\Models\Subscribtion;
 use App\Models\Phrase;
 use App\Models\Quiz;
@@ -309,13 +310,13 @@ class CourseController extends Controller
           'course_id' => $course_id,
           'section_id' => $section_id,
         ]);
-        /*
+
         if ($completedSection->exists) {
           $update_at = $completedSection->updated_at;
         } else {
           $update_at = "";
         }
-          */
+
           switch ($locale) {
             case 'uk':
                 $sectionName = $section->section_name_uk;
@@ -356,7 +357,7 @@ class CourseController extends Controller
        // Log::info('Completing section', [
        //     'correctAnswers' => $correctAnswers,
        // ]);
-        return view("courses.section.practice", compact('completedSections','locale','allSections','localizedPhrases','correctAnswers','questions', 'highestPracticeScore', 'courseName', 'section', 'phrases', 'course_id', 'section_id', 'sectionName'));
+        return view("courses.section.practice", compact('update_at','completedSections','locale','allSections','localizedPhrases','correctAnswers','questions', 'highestPracticeScore', 'courseName', 'section', 'phrases', 'course_id', 'section_id', 'sectionName'));
     }
 
     public function quiz($course_id, $section_id)
@@ -365,6 +366,13 @@ class CourseController extends Controller
     $section = Section::where('id', $section_id)->where('course_id', $course_id)->firstOrFail();
     $phrases = Phrase::where('section_id', $section_id)->get();
     $questions = Quiz::where('section_id', $section_id)->get();
+    $allSections = Section::where('course_id', $course_id)->get();
+    $completedSections = CompletedSection::pluck('section_id')->toArray();
+        $completedSection = CompletedSection::firstOrNew([
+          'user_id' => $user_id,
+          'course_id' => $course_id,
+          'section_id' => $section_id,
+        ]);
 
     // Prepare correct answers and their points
     $correctAnswers = [];
@@ -405,7 +413,7 @@ class CourseController extends Controller
         'course_id' => $course_id,
         'section_id' => $section_id,
     ]);
-    // $update_at = $completedSection->exists ? $completedSection->updated_at : "";
+    $update_at = $completedSection->exists ? $completedSection->updated_at : "";
 
     switch ($locale) {
         case 'uk':
@@ -422,7 +430,7 @@ class CourseController extends Controller
             break;
     }
 
-    return view("courses.section.quiz", compact('questions', 'correctAnswers', 'courseName', 'sectionName', 'section', 'phrases', 'course_id', 'section_id', 'highestPracticeScore', 'highestQuizScore'));
+    return view("courses.section.quiz", compact('allSections', 'completedSections', 'update_at', 'questions', 'correctAnswers', 'courseName', 'sectionName', 'section', 'phrases', 'course_id', 'section_id', 'highestPracticeScore', 'highestQuizScore'));
 }
 
 
@@ -472,13 +480,13 @@ class CourseController extends Controller
     // Calculate the overall score
     $completedSection->highest_overall_score = max($completedSection->highest_overall_score ?? 0, ($completedSection->highest_practice_score ?? 0) + ($completedSection->highest_quiz_score ?? 0));
     $completedSection->overall_score = ($completedSection->practice_score ?? 0) + ($completedSection->quiz_score ?? 0);
-    /*
+
     if ($completedSection->exists) {
         $completedSection->updated_at = now();
     } else {
         $completedSection->created_at = now();
     }
-    */
+
     $completedSection->save();
 
     //Log::info('Section completed and saved:', $completedSection->toArray());
@@ -490,42 +498,33 @@ class CourseController extends Controller
                             ->first();
 
     if ($nextSection) {
+        Log::info('Redirecting to next section', ['course_id' => $course_id, 'section_id' => $nextSection->id]);
         return redirect()->route('course.show', ['course_id' => $course_id, 'section_id' => $nextSection->id]);
     } else {
         // If no more sections, redirect to the course index page
+        Log::info('No more sections, redirecting to course index', ['course_id' => $course_id]);
         return redirect()->route('course.index', ['course_id' => $course_id]);
     }
 }
 
-public function updatePracticeScore(Request $request, $course_id, $section_id)
-{
+public function updatePracticeScore(Request $request, $course_id, $section_id){
     $user_id = Auth::id();
     $practice_score = $request->input('practice_score');
 
-    // Log::info('Updating practice score', [
-    //    'user_id' => $user_id,
-    //   'course_id' => $course_id,
-    //    'section_id' => $section_id,
-    //    'practice_score' => $practice_score,
-    //]);
-
-    $completedSection = CompletedSection::firstOrNew([
+    $score = Score::firstOrNew([
         'user_id' => $user_id,
         'course_id' => $course_id,
         'section_id' => $section_id,
     ]);
 
-    $completedSection->highest_practice_score = max($completedSection->highest_practice_score ?? 0, $practice_score);
-    $completedSection->practice_score = $practice_score;
+    $score->practice_score = $practice_score;
+    $score->highest_practice_score = max($score->highest_practice_score, $practice_score);
+    $score->overall_score = $score->practice_score + $score->quiz_score;
+    $score->highest_overall_score = max($score->highest_overall_score, $score->overall_score);
 
-    $completedSection->highest_overall_score = max($completedSection->highest_overall_score ?? 0, ($completedSection->highest_practice_score ?? 0) + ($completedSection->highest_quiz_score ?? 0));
-    $completedSection->overall_score = ($completedSection->practice_score ?? 0) + ($completedSection->quiz_score ?? 0);
-
-    //$completedSection->updated_at = now();
-    $completedSection->save();
+    $score->save();
 
     return redirect()->route('course.quiz', ['course_id' => $course_id, 'section_id' => $section_id]);
-
 }
 
 public function updateQuizScore(Request $request, $course_id, $section_id)
@@ -533,30 +532,39 @@ public function updateQuizScore(Request $request, $course_id, $section_id)
     $user_id = Auth::id();
     $quiz_score = $request->input('quiz_score');
 
-    Log::info('Updating quiz score', [
-        'user_id' => $user_id,
-        'course_id' => $course_id,
-        'section_id' => $section_id,
-        'quiz_score' => $quiz_score,
-    ]);
-
-    $completedSection = CompletedSection::firstOrNew([
+    $score = Score::firstOrNew([
         'user_id' => $user_id,
         'course_id' => $course_id,
         'section_id' => $section_id,
     ]);
 
-    $completedSection->highest_quiz_score = max($completedSection->highest_quiz_score ?? 0, $quiz_score);
-    $completedSection->quiz_score = $quiz_score;
+    $score->quiz_score = $quiz_score;
+    $score->highest_quiz_score = max($score->highest_quiz_score, $quiz_score);
+    $score->overall_score = $score->practice_score + $score->quiz_score;
+    $score->highest_overall_score = max($score->highest_overall_score, $score->overall_score);
 
-    $completedSection->highest_overall_score = max($completedSection->highest_overall_score ?? 0, ($completedSection->highest_practice_score ?? 0) + ($completedSection->highest_quiz_score ?? 0));
-    $completedSection->overall_score = ($completedSection->practice_score ?? 0) + ($completedSection->quiz_score ?? 0);
+    $score->save();
 
-    //$completedSection->updated_at = now();
-    $completedSection->save();
+    // Mark the section as completed
+    CompletedSection::firstOrCreate([
+        'user_id' => $user_id,
+        'course_id' => $course_id,
+        'section_id' => $section_id,
+    ]);
 
-    return response()->json(['message' => 'Quiz score updated successfully']);
+    // Redirect to the next section or course index
+    $nextSection = Section::where('course_id', $course_id)
+        ->where('id', '>', $section_id)
+        ->orderBy('id')
+        ->first();
+
+    if ($nextSection) {
+        return redirect()->route('course.show', ['course_id' => $course_id, 'section_id' => $nextSection->id]);
+    } else {
+        return redirect()->route('course.index', ['course_id' => $course_id]);
+    }
 }
+
 
 
 

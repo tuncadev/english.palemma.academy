@@ -19,13 +19,16 @@
 </p>
 
 @if ($current_id == $id)
-<div class="{{$class}} mt-1 py-1 px-2 rounded-lg">
-@lang('sidebar.currentsection')
-</div>
+<div class=" mt-1 py-1 px-2 rounded-lg flex flex-col">
+    <div class="{{$class}} mt-1 text-xsm py-1 px-2 rounded-lg flex flex-col">
+        @lang('sidebar.currentsection')
+        </div>
 @else
+
 <div class="bg-green-300 mt-1 py-1 px-2 rounded-lg">
 @lang('sidebar.completed')
 </div>
+
 @endif
 
 

@@ -12,20 +12,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('quiz', function (Blueprint $table) {
+        Schema::create('scores', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('course_id');
             $table->unsignedBigInteger('section_id');
-            $table->string('question');
-            $table->string('question_uk'); // Dropping 'question_uk' column
-            $table->string('question_ru'); // Dropping 'question_ru' column
-            $table->string('correct_answer')->nullable();
-            $table->timestamps(); // Adds created_at and updated_at columns
+            $table->integer('practice_score')->default(0);
+            $table->integer('quiz_score')->default(0);
+            $table->integer('overall_score')->default(0);
+            $table->integer('highest_practice_score')->default(0);
+            $table->integer('highest_quiz_score')->default(0);
+            $table->integer('highest_overall_score')->default(0);
+            $table->timestamps();
 
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
             $table->foreign('section_id')->references('id')->on('sections')->onDelete('cascade');
         });
-
     }
 
     /**
@@ -33,6 +36,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('quiz');
+        Schema::dropIfExists('subscribtions');
     }
 };
+

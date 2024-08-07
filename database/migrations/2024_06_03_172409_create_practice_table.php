@@ -21,8 +21,7 @@ return new class extends Migration
             $table->string('question_ru');
             $table->string('answers')->nullable();
             $table->string('correct_answer')->nullable();
-            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
-
+            $table->timestamps(); // Adds created_at and updated_at columns
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
             $table->foreign('section_id')->references('id')->on('sections')->onDelete('cascade');
         });

@@ -1,8 +1,26 @@
+
+@php
+$locale = session('locale', 'uk');
+$currentLocale = session('locale', 'uk');
+@endphp
 @extends('layouts.layout')
     @section('content')
-    <div class="p-4 sm:ml-64">
-        <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-           <div class="flex flex-col items-center justify-center mb-4 gap-6 rounded bg-gray-50 dark:bg-gray-800">
+    @section('navigation')
+    <div class="sm:ml-64">
+        <div class="w-full bg-top_bar shadow-md">
+            <nav class="md:max-w-3xl m-auto border-gray-200 dark:bg-gray-900 ">
+                <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+                <x-top-logo />
+                <x-user-menu :currentLocale="$currentLocale" />
+                <x-menu />
+                </div>
+            </nav>
+        </div>
+    </div>
+    @endsection
+    <div class="sm:ml-64">
+        <div class="mt-2 rounded-lg">
+           <div class="p-2 flex flex-col items-center justify-center mb-4 gap-6 rounded bg-gray-50 dark:bg-gray-800">
                 <div class="flex w-full items-left">
                     <button data-drawer-target="cta-button-sidebar" data-drawer-toggle="cta-button-sidebar" aria-controls="cta-button-sidebar" type="button" class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
                         <span class="sr-only">
@@ -16,39 +34,7 @@
                         </div>
                     </button>
                 </div>
-                <x-sidebar>
-                    <ol class="relative text-sm text-gray-500 border-s border-gray-200 dark:border-gray-700 dark:text-gray-400">
-                        @foreach ($allSections as $index => $mySection)
-                            @php
-                                $colors = [
-                                    'bg-s_card-blue text-white',
-                                    'bg-s_card-gray text-gray-800',
-                                    'bg-s_card-green text-gray-200',
-                                    'bg-s_card-rose text-gray-200',
-                                    'bg-s_card-yellow text-gray-700',
-                                    'bg-s_card-sky text-gray-700',
-                                    'bg-s_card-white text-gray-200',
-                                ];
-                                $sectionColorClass = $colors[$index % count($colors)];
-                                $section_name = "section_name_" . $locale;
-                                $name  = $mySection->$section_name;
-                                $id = $mySection->id;
-                                if ( in_array($mySection->id, $completedSections ) ) {
-                                    $completed = true;
-                                } else {
-                                    $completed = false;
-                                }
-                                if ( !in_array($mySection->id - 1, $completedSections ) && $mySection->id != 1 ) {
-                                    $locked = true;
-                                } else {
-                                    $locked = false;
-                                }
-                            @endphp
-                            <x-section-steps :current="$section_id" :name="$name" :locked="$locked" :completed="$completed" :id="$id" :course_id="$course_id" :color="$sectionColorClass" />
-                        @endforeach
-
-                    </ol>
-                </x-sidebar>
+                <x-steps-sidebar :current="$section_id" :allSections="$allSections" :locale="$locale" :completedSections="$completedSections" :course_id="$course_id" />
                 <div class="flex w-full justify-center p-4 max-w-md flex-col items-end min-h-60 dsection rounded-lg border-gray-300 border shadow-lg">
                     <h1  id="top" class="text-xl">
                         {{ $courseName }} -
@@ -72,14 +58,14 @@
                 </div>
                 </div>
                 <form class="w-full max-w-3xl pb-20" id="phrases-form" action="{{ route('course.practice', ['course_id' => $course_id, 'section_id' => $section_id]) }}" method="GET" onsubmit="return validateForm()">
-                    <ul>
+                    <ul class="md:grid md:grid-cols-2 md:gap-2">
                         @foreach ($localizedPhrases as $phrase)
-                            <x-phrase-card :phrase="$phrase" class="max-w-96 {{$colorClass}} text-gray-200"/>
+                            <x-phrase-card :phrase="$phrase"  class="w-full text-gray-900"/>
                         @endforeach
                     </ul>
                     <div class="flex justify-between items-center">
                     <span id="score"></span>
-                    <button type="submit" class="flex items-center gap-x-4 px-8 py-1 font-semibold bg-blue-800 mt-3 border rounded-lg text-white hover:bg-gray-200 hover:text-blue-800 hover:border hover:border-blue-800">
+                    <button type="submit" class="my-4 p-4 m-auto rounded-md text-white uppercase font-semibold w-btn_purple h-btn_purple bg-btn_purple  shadow-md m-auto">
                         @lang('lesson.next') <i class="fa-solid fa-circle-right"></i>
                     </button>
                     </div>

@@ -1,4 +1,4 @@
-<?php 
+<?php
 return [
   'course' => 'Курс',
   'course_name' => 'Фразові дієслова',

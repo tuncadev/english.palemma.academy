@@ -14,21 +14,10 @@ return new class extends Migration
     {
         Schema::create('completed_sections', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('course_id');
-            $table->unsignedBigInteger('section_id');
-            $table->integer('practice_score')->default(0);
-            $table->integer('quiz_score')->default(0);
-            $table->integer('overall_score')->default(0);
-            $table->integer('highest_practice_score')->default(0);
-            $table->integer('highest_quiz_score')->default(0);
-            $table->integer('highest_overall_score')->default(0);
-            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
-            $table->foreign('section_id')->references('id')->on('sections')->onDelete('cascade');
-            $table->unique(['user_id', 'course_id', 'section_id']);
+            $table->integer('user_id')->default(0);
+            $table->integer('course_id')->default(0);
+            $table->integer('section_id')->default(0);
+            $table->timestamps(); // Adds created_at and updated_at columns
         });
     }
 

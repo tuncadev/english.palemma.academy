@@ -1,5 +1,21 @@
-@extends('layouts.layout')
 @auth
+@php
+$locale = session('locale', 'uk');
+$currentLocale = session('locale', 'uk');
+@endphp
+@extends('layouts.layout')
+@section('navigation')
+
+        <div class="w-full bg-top_bar shadow-md">
+            <nav class="md:max-w-3xl m-auto border-gray-200 dark:bg-gray-900 ">
+                <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+                <x-top-logo />
+                <x-user-menu :currentLocale="$currentLocale" />
+                <x-menu />
+                </div>
+            </nav>
+        </div>
+    @endsection
   @section('content')
   <div class="flex flex-col text-center w-full justify-center pb-4 border-b-2 border-gray-300 md:max-w-3xl m-auto pt-6">
     <h1 class="shadow-md p-4 rounded-md text-white bg-s_card-rose text-3xl font-bold mb-6">{{ $courseName }}</h1>

@@ -24,7 +24,7 @@ $hidden = $active ? "" : "hidden";
   @endif
   <div class="top bg-blue-500 pt-10 pb-5 px-4 {{ $opacity }}">
     <h1 class="font-bold text-gray-200 text-2xl">@lang('general.course') - № {{ $course->id }}</h1>
-    <h2 class="font-bold text-white text-3xl mb-6">{{ $courseName }}</h2>
+    <h2 class="font-bold text-white text-2xl mb-6">{{ $courseName }}</h2>
     <div class="flex flex-col flex-wrap content-center justify-center gap-x-4 text-xs text-gray-900">
       <span><i class="fa-regular fa-circle-check mr-4" style="color: #B197FC;"></i> 1000 phrases</span>
       <span><i class="fa-regular fa-circle-check mr-4" style="color: #97d4fc;"></i> 500 quiz questions</span>

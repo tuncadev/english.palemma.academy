@@ -10,22 +10,10 @@
     @vite(['resources/css/app.css','resources/js/app.js'])
     <script src="https://kit.fontawesome.com/d4521e1f6c.js" crossorigin="anonymous"></script>
   </head>
-  @php
-    $locale = session('locale', 'uk');
-    $currentLocale = session('locale', 'uk');
-  @endphp
   <body class="bg-gray-100 p-0 m-0">
-    <div class="w-full bg-top_bar shadow-md">
-      <nav class="md:max-w-3xl m-auto border-gray-200 dark:bg-gray-900 ">
-        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-          <x-top-logo />
-          <x-user-menu :currentLocale="$currentLocale" />
-          <x-menu />
-        </div>
-      </nav>
-    </div>
-    <main class="">
-      @yield('content')
+    @yield('navigation')
+    <main class="px-2">
+        @yield('content')
     </main>
     @unless (auth()->check())
       <x-authorize-pop />

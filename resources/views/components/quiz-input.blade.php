@@ -1,0 +1,1 @@
+<input type="text" id="{{$id}}" name="{{ $name }}" data-points="{{ $points }}" class="max-w-16 mt-1 mr-2 ml-2 px-2 py-1 bg-white border border-slate-300 rounded-md text-xs shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500 invalid:border-pink-500 invalid:text-pink-600 focus:invalid:border-pink-500 focus:invalid:ring-pink-500"/>

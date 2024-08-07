@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('content_en');
             $table->text('content_ru')->nullable();
             $table->text('content_uk')->nullable();
-            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamps(); // Adds created_at and updated_at columns
             $table->foreign('course_id')->references('course_id')->on('courses')->onDelete('cascade');
             $table->foreign('section_id')->references('section_id')->on('sections')->onDelete('cascade');
         });

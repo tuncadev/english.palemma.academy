@@ -13,26 +13,25 @@
         @vite(['resources/css/app.css','resources/js/app.js'])
         <script src="https://kit.fontawesome.com/d4521e1f6c.js" crossorigin="anonymous"></script>
     </head>
-    <body class="font-sans antialiased">
+    @php
+    $locale = session('locale', 'uk');
+    $currentLocale = session('locale', 'uk');
+  @endphp
+    <body class="bg-gray-100">
         <div class="dashboard min-h-screen bg-gray-100 dark:bg-gray-900 z-10">
-            @auth
-            @include('layouts.navigation')
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-gray-600 dark:bg-blue-800 shadow z-10">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 z-10">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endisset
-
+            <div class="w-full bg-top_bar shadow-md l1_top ">
+                <nav class="md:max-w-3xl m-auto border-gray-200 dark:bg-gray-900 ">
+                  <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+                    <x-top-logo />
+                    <x-user-menu :currentLocale="$currentLocale"  />
+                    <x-menu />
+                  </div>
+                </nav>
+              </div>
             <!-- Page Content -->
             <main>
                 {{ $slot }}
             </main>
-            @else
-                @include('auth.login')
-            @endauth
         </div>
     </body>
 </html>
