@@ -15,7 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append:[
             App\Http\Middleware\LocalizationMiddleware::class,
           ]);
-          $middleware->append(CacheVideo::class);
+        $middleware->append(CacheVideo::class);
+
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

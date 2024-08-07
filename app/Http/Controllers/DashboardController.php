@@ -22,8 +22,9 @@ class DashboardController extends Controller
         $subscribtions = Subscribtion::where('user_id', $user_id)->get()->pluck('course_id');
         $courses = Course::whereIn('id', $subscribtions)->get();
         $locale = session('locale', config('app.locale'));
+        $subscribed = count($courses);
 
-        return view('dashboard', compact('courses', 'subscribtions'));
+        return view('dashboard', compact('courses', 'subscribtions', 'subscribed'));
     }
 
     public function subscribtions() {
@@ -31,7 +32,8 @@ class DashboardController extends Controller
         $subscribtions = Subscribtion::where('user_id', $user_id)->get()->pluck('course_id');
         $courses = Course::whereIn('id', $subscribtions)->get();
         $locale = session('locale', config('app.locale'));
+        $subscribed = count($courses);
 
-        return view('courses.dashboard.subscribtions', compact('courses', 'subscribtions'));
+        return view('courses.dashboard.subscribtions', compact('courses', 'subscribtions', 'subscribed'));
     }
 }
