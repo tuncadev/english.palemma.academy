@@ -18,6 +18,7 @@ $currentLocale = session('locale', 'uk');
     </div>
     @endsection
     @section('content')
+    @if ($hasSubscription)
         @php
         $sectionColors = [
             '1' => 'bg-s_card-blue text-white',
@@ -121,6 +122,7 @@ $currentLocale = session('locale', 'uk');
                                     shuffle($options);
                                     $selectComponent = view('components.practice-select', compact('id', 'options'))->render();
                                     $questionText = str_replace('_', $selectComponent, $question->question);
+                                    $localizedQuestion = $localizedQuestions[$index]['localizedQuestion'] ?? '';
                                 @endphp
                                 <li class="p-4 bg-blue-300 rounded-lg w-full mb-2">
                                     <div class="flex justify-between divide-gray-800/25 divide-x">
@@ -139,7 +141,9 @@ $currentLocale = session('locale', 'uk');
                                         </div>
                                     </div>
                                     <div id="translation-{{ $id }}" style="display: none;" class="bg-white rounded p-2 mt-2 text-sm">
-                                        <p class="text-gray-800"><i class="fa-solid fa-circle-arrow-right mr-2"></i>@lang('practice'.$section_id.'.trnslt'.$id.'')</p>
+                                        <p class="text-gray-800"><i class="fa-solid fa-circle-arrow-right mr-2"></i>
+                                            {{ $localizedQuestion }}
+                                        </p>
                                     </div>
                                 </li>
                                 @php
@@ -293,6 +297,9 @@ $currentLocale = session('locale', 'uk');
             modal.hide();
         }
         </script>
+        @else
+            <x-error-msg :message="'You haven\'t purchased the ' . $courseName .' course yet.'" />
+        @endif
     @endsection
 @else
   <script>

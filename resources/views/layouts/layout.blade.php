@@ -13,9 +13,9 @@
   <body class="bg-gray-100 p-0 m-0">
     @yield('navigation')
     <main class="px-2">
-        @if (session('error'))
+        @if (session('message'))
         <div class="alert alert-danger">
-            {{ session('error') }}
+            {{ session('message') }}
         </div>
     @endif
         @yield('content')

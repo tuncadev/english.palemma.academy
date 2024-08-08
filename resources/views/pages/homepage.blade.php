@@ -1,7 +1,6 @@
 
 @php
 $locale = session('locale', 'uk');
-$currentLocale = session('locale', 'uk');
 @endphp
 @extends('layouts.layout')
     @section('navigation')
@@ -10,7 +9,7 @@ $currentLocale = session('locale', 'uk');
             <nav class="md:max-w-3xl m-auto border-gray-200 dark:bg-gray-900 ">
                 <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                 <x-top-logo />
-                <x-user-menu :currentLocale="$currentLocale" />
+                <x-user-menu :currentLocale="$locale" />
                 <x-menu />
                 </div>
             </nav>
@@ -18,7 +17,11 @@ $currentLocale = session('locale', 'uk');
 
     @endsection
     @section('content')
-
+        @if (session('message'))
+        <div class="alert alert-danger">
+            {{ session('message') }}
+        </div>
+    @endif
 
         <x-personal-card />
 

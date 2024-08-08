@@ -54,7 +54,7 @@ $currentLocale = session('locale', 'uk');
                       </button>
                     </div>
                   </div>
-        </div>
+            </div>
         @endif
 
 @endsection

@@ -98,6 +98,7 @@ $currentLocale = session('locale', 'uk');
                     @php
                         $id = $question->id;
                         $questionText = $question->question;
+                        $localizedQuestion = $localizedQuestions[$index]['localizedQuestion'] ?? '';
                         $inputs = explode('_', $questionText);
                         $formattedQuestion = '';
                         // echo "PIN : " . $inputs;
@@ -133,7 +134,9 @@ $currentLocale = session('locale', 'uk');
                             </div>
                         </div>
                         <div id="translation-{{ $id }}" style="display: none;" class="bg-white rounded p-2 mt-2 text-sm">
-                            <p class="text-gray-800"><i class="fa-solid fa-circle-arrow-right mr-2"></i>@lang('quiz'.$section_id.'.trnslt'.$id.'')</p>
+                            <p class="text-gray-800"><i class="fa-solid fa-circle-arrow-right mr-2"></i>
+                                {{ $localizedQuestion }}
+                            </p>
                         </div>
                     </li>
                     @php

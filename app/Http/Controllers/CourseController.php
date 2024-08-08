@@ -22,6 +22,11 @@ class CourseController extends Controller
     public function sections($course_id) {
         $locale = session('locale', config('app.locale'));
         $user_id = Auth::id();
+        $subscription = Subscribtion::where('user_id', $user_id )
+                                    ->where('course_id', $course_id)
+                                    ->first();
+        $hasSubscription = $subscription && $subscription->payment_status === 'completed';
+        $user_id = Auth::id();
         $sections = Section::where('course_id', $course_id)->get();
         $completedSections = CompletedSection::where('user_id', $user_id)
                                           ->where('course_id', $course_id)
@@ -64,7 +69,7 @@ class CourseController extends Controller
               break;
       }
 
-        return view('courses.sections', compact('localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
+        return view('courses.sections', compact('hasSubscription','localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
 
     }
     public function subscribtions() {
@@ -226,6 +231,11 @@ class CourseController extends Controller
 
     public function show($course_id, $section_id, Request $request)
     {
+        $user_id = Auth::id();
+        $subscription = Subscribtion::where('user_id', $user_id )
+                                    ->where('course_id', $course_id)
+                                    ->first();
+        $hasSubscription = $subscription && $subscription->payment_status === 'completed';
         $colorClass = $request->query('colorClass', null);
         $locale = session('locale', config('app.locale'));
         $completedSections = CompletedSection::pluck('section_id')->toArray();
@@ -288,12 +298,16 @@ class CourseController extends Controller
                 break;
         }
 
-        return view('courses.section.show', compact('locale', 'allSections', 'completedSections', 'completedSectionNames', 'colorClass', 'locked','section_id', 'phrases', 'sectionName', 'localizedPhrases', 'courseName', 'course_id'));
+        return view('courses.section.show', compact('hasSubscription', 'locale', 'allSections', 'completedSections', 'completedSectionNames', 'colorClass', 'locked','section_id', 'phrases', 'sectionName', 'localizedPhrases', 'courseName', 'course_id'));
     }
 
     public function practice($course_id, $section_id)
     {
         $user_id = Auth::id();
+        $subscription = Subscribtion::where('user_id', $user_id )
+        ->where('course_id', $course_id)
+        ->first();
+        $hasSubscription = $subscription && $subscription->payment_status === 'completed';
         $section = Section::where('id', $section_id)->where('course_id', $course_id)->firstOrFail();
         $questions = Practice::where('section_id', $section_id)->get();
         $course = Course::where('id', $course_id)->firstOrFail();
@@ -328,6 +342,11 @@ class CourseController extends Controller
                         'id' => $phrase->id,
                     ];
                 });
+                $localizedQuestions = $questions->map(function($question){
+                    return [
+                        'localizedQuestion' => $question->question_uk,
+                    ];
+                });
                 break;
             case 'ru':
                 $courseName = $course->course_name_ru;
@@ -337,6 +356,11 @@ class CourseController extends Controller
                         'localized' => $phrase->phrase_ru,
                         'en' => $phrase->phrase_en,
                         'id' => $phrase->id,
+                    ];
+                });
+                $localizedQuestions = $questions->map(function($question){
+                    return [
+                        'localizedQuestion' => $question->question_ru,
                     ];
                 });
                 break;
@@ -350,6 +374,11 @@ class CourseController extends Controller
                         'id' => $phrase->id,
                     ];
                 });
+                $localizedQuestions = $questions->map(function($question){
+                    return [
+                        'localizedQuestion' => $question->question_uk,
+                    ];
+                });
                 break;
         }
 
@@ -357,12 +386,16 @@ class CourseController extends Controller
        // Log::info('Completing section', [
        //     'correctAnswers' => $correctAnswers,
        // ]);
-        return view("courses.section.practice", compact('update_at','completedSections','locale','allSections','localizedPhrases','correctAnswers','questions', 'highestPracticeScore', 'courseName', 'section', 'phrases', 'course_id', 'section_id', 'sectionName'));
+        return view("courses.section.practice", compact('localizedQuestions', 'hasSubscription', 'update_at','completedSections','locale','allSections','localizedPhrases','correctAnswers','questions', 'highestPracticeScore', 'courseName', 'section', 'phrases', 'course_id', 'section_id', 'sectionName'));
     }
 
     public function quiz($course_id, $section_id)
 {
     $user_id = Auth::id();
+    $subscription = Subscribtion::where('user_id', $user_id )
+    ->where('course_id', $course_id)
+    ->first();
+    $hasSubscription = $subscription && $subscription->payment_status === 'completed';
     $section = Section::where('id', $section_id)->where('course_id', $course_id)->firstOrFail();
     $phrases = Phrase::where('section_id', $section_id)->get();
     $questions = Quiz::where('section_id', $section_id)->get();
@@ -419,92 +452,33 @@ class CourseController extends Controller
         case 'uk':
             $sectionName = $section->section_name_uk;
             $courseName = $section->course_name_uk;
+            $localizedQuestions = $questions->map(function($question){
+                return [
+                    'localizedQuestion' => $question->question_uk,
+                ];
+            });
             break;
         case 'ru':
             $courseName = $section->course_name_ru;
             $sectionName = $section->section_name_ru;
+            $localizedQuestions = $questions->map(function($question){
+                return [
+                    'localizedQuestion' => $question->question_ru,
+                ];
+            });
             break;
         default:
             $sectionName = $section->section_name_en;
             $courseName = $section->course_name_en;
+            $localizedQuestions = $questions->map(function($question){
+                return [
+                    'localizedQuestion' => $question->question_uk,
+                ];
+            });
             break;
     }
 
-    return view("courses.section.quiz", compact('allSections', 'completedSections', 'update_at', 'questions', 'correctAnswers', 'courseName', 'sectionName', 'section', 'phrases', 'course_id', 'section_id', 'highestPracticeScore', 'highestQuizScore'));
-}
-
-
-
-      public function completeSection($course_id, $section_id)
-{
-    $user_id = Auth::id();
-    $completedSections = session()->get('completed_sections', []);
-    $type = request('type'); // Retrieve the type (practice or quiz) from the request
-    $score = 0;
-
-    if ($type == 'practice') {
-        $score = request('practice_score');
-    } else if ($type == 'quiz') {
-        $score = request('quiz_score');
-    }
-
-    //Log::info('Completing section', [
-    //    'user_id' => $user_id,
-    //   'course_id' => $course_id,
-    //    'section_id' => $section_id,
-    //    'type' => $type,
-    //    'score' => $score,
-    //]);
-
-    // Ensure session tracking for completed sections
-    if (!in_array($section_id, $completedSections)) {
-        $completedSections[] = $section_id;
-        session()->put('completed_sections', $completedSections);
-    }
-
-    $completedSection = CompletedSection::firstOrNew([
-        'user_id' => $user_id,
-        'course_id' => $course_id,
-        'section_id' => $section_id,
-    ]);
-
-    // Update the highest scores if applicable
-    if ($type == 'practice') {
-        $completedSection->highest_practice_score = max($completedSection->highest_practice_score ?? 0, $score);
-        $completedSection->practice_score = $score;
-    } else if ($type == 'quiz') {
-        $completedSection->highest_quiz_score = max($completedSection->highest_quiz_score ?? 0, $score);
-        $completedSection->quiz_score = $score;
-    }
-
-    // Calculate the overall score
-    $completedSection->highest_overall_score = max($completedSection->highest_overall_score ?? 0, ($completedSection->highest_practice_score ?? 0) + ($completedSection->highest_quiz_score ?? 0));
-    $completedSection->overall_score = ($completedSection->practice_score ?? 0) + ($completedSection->quiz_score ?? 0);
-
-    if ($completedSection->exists) {
-        $completedSection->updated_at = now();
-    } else {
-        $completedSection->created_at = now();
-    }
-
-    $completedSection->save();
-
-    //Log::info('Section completed and saved:', $completedSection->toArray());
-
-    // Check if there is a next section to redirect to
-    $nextSection = Section::where('course_id', $course_id)
-                            ->where('id', '>', $section_id)
-                            ->orderBy('id')
-                            ->first();
-
-    if ($nextSection) {
-        Log::info('Redirecting to next section', ['course_id' => $course_id, 'section_id' => $nextSection->id]);
-        return redirect()->route('course.show', ['course_id' => $course_id, 'section_id' => $nextSection->id]);
-    } else {
-        // If no more sections, redirect to the course index page
-        Log::info('No more sections, redirecting to course index', ['course_id' => $course_id]);
-        return redirect()->route('course.index', ['course_id' => $course_id]);
-    }
+    return view("courses.section.quiz", compact('localizedQuestions', 'hasSubscription', 'allSections', 'completedSections', 'update_at', 'questions', 'correctAnswers', 'courseName', 'sectionName', 'section', 'phrases', 'course_id', 'section_id', 'highestPracticeScore', 'highestQuizScore'));
 }
 
 public function updatePracticeScore(Request $request, $course_id, $section_id){
