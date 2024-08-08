@@ -44,7 +44,7 @@ class AddQuizQuestion extends Seeder
         [
             'course_id' => 1,
             'section_id' => 1,
-            'question' => 'I’m cold, could you _ the heating, please?',
+            'question' => 'I’m cold, could you _ the heating _, please?',
             'question_uk' => 'Мені холодно, можеш, будь ласка, збільшити опалення?',
             'question_ru' => 'Мне холодно, можно, пожалуйста, увеличить отопление?',
             'correct_answer' => 'turn, up',
