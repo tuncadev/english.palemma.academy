@@ -1785,7 +1785,7 @@ class AddPracticeQuestions extends Seeder
 
 
         ];
-        $chunks = array_chunk($questions, 500); // Adjust chunk size as necessary
+        $chunks = array_chunk($questions, 100); // Adjust chunk size as necessary
 
         foreach ($chunks as $chunk) {
             DB::table('practice')->insert($chunk);
