@@ -95,3 +95,94 @@
   box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
   outline: 0;
 }
+.phrase_card {
+    box-shadow: 0 0 1px 1px rgba(34, 52, 71, .05), 0 1px 6px -1px rgba(34, 52, 71, .03), 0 2px 4px rgba(34, 52, 71, .03);
+}
+.phrase_card:hover {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .05), 0 3px 8px rgba(0, 0, 0, .08);
+}
+
+.button_steps_sections-top + .button_steps_sections-top::before {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid #3b3b3b; /* Adjust the color as needed */
+    margin: 0 auto;
+    position: absolute;
+    left: -11px; /* Adjust the positioning as needed */
+    top: 50%;
+    transform: translateY(-50%);
+  }
+.button_steps_sections-top {
+    position: relative;
+  border: 1px solid #d5d9d9;
+  border-radius: 8px;
+  box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
+  color: #0f1111;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 29px;
+  padding: 0 10px 0 10px;
+  width: 100px;
+}
+
+.button_steps_sections-top:hover {
+  background-color: #c2c2c2;
+}
+
+.button_steps_sections-top:focus {
+  border-color: #008296;
+  box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
+  outline: 0;
+}
+
+
+.card-sticker--badgeGreen:before {
+    background-color: #52c41a;
+}
+.card-sticker--badgeGreen:after {
+    background-color:#389e0d;
+}
+.card-sticker--badgeOrange:before {
+    background-color:#faad14
+}
+.card-sticker--badgeOrange:after {
+    background-color:#d46b08
+}
+.card-sticker--badgeRed:before {
+    background-color:#fa2314
+}
+.card-sticker--badgeRed:after {
+    background-color:#b12900
+}
+.card-sticker {
+    position: relative;
+    overflow: visible;
+}
+.card-sticker:before {
+    border-radius: 4px 4px 0 4px;
+    color: #fff;
+    content: attr(data-text);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+    padding: 1px 8px;
+    position: absolute;
+    right: -8px;
+    top: 16px;
+    z-index: 1;
+}
+.card-sticker:after {
+    -webkit-clip-path: polygon(0 0, 0 100%, 100% 0);
+    clip-path: polygon(0 0, 0 100%, 100% 0);
+    content: "";
+    height: 6px;
+    position: absolute;
+    right: -8px;
+    top: 40px;
+    width: 8px;
+    z-index: 1;
+}

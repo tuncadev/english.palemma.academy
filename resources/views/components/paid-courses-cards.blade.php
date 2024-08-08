@@ -7,7 +7,7 @@ $courseDescription = $course['course_description_' . $locale];
 $hidden = $active ? "" : "hidden";
 @endphp
 
-<div class="{{$cursor }} h-full hover:opacity-100 {{ $active ? 'opacity-90' : '' }} container relative flex flex-col m-auto overflow-hidden border border-teal-300 rounded-lg max-w-96">
+<div data-text="{{$badge}}" class="card-sticker card-sticker--{{$badgeClass}} {{$cursor }} h-full hover:opacity-100 {{ $active ? 'opacity-90' : '' }} container relative flex flex-col m-auto overflow-hidden border border-teal-300 rounded-lg max-w-96">
   @if (!$active)
         <div class="flex absolute w-full p-2 font-bold text-rose-500 bg-red-500/50">
             <p class="bg-white px-2 rounded">
@@ -38,7 +38,7 @@ $hidden = $active ? "" : "hidden";
     </div>
     <div class="btn w-2/5 flex items-center justify-center {{$hidden}}">
       <a {{$attributes->merge(['class' => 'font-bold bg-green-400 rounded-lg text-gray-900 py-2 px-6 hover:text-white hover:bg-blue-500', 'href' => ''])}}>
-        @lang('general.more')
+        @lang('general.start')
       </a>
     </div>
   </div>

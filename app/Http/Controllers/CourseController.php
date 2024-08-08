@@ -25,7 +25,11 @@ class CourseController extends Controller
         $subscription = Subscribtion::where('user_id', $user_id )
                                     ->where('course_id', $course_id)
                                     ->first();
-        $hasSubscription = $subscription && $subscription->payment_status === 'completed';
+        $subscription = Subscribtion::where('user_id', $user_id )
+        ->where('course_id', $course_id)
+        ->first();
+        $hasSubscription = $subscription && $subscription->payment_status === 'completed' && $subscription->expiry_date > today();
+        //$hasSubscription = $subscription && $subscription->payment_status === 'completed';
         $user_id = Auth::id();
         $sections = Section::where('course_id', $course_id)->get();
         $completedSections = CompletedSection::where('user_id', $user_id)
@@ -77,39 +81,36 @@ class CourseController extends Controller
         $subscribtions = Subscribtion::where('user_id', $user_id)->get()->pluck('course_id');
         $courses = Course::whereIn('id', $subscribtions)->get();
         $locale = session('locale', config('app.locale'));
+        // Prepare the localized courses array
+    $localizedCourses = $courses->map(function($course) use ($user_id, $locale) {
+        $subscription = Subscribtion::where('user_id', $user_id)
+            ->where('course_id', $course->id)
+            ->first();
+        $hasSubscription = $subscription && $subscription->payment_status === 'completed' && $subscription->expiry_date > today();
+
+        $courseDetails = [
+            'id' => $course->id,
+            'active' => $course->active,
+            'hasSubscription' => $hasSubscription,
+        ];
 
         switch ($locale) {
             case 'uk':
-                $localizedCourses = $courses->map(function($course) {
-                  return [
-                    'id' => $course->id,
-                    'course_name' => $course->course_name_uk,
-                    'course_description_' => $course->course_description_uk,
-                    'active' => $course->active,
-                  ];
-                 });
+                $courseDetails['course_name'] = $course->course_name_uk;
+                $courseDetails['course_description'] = $course->course_description_uk;
                 break;
             case 'ru':
-                $localizedCourses = $courses->map(function($course) {
-                  return [
-                    'id' => $course->id,
-                    'course_name' => $course->course_name_ru,
-                    'course_description_' => $course->course_description_ru,
-                    'active' => $course->active,
-                  ];
-                });
+                $courseDetails['course_name'] = $course->course_name_ru;
+                $courseDetails['course_description'] = $course->course_description_ru;
                 break;
             default:
-            $localizedCourses = $courses->map(function($course) {
-              return [
-                'id' => $course->id,
-                'course_name' => $course->course_name_uk,
-                'course_description_' => $course->course_description_uk,
-                'active' => $course->active,
-              ];
-             });
+                $courseDetails['course_name'] = $course->course_name_uk;
+                $courseDetails['course_description'] = $course->course_description_uk;
                 break;
         }
+
+        return $courseDetails;
+    });
 
         return view('courses.dashboard.subscribtions', compact('subscribtions', 'localizedCourses'));
 
@@ -188,6 +189,11 @@ class CourseController extends Controller
                                           ->where('course_id', $course_id)
                                           ->pluck('section_id')
                                           ->toArray();
+        $subscription = Subscribtion::where('user_id', $user_id )
+        ->where('course_id', $course_id)
+        ->first();
+
+        $hasSubscription = $subscription && $subscription->payment_status === 'completed' && $subscription->expiry_date > today();
      //   $completedSections = session()->get('completed_sections', []);
         $locale = session('locale', config('app.locale'));
 
@@ -235,7 +241,8 @@ class CourseController extends Controller
         $subscription = Subscribtion::where('user_id', $user_id )
                                     ->where('course_id', $course_id)
                                     ->first();
-        $hasSubscription = $subscription && $subscription->payment_status === 'completed';
+
+        $hasSubscription = $subscription && $subscription->payment_status === 'completed' && $subscription->expiry_date > today();
         $colorClass = $request->query('colorClass', null);
         $locale = session('locale', config('app.locale'));
         $completedSections = CompletedSection::pluck('section_id')->toArray();
@@ -382,7 +389,25 @@ class CourseController extends Controller
                 break;
         }
 
-        $correctAnswers = $questions->pluck('correct_answer', 'id');
+        $correctAnswers = [];
+
+        foreach ($questions as $question) {
+            $underscoreCount = substr_count($question->question, '_');
+
+            if ($underscoreCount === 2) {
+                // Separate the correct answer into two parts
+                $answers = explode(' ', $question->correct_answer);
+                $correctAnswers[$question->id] = [
+                    'part1' => $answers[0],
+                    'part2' => $answers[1]
+                ];
+            } else {
+                $correctAnswers[$question->id] = [
+                    'full' => $question->correct_answer
+                ];
+            }
+        }
+        //$correctAnswers = $questions->pluck('correct_answer', 'id');
        // Log::info('Completing section', [
        //     'correctAnswers' => $correctAnswers,
        // ]);
@@ -391,38 +416,45 @@ class CourseController extends Controller
 
     public function quiz($course_id, $section_id)
 {
+    $allquizquestions = Quiz::where('course_id', $course_id)->get();
+    $allpracticequestions = Practice::where('course_id', $course_id)->get();
+    // Log IDs of questions with multiple underscores
+    foreach ($allquizquestions as $onequestion) {
+        if (substr_count($onequestion->question, '_') >= 2) {
+            Log::debug('Quiz Question with multiple underscores', ['id' => $onequestion->id, 'question' => $onequestion->question]);
+        }
+    }
+    Log::debug('');
+    foreach ($allpracticequestions as $onequestion) {
+        if (substr_count($onequestion->question, '_') >= 2) {
+            Log::debug('Pracrtice Question with multiple underscores', ['id' => $onequestion->id, 'question' => $onequestion->question]);
+        }
+    }
+
+
     $user_id = Auth::id();
-    $subscription = Subscribtion::where('user_id', $user_id )
-    ->where('course_id', $course_id)
-    ->first();
+    $subscription = Subscribtion::where('user_id', $user_id)
+        ->where('course_id', $course_id)
+        ->first();
     $hasSubscription = $subscription && $subscription->payment_status === 'completed';
     $section = Section::where('id', $section_id)->where('course_id', $course_id)->firstOrFail();
     $phrases = Phrase::where('section_id', $section_id)->get();
     $questions = Quiz::where('section_id', $section_id)->get();
+
+
     $allSections = Section::where('course_id', $course_id)->get();
     $completedSections = CompletedSection::pluck('section_id')->toArray();
-        $completedSection = CompletedSection::firstOrNew([
-          'user_id' => $user_id,
-          'course_id' => $course_id,
-          'section_id' => $section_id,
-        ]);
 
-    // Prepare correct answers and their points
+    $completedSection = CompletedSection::firstOrNew([
+        'user_id' => $user_id,
+        'course_id' => $course_id,
+        'section_id' => $section_id,
+    ]);
+
     $correctAnswers = [];
     foreach ($questions as $question) {
-        $question_text = $question->question;
-        $how_many = substr_count($question_text, '_');
-
-        if ($how_many == 1) {
-            $answers = [$question->correct_answer];
-            $points = [5];
-        } elseif ($how_many == 2) {
-            $answers = explode(' ', $question->correct_answer);
-            $points = [2.5, 2.5];
-        } else {
-            $answers = [$question->correct_answer]; // Default to single answer
-            $points = [5]; // Default to 5 points
-        }
+        $answers = explode(', ', $question->correct_answer); // Split answers by comma and space
+        $points = array_fill(0, count($answers), 5 / count($answers)); // Evenly distribute points
 
         $correctAnswers[$question->id] = [
             'answers' => $answers,
@@ -441,18 +473,13 @@ class CourseController extends Controller
         ->max('highest_quiz_score');
     $locale = session('locale', config('app.locale'));
 
-    $completedSection = CompletedSection::firstOrNew([
-        'user_id' => $user_id,
-        'course_id' => $course_id,
-        'section_id' => $section_id,
-    ]);
     $update_at = $completedSection->exists ? $completedSection->updated_at : "";
 
     switch ($locale) {
         case 'uk':
             $sectionName = $section->section_name_uk;
             $courseName = $section->course_name_uk;
-            $localizedQuestions = $questions->map(function($question){
+            $localizedQuestions = $questions->map(function ($question) {
                 return [
                     'localizedQuestion' => $question->question_uk,
                 ];
@@ -461,7 +488,7 @@ class CourseController extends Controller
         case 'ru':
             $courseName = $section->course_name_ru;
             $sectionName = $section->section_name_ru;
-            $localizedQuestions = $questions->map(function($question){
+            $localizedQuestions = $questions->map(function ($question) {
                 return [
                     'localizedQuestion' => $question->question_ru,
                 ];
@@ -470,7 +497,7 @@ class CourseController extends Controller
         default:
             $sectionName = $section->section_name_en;
             $courseName = $section->course_name_en;
-            $localizedQuestions = $questions->map(function($question){
+            $localizedQuestions = $questions->map(function ($question) {
                 return [
                     'localizedQuestion' => $question->question_uk,
                 ];
@@ -480,6 +507,7 @@ class CourseController extends Controller
 
     return view("courses.section.quiz", compact('localizedQuestions', 'hasSubscription', 'allSections', 'completedSections', 'update_at', 'questions', 'correctAnswers', 'courseName', 'sectionName', 'section', 'phrases', 'course_id', 'section_id', 'highestPracticeScore', 'highestQuizScore'));
 }
+
 
 public function updatePracticeScore(Request $request, $course_id, $section_id){
     $user_id = Auth::id();

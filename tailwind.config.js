@@ -37,8 +37,11 @@ export default {
             'top_bar' : '#eff5ff',
             'bermuda': '#78dcca',
             'deeppink' : '#FF1493',
-
+            'badgeGreen' : '#389e0d',
+            'badgeOrange' : '#d46b08',
+            'badgeRed' : '#d43808',
           },
+
     },
 
   },

@@ -47,7 +47,7 @@ class AddQuizQuestion extends Seeder
             'question' => 'I’m cold, could you _ the heating, please?',
             'question_uk' => 'Мені холодно, можеш, будь ласка, збільшити опалення?',
             'question_ru' => 'Мне холодно, можно, пожалуйста, увеличить отопление?',
-            'correct_answer' => 'turn up',
+            'correct_answer' => 'turn, up',
             'created_at' => now(),
         ],
 
@@ -513,7 +513,7 @@ class AddQuizQuestion extends Seeder
             'question' => 'My sister and I went to the bus station to _ our mother _.',
             'question_uk' => 'Моя сестра і я поїхали на автобусну станцію, щоб провести нашу маму.',
             'question_ru' => 'Я и моя сестра отправились на автобусную станцию провести нашу маму.',
-            'correct_answer' => 'see off',
+            'correct_answer' => 'see, off',
             'created_at' => now(),
         ],
 
