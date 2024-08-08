@@ -27,7 +27,7 @@ class AddQuizQuestion extends Seeder
             'question' => 'The concert didn’t _ to my expectations.',
             'question_uk' => 'Концерт не виправдав мої очікування.',
             'question_ru' => 'Концерт не оправдал моих надежд.',
-            'correct_answer' => 'live up to',
+            'correct_answer' => 'live up',
             'created_at' => now(),
         ],
 
