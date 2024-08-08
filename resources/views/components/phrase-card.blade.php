@@ -14,7 +14,7 @@
             </a>
         </div>
     </div>
-    <div id="translation-{{ $phrase['id'] }}" style="display: none;" class="bg-gray-200 rounded p-2 mt-2 text-sm">
+    <div id="translation-{{ $phrase['id'] }}" style="display: none;" class="bg-white rounded-md pl-4 p-2 mt-2 text-sm">
         <p class="text-gray-800"><i class="fa-solid fa-circle-arrow-right mr-2"></i>{{ $phrase['localized'] }}</p>
     </div>
 </li>
