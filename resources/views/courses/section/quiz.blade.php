@@ -5,7 +5,7 @@ $currentLocale = session('locale', 'uk');
 @auth
 @extends('layouts.layout')
 @section('navigation')
-<div class="sm:ml-64">
+<div class="{{ $hasSubscription ? 'sm:ml-64' : ''}}">
     <div class="w-full bg-top_bar shadow-md">
         <nav class="md:max-w-3xl m-auto border-gray-200 dark:bg-gray-900 ">
             <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -18,6 +18,7 @@ $currentLocale = session('locale', 'uk');
 </div>
 @endsection
 @section('content')
+@if ($hasSubscription)
 <div class=" sm:ml-64">
     <div class="mt-4 rounded-lg">
         <div class="p-2 flex flex-col items-center justify-center mb-4 gap-6 rounded bg-gray-50 dark:bg-gray-800">
@@ -157,8 +158,7 @@ $currentLocale = session('locale', 'uk');
             </div>
         </div>
         <x-popmsg :section_id="$section_id"  :course_id="$course_id" />
-@endsection
-<script>
+        <script>
             function closeModal(){
             const modal = new Modal(document.getElementById('modal_answers'));
             modal.hide();
@@ -329,6 +329,11 @@ $currentLocale = session('locale', 'uk');
     };
 });
 </script>
+        @else
+            <x-error-msg :message="'You haven\'t purchased the ' . $courseName .' course yet.'" />
+        @endif
+
+@endsection
 @else
   <script>
      document.addEventListener('DOMContentLoaded', function() {
