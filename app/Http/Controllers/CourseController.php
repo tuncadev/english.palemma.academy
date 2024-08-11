@@ -328,10 +328,18 @@ class CourseController extends Controller
         $course = Course::where('id', $course_id)->firstOrFail();
         $phrases = Phrase::where('section_id', $section_id)->get();
         $locale = session('locale', config('app.locale'));
-        $highestPracticeScore = CompletedSection::where('user_id', Auth::id())
+        $highestPracticeScore = Score::where('user_id', Auth::id())
                                             ->where('course_id', $course_id)
                                             ->where('section_id', $section_id)
                                             ->max('highest_practice_score');
+
+        $highestScoreDate = Score::where('user_id', Auth::id())
+        ->where('course_id', $course_id)
+        ->where('section_id', $section_id)
+        ->where('highest_practice_score', $highestPracticeScore)
+        ->value('updated_at');
+
+
         $allSections = Section::where('course_id', $course_id)->get();
         $completedSections = CompletedSection::pluck('section_id')->toArray();
         $completedSection = CompletedSection::firstOrNew([
@@ -346,6 +354,9 @@ class CourseController extends Controller
         ->where('section_id', $section_id)
         ->pluck('dropdown_value', 'practice_id')
         ->toArray();
+        if (!$dropdownStates) {
+            $dropdownStates = []; // Ensure it's an empty array, not null
+        }
 
         if ($completedSection->exists) {
           $update_at = $completedSection->updated_at;
@@ -403,7 +414,7 @@ class CourseController extends Controller
                 }
                     return [
                         'localizedQuestion' => $question->question_uk,
-                      //  'dropdownValue' => $dropdownStates[$id],
+                      //  'dropdownValue' => $dropdownStates[$id]  ?? 'default_value',
                     ];
                 });
                 break;
@@ -418,6 +429,7 @@ class CourseController extends Controller
             $underscoreCount = substr_count($question->question, '_');
 
             if ($underscoreCount === 2) {
+
                 // Separate the correct answer into two parts
                 $answers = explode(' ', $question->correct_answer);
                 $correctAnswers[$question->id] = [
@@ -425,9 +437,11 @@ class CourseController extends Controller
                     'part2' => $answers[1]
                 ];
                 if($dropdownStates) {
+
                     $dropdownVals[$id] =  [
                         $question->id."1" => $dropdownStates[$id."1"] ?? null,
                         $question->id."2" => $dropdownStates[$id."2"] ?? null,
+
                     ];
                  }
 
@@ -435,9 +449,12 @@ class CourseController extends Controller
                 $correctAnswers[$id] = [
                     'full' => $question->correct_answer
                 ];
+
                 if($dropdownStates) {
+
                     $dropdownVals[$id] = [
-                        $id => $dropdownStates[$id],
+
+                        $id => $dropdownStates[$id]  ?? null,
                     ];
                 }
             }
@@ -447,7 +464,7 @@ class CourseController extends Controller
        //     'correctAnswers' => $correctAnswers,
        // ]);
        //dd( $dropdownVals);
-        return view("courses.section.practice", compact('dropdownVals','dropdownStates', 'localizedQuestions', 'hasSubscription', 'update_at','completedSections','locale','allSections','correctAnswers','questions', 'highestPracticeScore', 'courseName', 'section', 'phrases', 'course_id', 'section_id', 'sectionName'));
+        return view("courses.section.practice", compact('highestPracticeScore', 'highestScoreDate', 'dropdownVals','dropdownStates', 'localizedQuestions', 'hasSubscription', 'update_at','completedSections','locale','allSections','correctAnswers','questions', 'highestPracticeScore', 'courseName', 'section', 'phrases', 'course_id', 'section_id', 'sectionName'));
     }
 
     function replaceUnderscoresWithSpans($inputString, $id) {
@@ -464,13 +481,13 @@ class CourseController extends Controller
     // Log IDs of questions with multiple underscores
     foreach ($allquizquestions as $onequestion) {
         if (substr_count($onequestion->question, '_') >= 2) {
-            Log::debug('Quiz Question with multiple underscores', ['id' => $onequestion->id, 'question' => $onequestion->question]);
+           // Log::debug('Quiz Question with multiple underscores', ['id' => $onequestion->id, 'question' => $onequestion->question]);
         }
     }
-    Log::debug('');
+    //Log::debug('');
     foreach ($allpracticequestions as $onequestion) {
         if (substr_count($onequestion->question, '_') >= 2) {
-            Log::debug('Pracrtice Question with multiple underscores', ['id' => $onequestion->id, 'question' => $onequestion->question]);
+           // Log::debug('Pracrtice Question with multiple underscores', ['id' => $onequestion->id, 'question' => $onequestion->question]);
         }
     }
 
@@ -484,6 +501,15 @@ class CourseController extends Controller
     $phrases = Phrase::where('section_id', $section_id)->get();
     $questions = Quiz::where('section_id', $section_id)->get();
 
+    $prevInputValues = DB::table('user_progress')
+        ->where('user_id', $user_id)
+        ->where('course_id', $course_id)
+        ->where('section_id', $section_id)
+        ->pluck('input_value', 'quiz_id')
+        ->toArray();
+        if (!$prevInputValues) {
+            $prevInputValues = []; // Ensure it's an empty array, not null
+        }
 
     $allSections = Section::where('course_id', $course_id)->get();
     $completedSections = CompletedSection::pluck('section_id')->toArray();
@@ -572,13 +598,13 @@ class CourseController extends Controller
 
 
    // dd($newQuestions);
-    return view("courses.section.quiz", compact('inputValues','localizedQuestions', 'hasSubscription', 'allSections', 'completedSections', 'update_at', 'questions', 'correctAnswers', 'courseName', 'sectionName', 'section', 'phrases', 'course_id', 'section_id', 'highestPracticeScore', 'highestQuizScore'));
+    return view("courses.section.quiz", compact('prevInputValues', 'inputValues','localizedQuestions', 'hasSubscription', 'allSections', 'completedSections', 'update_at', 'questions', 'correctAnswers', 'courseName', 'sectionName', 'section', 'phrases', 'course_id', 'section_id', 'highestPracticeScore', 'highestQuizScore'));
 }
 
 
 public function updatePracticeScore(Request $request, $course_id, $section_id){
     $user_id = Auth::id();
-    $practice_score = $request->input('practice_score');
+    $practice_score = $request->input('practiceScore');
 
     $score = Score::firstOrNew([
         'user_id' => $user_id,
@@ -592,14 +618,14 @@ public function updatePracticeScore(Request $request, $course_id, $section_id){
     $score->highest_overall_score = max($score->highest_overall_score, $score->overall_score);
 
     $score->save();
-
-    return redirect()->route('course.quiz', ['course_id' => $course_id, 'section_id' => $section_id]);
+    return response()->json(['success' => true]);
+   // return redirect()->route('course.quiz', ['course_id' => $course_id, 'section_id' => $section_id]);
 }
 
 public function updateQuizScore(Request $request, $course_id, $section_id)
 {
     $user_id = Auth::id();
-    $quiz_score = $request->input('quiz_score');
+    $quiz_score = $request->input('score');
 
     $score = Score::firstOrNew([
         'user_id' => $user_id,
@@ -628,9 +654,11 @@ public function updateQuizScore(Request $request, $course_id, $section_id)
         ->first();
 
     if ($nextSection) {
-        return redirect()->route('course.show', ['course_id' => $course_id, 'section_id' => $nextSection->id]);
+        // return redirect()->route('course.show', ['course_id' => $course_id, 'section_id' => $nextSection->id]);
+        return response()->json(['success' => true]);
     } else {
-        return redirect()->route('course.index', ['course_id' => $course_id]);
+        // return redirect()->route('course.index', ['course_id' => $course_id]);
+        return response()->json(['success' => false]);
     }
 }
 
@@ -638,6 +666,7 @@ public function savePracticeProgress(Request $request, $course_id, $section_id)
 {
     $user_id = Auth::id();
     $dropdownVals = $request->input('dropdownValues', []);
+    $highestPracticeScore = $request->input('practiceScore');
 
     foreach ($dropdownVals as $dropdownVal) {
         $id = $dropdownVal['id'];
@@ -660,9 +689,43 @@ public function savePracticeProgress(Request $request, $course_id, $section_id)
             ]
         );
     }
-
+    $this->updatePracticeScore($request, $course_id, $section_id);
     return response()->json(['success' => true]);
 }
+
+public function saveQuizProgress(Request $request, $course_id, $section_id)
+{
+    $user_id = Auth::id();
+    $answers = $request->input('answers', []);
+    $highestQuizScore = $request->input('score');
+
+    foreach ($answers as $answer) {
+        $id = $answer['id'];
+        $value = $answer['value'];
+
+        // Update or create the record in the user_progress table
+        UserProgress::updateOrCreate(
+            [
+                'user_id' => $user_id,
+                'course_id' => $course_id,
+                'section_id' => $section_id,
+                'quiz_id' => $id,
+
+            ],
+            [
+                'practice_id' => null,
+                'checkbox_state' => null,
+                'phrase_id' => null,
+                'input_value' => $value,
+                'dropdown_value' => null,
+            ]
+        );
+    }
+    $this->updateQuizScore($request, $course_id, $section_id);
+    return response()->json(['success' => true]);
+}
+
+
 public function savePhraseProgress(Request $request, $course_id, $section_id)
 {
     $user_id = Auth::id();

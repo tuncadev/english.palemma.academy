@@ -8,4 +8,4 @@
     ondragstart="drag(event)"
     ondrop="drop(event)"
     ondragover="allowDrop(event)"
-    value="" />
+    value="{{ isset($prevValue) ? $prevValue : ''}}" />

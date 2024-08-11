@@ -79,7 +79,7 @@ $currentLocale = session('locale', 'uk');
                             </span>
                             <i class="fa-solid text-blue-600 fa-arrow-right mr-2"></i>
                             <span class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">
-                            {{ $update_at }}
+                            {{ $highestScoreDate }}
                             </span>
                         </div>
                     @endif
@@ -105,9 +105,9 @@ $currentLocale = session('locale', 'uk');
                         @lang('lesson.not_filled')
                         </div>
                     </div>
-                    <form name="practice-form" class="w-full md:w-10/12 pb-20" id="practice-form" >
+                    <form name="practice-form" action="{{ route('course.quiz', ['course_id' => $course_id, 'section_id' => $section_id]) }}" class="w-full md:w-10/12 pb-20" id="practice-form" >
                         @csrf
-                        <input type="hidden" name="practice_score" id="practice_score" >
+                        <input type="hidden" name="practice_score" id="practice_score" value="{{ isset($highestPracticeScore) ? $highestPracticeScore : 0 }}">
                         <input type="hidden" name="type" value="practice">
                         <ul>
                             @php
@@ -120,14 +120,25 @@ $currentLocale = session('locale', 'uk');
                                     if (is_array($value) && count($value) > 1) {
                                         // If it's an array with more than one item, add each item separately
                                         foreach ($value as $subKey => $subValue) {
-                                            $dropdownValues[$subKey] = [$subKey => $subValue];
+                                            $dropdownValues[$subKey] = [
+                                                $subKey => $subValue,
+                                                "point" => 2.5,
+                                            ];
                                         }
                                     } else {
                                         // Otherwise, just add the original key-value pair
-                                        $dropdownValues[$key] = $value;
+                                        foreach ($value as $aKey => $aValue) {
+                                            $dropdownValues[$aKey] = [
+                                                $aKey => $aValue,
+                                                "point" => 5,
+                                            ];
+                                        }
+
+
                                     }
                                 }
                             }
+                           // dd($dropdownValues);
                             @endphp
                             @foreach ($questions as $index => $question)
 
@@ -136,14 +147,15 @@ $currentLocale = session('locale', 'uk');
                                 $id = $question->id;
                                 $options = json_decode($question->answers, true); // Convert JSON string to array
                                 shuffle($options);
-
+                                //dd($correctAnswers);
                                 $questionText = $question->question;
                                 $underscoreCount = substr_count($questionText, '_');
-
+                                $points = "";
                                 if ($underscoreCount === 2) {
                                     // Split the question text into parts
                                     $parts = explode('_', $questionText);
-
+                                    $points = 2.5;
+                                    $doulbeID = $question->id;
                                     // Generate the options for the two dropdowns
                                     $firstOptions = array_map(function($option) {
                                         $words = explode(' ', $option);
@@ -155,15 +167,18 @@ $currentLocale = session('locale', 'uk');
                                         $secondPart = isset($words[2]) ? $words[1] . " " . $words[2] : (isset($words[1]) ? $words[1] : "");
                                         return $secondPart;
                                     }, $options);
+                                   // dd($correctAnswers);
                                     // Generate the question HTML with two select components
                                     $questionText = $parts[0] .
-                                                    view('components.practice-select', ['dropdownValues' => $dropdownValues[(int)($id . "1")][(int)($id . "1")] ?? '', 'id' =>  (int)($id . "1"), 'options' => $firstOptions, ])->render() .
+                                                    view('components.practice-select', ['answer' => base64_encode($correctAnswers[$doulbeID]['part1']) ,'points' => $points, 'dropdownValues' => $dropdownValues[(int)($id . "1")][(int)($id . "1")] ?? '', 'id' =>  (int)($id . "1"), 'options' => $firstOptions, ])->render() .
                                                     $parts[1] .
-                                                    view('components.practice-select', ['dropdownValues' => $dropdownValues[(int)($id . "2")][(int)($id . "2")] ?? '', 'id' =>  (int)($id . "2"), 'options' => $secondOptions])->render() .
+                                                    view('components.practice-select', ['answer' => base64_encode($correctAnswers[$doulbeID]['part2']), 'points' => $points, 'dropdownValues' => $dropdownValues[(int)($id . "2")][(int)($id . "2")] ?? '', 'id' =>  (int)($id . "2"), 'options' => $secondOptions])->render() .
                                                     $parts[2];
 
                                 } else {
-                                    $selectComponent = view('components.practice-select', compact('dropdownValues', 'id', 'options'))->render();
+                                    $answer = base64_encode($question->correct_answer);
+                                    $points = 5;
+                                    $selectComponent = view('components.practice-select', compact('answer', 'points', 'dropdownValues', 'id', 'options'))->render();
                                     $questionText = str_replace('_', $selectComponent, $questionText);
                                 }
 
@@ -200,8 +215,10 @@ $currentLocale = session('locale', 'uk');
                             <button id="checkanswers" onclick="checkAnswers()" data-modal-target="modal_answers" class="p-2 md:p-4 m-auto rounded-md text-white uppercase font-semibold w-btn_purple h-btn_purple bg-btn_purple  shadow-md m-auto" type="button">
                                 Check Answers
                             </button>
-                            <button id="continue" type="submit"  class=" p-2 md:p-4 m-auto rounded-md text-white uppercase font-semibold w-btn_purple h-btn_purple bg-btn_green  shadow-md m-auto">
-                                @lang('lesson.next')
+                            <button id="continue"
+                            type="submit"
+                            class=" p-2 md:p-4 m-auto rounded-md text-white uppercase font-semibold w-btn_purple h-btn_purple bg-btn_green  shadow-md m-auto">
+                                @lang('lesson.next')console.log
                             </button>
                         </div>
                     </form>
@@ -215,14 +232,138 @@ $currentLocale = session('locale', 'uk');
                 window.location.href = url;
             }
             </script>
-        <script>
+       <script>
+        function closeModal() {
+            const modal = new Modal(document.getElementById('modal_answers'));
+            modal.hide();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+
+            let practiceScore = 0;
+            let translationsOpened = new Set();
+            var practiceInputs = document.querySelectorAll('#practice-form select');
+
+            window.toggleTranslation = function(id) {
+                var element = document.getElementById('translation-' + id);
+                if (element.style.display === 'none') {
+                    element.style.display = 'block';
+                    if (!translationsOpened.has(id)) {
+                        translationsOpened.add(id);
+                        practiceScore -= 1;
+                    }
+                } else {
+                    element.style.display = 'none';
+                }
+                updatePracticeScore();
+            };
+
+            function updatePracticeScore() {
+                let totalScore = 0;
 
 
-            function closeModal(){
-                const modal = new Modal(document.getElementById('modal_answers'));
-                modal.hide();
+                practiceInputs.forEach(input => {
+                    let answer = atob(input.getAttribute('data-check')); // Decode the base64 encoded answer
+                    let point = parseFloat(input.getAttribute('data-point'));
+
+                    if (input.value.toLowerCase() === answer) {
+                        totalScore += point;
+                    }
+                });
+
+                totalScore -= translationsOpened.size;
+                practiceScore = totalScore;
+                document.getElementById('score').innerText = 'Score: ' + practiceScore;
+                document.getElementById('practice_score').value = practiceScore;
             }
-            </script>
+
+            window.handlePracticeAnswerChange = function(input) {
+                let answer = atob(input.getAttribute('data-check')); // Decode the base64 encoded answer
+                console.log(answer);
+                if (input.value.toLowerCase() === answer) {
+                    input.classList.add('border-green-500');
+                    input.classList.remove('border-gray-400', 'border-sky-400');
+                } else {
+                    input.classList.add('border-gray-400');
+                    input.classList.remove('border-green-500');
+                }
+
+                updatePracticeScore();
+            };
+
+            window.checkAnswers = function() {
+                const modal = new Modal(document.getElementById('modal_answers'));
+
+                let allFilled = true;
+                let correctCount = 0;
+                let incorrectCount = 0;
+
+
+                practiceInputs.forEach(function(input) {
+                    let answer = atob(input.getAttribute('data-check')); // Decode the base64 encoded answer
+
+                    if (input.value.toLowerCase() === "") {
+                        allFilled = false;
+                        input.classList.add('border-red-500');
+                        input.classList.remove('border-green-500', 'border-gray-400',  'border-sky-400',  'border-dashed', 'border-1');
+
+                        document.getElementById("continue").classList.add('hidden');
+                        var warn = document.getElementById('warn');
+                        warn.style.display = 'flex';
+                        location.href = "#top";
+                    } else if (input.value.toLowerCase() !== answer) {
+                        input.classList.add('border-red-500');
+                        input.classList.remove('border-0');
+                        input.classList.remove('border-green-500', 'border-gray-400',  'border-sky-400',  'border-dashed', 'border-1');
+
+                        incorrectCount++;
+                    } else {
+                        input.classList.add('border-green-500', 'border-2');
+                        input.classList.remove('border-0');
+                        input.classList.remove('border-red-500', 'border-sky-400', 'border-dashed', 'border-1');
+                        correctCount++;
+                    }
+                });
+
+                window.translations = {
+                    correct: "{{ __('general.correctanswers') }}",
+                    incorrect: "{{ __('general.wronganswers') }}"
+                };
+
+                document.getElementById("continue").classList.remove('hidden');
+
+            };
+
+            practiceInputs.forEach(function(input) {
+                input.addEventListener('change', function() {
+                    handlePracticeAnswerChange(this);
+                });
+            });
+
+            document.querySelectorAll('[data-translation-button]').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const id = button.dataset.translationButton;
+                    toggleTranslation(id);
+                });
+            });
+
+            window.validatePracticeForm = function() {
+                let allFilled = true;
+
+                document.querySelectorAll('input[type="text"]').forEach(function(input) {
+                    if (input.value.toLowerCase() === "") {
+                        allFilled = false;
+                        var warn = document.getElementById('warn');
+                        warn.style.display = 'flex';
+                        location.href = "#top";
+                    }
+                });
+                    //document.getElementById('practice_score').value = practiceScore; // Set practice score
+                    return true; // Allow form submission
+
+            };
+        });
+    </script>
             <script>
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -230,35 +371,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
     form.addEventListener('submit', function(event) {
         event.preventDefault();
+        var currentPracticeScore = document.getElementById('practice_score').value;
 
+        const practiceScore = document.getElementById('practice_score').value;
+
+        const score = document.getElementById('practice_score').value;
         const dropdowns = document.querySelectorAll('select');
         const data = Array.from(dropdowns).map(dropdown => ({
             id: dropdown.id.replace('sentence_', ''),
             value: dropdown.value,
         }));
-        console.log(data);
+
+
         fetch('{{ route("course.savePracticeProgress", ["course_id" => $course_id, "section_id" => $section_id]) }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
-            body: JSON.stringify({ dropdownValues: data })
+            body: JSON.stringify({
+                dropdownValues: data,
+                practiceScore: currentPracticeScore,
+                score : score
+            })
         }).then(response => response.json())
           .then(data => {
-
               if (data.success) {
                   //window.location.href = '{{ route("course.quiz", ["course_id" => $course_id, "section_id" => $section_id]) }}';
+                 document.getElementById('practice-form').submit(); // Submit the form
               } else {
                   alert('Failed to save progress. Please try again.');
               }
           });
     });
 });
-
-
-
-
             </script>
         @else
             <x-error-msg :message="'You haven\'t purchased the ' . $courseName .' course yet.'" />

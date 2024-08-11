@@ -111,12 +111,14 @@
                     </div>
                     <h2>Phrasal Verbs Quiz</h2>
                     <!-- Answers Pack with draggable inputs -->
-                    <div id="answers" class="flex mb-6 flex justify-center items-center w-full  flex-wrap gap-2">
+                    <div id="answers" class="md:max-w-3xl px-2 flex mb-6 flex justify-center items-center w-full  flex-wrap gap-2">
                         @foreach ($inputValues as $key => $answerSet)
+                        @php $iVal = isset($prevInputValues) ? "" : $answerSet['answer']; @endphp
+                        @php $bgClass = isset($prevInputValues) ? "border-gray-400 bg-gray-300" : "border-sky-400 bg-sky-300"; @endphp
                             <input type="text"
                             id="answer-{{ $key }}"
-                            value="{{ $answerSet['answer'] }}"
-                            class=" answer-input p-2 border-1 rounded cursor-pointer max-w-24 text-xs text-center border-sky-400 bg-sky-300"
+                            value="{{ $iVal }}"
+                            class=" answer-input p-2 border-1 rounded cursor-pointer max-w-24 text-xs text-center {{$bgClass}}"
                             draggable="true"
                             ondragstart="drag(event)"
                             ondrop="drop(event)"
@@ -125,14 +127,18 @@
                     </div>
                     <!-- Questions with empty draggable inputs -->
                     <form id="quiz-form" method="POST"
-                        action="{{ route('course.updateQuizScore', ['course_id' => $course_id, 'section_id' => $section_id]) }}">
+                        action="{{ route('course.show', ['course_id' => $course_id, 'section_id' => $section_id+1]) }}">
+                        <input type="hidden" name="quiz_score" id="quiz_score" value="{{ isset($highestQuizScore) ? $highestQuizScore : 0 }}">
                         <ul>
                             @csrf
                             @php
                                 $qnum = 1;
+
+                                //dd($prevInputValues['question-0']);
                             @endphp
                             @foreach ($questions as $index => $question)
                                 @php
+                                    $pnum =  $qnum -1;
                                     $id = $question->id;
                                     $questionText = $question->question;
                                     $answers = explode(', ', $question->correct_answer);
@@ -150,11 +156,12 @@
                                             'answer' => $answer,
                                             'point' => $point,
                                             'index' => $index,
+                                            'prevValue' => $prevInputValues['question-'. $pnum]
                                             ])->render();
                                             }
                                     }
                                 @endphp
-                                <li class="p-6 bg-white phrase_card rounded-lg w-full mb-2">
+                                <li class="px-5 py-3 bg-white phrase_card rounded-lg w-full mb-2">
                                     <div class="flex justify-between">
                                         <div class="text-sm flex w-full justify-start items-center">
                                             {{ $qnum }}. {!! $formattedQuestion !!}
@@ -180,6 +187,7 @@
                                     $qnum += 1;
                                 @endphp
                             @endforeach
+
                             <span class="" id="score"></span>
                             <div class="flex flex-col md:flex-row gap-y-4 md:justify-between items-center mt-4">
                                 <button id="checkanswers" onclick="checkQuizAnswers()" data-modal-target="modal_answers" class="p-2 md:p-4 m-auto rounded-md text-white uppercase font-semibold w-btn_purple h-btn_purple bg-btn_purple  shadow-md m-auto" type="button">
@@ -196,29 +204,50 @@
         </div>
         <x-popmsg :section_id="$section_id"  :course_id="$course_id" />
 <script>
-  $(document).ready(function() {
-  // Form submit event to gather and display all answers
-  $('#quiz-form').on('submit', function(event) {
-  event.preventDefault(); // Prevent the form from actually submitting
+    $(document).ready(function() {
+        // Form submit event to gather and display all answers
+        $('#quiz-form').on('submit', function(event) {
+            event.preventDefault(); // Prevent the form from actually submitting
+            const score = document.getElementById('quiz_score').value;
+            // Collect all values from the question inputs
+            let answers = [];
+            $('#quiz-form input[type="text"]').each(function() {
+                if ($(this).val()) {
+                    answers.push({
+                        name: $(this).attr('name'),
+                        id: $(this).attr('id'),
+                        value: $(this).val()
+                    });
+                }
+            });
 
-  // Collect all values from the question inputs
-  let answers = [];
-  $('#quiz-form input[type="text"]').each(function() {
-  if ($(this).val()) {
-      answers.push({
-          name: $(this).attr('name'),
-          value: $(this).val()
-      });
-  }
-  });
+            // Display the collected answers in the console
+            console.log("Collected Answers:", answers);
+            console.log("Quiz score: ", score)
+            fetch('{{ route("course.saveQuizProgress", ["course_id" => $course_id, "section_id" => $section_id]) }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                answers: answers,
+                score : score
+            })
+        }).then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  //window.location.href = '{{ route("course.quiz", ["course_id" => $course_id, "section_id" => $section_id]) }}';
+                 document.getElementById('quiz-form').submit(); // Submit the form
+              } else {
+                  alert('Failed to save progress. Please try again.');
+              }
+          });
 
-  // Display the collected answers in the console
-  console.log("Collected Answers:", answers);
-
-  // Optionally, you can submit the form here if needed
-  // this.submit(); // Uncomment this line if you want to submit the form after logging the answers
-  });
-  });
+            // Optionally, you can submit the form here if needed
+            // this.submit(); // Uncomment this line if you want to submit the form after logging the answers
+        });
+    });
 
   // Function to log changes to the input value
 
@@ -242,7 +271,7 @@
 
    //   var inputElement = document.getElementById(targetElement.id);
 
-      console.log("val is: " + targetElement.value);
+
 
         if (targetElement.tagName === 'INPUT' && draggedElement !== targetElement) {
             // Swap values between dragged element and target element
@@ -255,9 +284,9 @@
             // Reset the dragged element style to empty
             draggedElement.classList.add("border-gray-400", "bg-gray-300");
             draggedElement.classList.remove("border-sky-400", "bg-sky-300");
-            console.log("draggedElement is: " + draggedElement.value);
+
             targetElement.value = draggedElement.value;
-            console.log("targetElement is: " + draggedElement.value);
+
             draggedElement.value = tempValue;
             draggedElement.blur();
 
@@ -320,10 +349,11 @@
             totalScore -= translationsOpened.size;
             quizScore = totalScore;
             document.getElementById('score').innerText = 'Score: ' + quizScore;
+            document.getElementById('quiz_score').value = quizScore;
         }
 
         window.handleQuizAnswerChange = function(input) {
-            let answer = atob(input.getAttribute('data-answer')); // Decode the base64 encoded answer
+            let answer = atob(input.getAttribute('data-check')); // Decode the base64 encoded answer
 
             if (input.value.toLowerCase() === answer) {
                 input.classList.add('border-green-500');
