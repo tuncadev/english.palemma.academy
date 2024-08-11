@@ -22,6 +22,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 
+Route::post('/course/{course_id}/section/{section_id}/save-phrase-progress', [CourseController::class, 'savePhraseProgress'])->name('course.savePhraseProgress');
+Route::post('/course/{course_id}/section/{section_id}/save-practice-progress', [CourseController::class, 'savePracticeProgress'])->name('course.savePracticeProgress');
+
 Route::get('/course/{course_id}/section/{section_id}', [CourseController::class, 'show'])->name('course.show');
 Route::get('/course/{course_id}/section/{section_id}/practice', [CourseController::class, 'practice'])->name('course.practice');
 Route::post('/course/{course_id}/section/{section_id}/update-practice', [CourseController::class, 'updatePracticeScore'])->name('course.updatePracticeScore');

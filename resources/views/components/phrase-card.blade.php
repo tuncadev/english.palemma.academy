@@ -1,15 +1,14 @@
-@props(['phrase'])
+@props(['phrase', 'savedProgress'])
 <li {{ $attributes->merge(['class' => 'p-4 bg-gray-200 border border-gray-300 rounded-lg mb-2 m-auto']) }}>
     <div class="flex justify-between">
         <div class="">
-            <input type="checkbox" id="phrase-{{ $phrase['id'] }}" class="phrase-checkbox mr-2">
+            <input type="checkbox" id="phrase-{{ $phrase['id'] }}" name="phrases[{{ $phrase['id'] }}]" class="phrase-checkbox mr-2" {{ isset($phrase['checked']) && $phrase['checked'] ? 'checked' : '' }}>
             <label for="phrase-{{ $phrase['id'] }}">
-                {{ $phrase['en']}}
+                {{ $phrase['en'] }}
             </label>
         </div>
         <div class="flex items-center">
-            <a href="javascript:void(0);" onclick="toggleTranslation({{ $phrase['id'] }})" class="r-0   text-xs flex flex-col items-center hover:text-blue-800">
-                <i class="fa-solid fa-language mr-1 "></i>
+                <i class="fa-solid fa-language mr-1"></i>
                 @lang('lesson.translate')
             </a>
         </div>

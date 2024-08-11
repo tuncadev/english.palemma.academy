@@ -1,4 +1,4 @@
-<div data-text="{{$badge}}"  class="card-sticker card-sticker--{{$badgeClass}} w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+<div data-text="{{$badge}}"  class="card-sticker card-sticker--{{$badgeClass}} w-full bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
     <div class="top bg-badgeOrange pt-10 pb-5 px-4 opacity-40 ">
         <h1 class="font-bold text-gray-200 text-2xl">@lang('general.course') - № {{ $course->id }}</h1>
         <h2 class="font-bold text-white text-2xl mb-6">{{ $course->course_name }}</h2>

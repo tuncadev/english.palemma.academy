@@ -1,1 +1,11 @@
-<input type="text" id="{{ $id }}" name="{{ $name }}" data-answer="{{ $answer }}" data-point="{{ $point }}" class="max-w-24 mt-1 mr-2 ml-2 px-2 py-1 bg-white border rounded-md text-xs shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500 invalid:border-pink-500 invalid:text-pink-600 focus:invalid:border-pink-500 focus:invalid:ring-pink-500"/>
+<input type="text"
+    id="question-{{ $index }}"
+    data-point="{{ $point }}"
+    data-check="{{ $answer }}"
+    name="answers[{{ $index }}]"
+    class="mx-2 dropzone p-2 border-1 border-dashed rounded cursor-pointer max-w-24 text-xs text-center border-gray-400 bg-gray-300/30 "
+    draggable="true"
+    ondragstart="drag(event)"
+    ondrop="drop(event)"
+    ondragover="allowDrop(event)"
+    value="" />

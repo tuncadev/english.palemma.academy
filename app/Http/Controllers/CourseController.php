@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Practice;
 use App\Models\Section;
 use App\Models\Score;
+use Illuminate\Support\Facades\DB;
+use App\Models\UserProgress;
 use App\Models\Subscribtion;
 use App\Models\Phrase;
 use App\Models\Quiz;
@@ -235,78 +237,84 @@ class CourseController extends Controller
         return view('courses.course', compact('course', 'colorClass', 'localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
     }
 
+
     public function show($course_id, $section_id, Request $request)
-    {
-        $user_id = Auth::id();
-        $subscription = Subscribtion::where('user_id', $user_id )
-                                    ->where('course_id', $course_id)
-                                    ->first();
+{
+    $user_id = Auth::id();
+    $subscription = Subscribtion::where('user_id', $user_id )
+                                ->where('course_id', $course_id)
+                                ->first();
 
-        $hasSubscription = $subscription && $subscription->payment_status === 'completed' && $subscription->expiry_date > today();
-        $colorClass = $request->query('colorClass', null);
-        $locale = session('locale', config('app.locale'));
-        $completedSections = CompletedSection::pluck('section_id')->toArray();
-        $completedSectionNames = Section::whereIn('id', $completedSections)
-                                 ->where('id', '!=', $section_id)
-                                 ->pluck('section_name_' . $locale)
-                                 ->toArray();
-        $locked = false;
-        //$completedSections = session()->get('completed_sections', []);
-        if (!in_array($section_id - 1, $completedSections) && $section_id != 1) {
-            $locked = true;
-            //return view('courses.course'.$course_id.'.s' . $section_id . '.s' . $section_id . '_show', compact('locked', 'course_id', 'section_id'));
-            //return redirect()->route('course.show', ['course_id' => $course_id, 'section_id' => $section_id - 1 ]);
-        }
+    $hasSubscription = $subscription && $subscription->payment_status === 'completed' && $subscription->expiry_date > today();
+    $colorClass = $request->query('colorClass', null);
+    $locale = session('locale', config('app.locale'));
+    $completedSections = CompletedSection::pluck('section_id')->toArray();
+    $completedSectionNames = Section::whereIn('id', $completedSections)
+                             ->where('id', '!=', $section_id)
+                             ->pluck('section_name_' . $locale)
+                             ->toArray();
+    $locked = false;
 
-        $section = Section::where('id', $section_id)->where('course_id', $course_id)->firstOrFail();
-
-        $sectionID = "0" . $section->id;
-        $course = Course::where('id', $course_id)->firstOrFail();
-        $phrases = Phrase::where('section_id', $section_id)->get();
-        $allSections = Section::where('course_id', $course_id)->get();
-
-
-        // Determine the course name and section name based on the current locale
-        switch ($locale) {
-            case 'uk':
-                $courseName = $course->course_name_uk;
-                $sectionName = $section->section_name_uk;
-                $localizedPhrases = $phrases->map(function($phrase) {
-                    return [
-                        'localized' => $phrase->phrase_uk,
-                        'en' => $phrase->phrase_en,
-                        'id' => $phrase->id,
-                    ];
-                });       // Log::info('Completing section', [
-       //     'correctAnswers' => $correctAnswers,
-       // ]);
-                break;
-            case 'ru':
-                $courseName = $course->course_name_ru;
-                $sectionName = $section->section_name_ru;
-                $localizedPhrases = $phrases->map(function($phrase) {
-                    return [
-                        'localized' => $phrase->phrase_ru,
-                        'en' => $phrase->phrase_en,
-                        'id' => $phrase->id,
-                    ];
-                });
-                break;
-            default:
-                $courseName = $course->course_name_uk; // Default to English if locale is not specified
-                $sectionName = $section->section_name_uk;
-                $localizedPhrases = $phrases->map(function($phrase) {
-                    return [
-                        'localized' => $phrase->phrase_uk, // Default to English if locale is not specified
-                        'en' => $phrase->phrase_uk,
-                        'id' => $phrase->id,
-                    ];
-                });
-                break;
-        }
-
-        return view('courses.section.show', compact('hasSubscription', 'locale', 'allSections', 'completedSections', 'completedSectionNames', 'colorClass', 'locked','section_id', 'phrases', 'sectionName', 'localizedPhrases', 'courseName', 'course_id'));
+    if (!in_array($section_id - 1, $completedSections) && $section_id != 1) {
+        $locked = true;
     }
+
+    $section = Section::where('id', $section_id)->where('course_id', $course_id)->firstOrFail();
+    $course = Course::where('id', $course_id)->firstOrFail();
+    $phrases = Phrase::where('section_id', $section_id)->get();
+    $allSections = Section::where('course_id', $course_id)->get();
+
+    // Retrieve the checkbox states from the user_progress table
+    $phraseStates = DB::table('user_progress')
+        ->where('user_id', $user_id)
+        ->where('course_id', $course_id)
+        ->where('section_id', $section_id)
+        ->pluck('checkbox_state', 'phrase_id')
+        ->toArray();
+
+    // Determine the course name and section name based on the current locale
+    switch ($locale) {
+        case 'uk':
+            $courseName = $course->course_name_uk;
+            $sectionName = $section->section_name_uk;
+            $localizedPhrases = $phrases->map(function($phrase) use ($phraseStates) {
+                return [
+                    'localized' => $phrase->phrase_uk,
+                    'en' => $phrase->phrase_en,
+                    'id' => $phrase->id,
+                    'checked' => isset($phraseStates[$phrase->id]) ? (bool) $phraseStates[$phrase->id] : false, // Add checkbox state
+                ];
+            });
+            break;
+        case 'ru':
+            $courseName = $course->course_name_ru;
+            $sectionName = $section->section_name_ru;
+            $localizedPhrases = $phrases->map(function($phrase) use ($phraseStates) {
+                return [
+                    'localized' => $phrase->phrase_ru,
+                    'en' => $phrase->phrase_en,
+                    'id' => $phrase->id,
+                    'checked' => isset($phraseStates[$phrase->id]) ? (bool) $phraseStates[$phrase->id] : false, // Add checkbox state
+                ];
+            });
+            break;
+        default:
+            $courseName = $course->course_name_uk; // Default to English if locale is not specified
+            $sectionName = $section->section_name_uk;
+            $localizedPhrases = $phrases->map(function($phrase) use ($phraseStates) {
+                return [
+                    'localized' => $phrase->phrase_uk, // Default to English if locale is not specified
+                    'en' => $phrase->phrase_en,
+                    'id' => $phrase->id,
+                    'checked' => isset($phraseStates[$phrase->id]) ? (bool) $phraseStates[$phrase->id] : false, // Add checkbox state
+                ];
+            });
+            break;
+    }
+
+    return view('courses.section.show', compact('hasSubscription', 'locale', 'allSections', 'completedSections', 'completedSectionNames', 'colorClass', 'locked', 'section_id', 'phrases', 'sectionName', 'localizedPhrases', 'courseName', 'course_id'));
+}
+
 
     public function practice($course_id, $section_id)
     {
@@ -331,6 +339,13 @@ class CourseController extends Controller
           'course_id' => $course_id,
           'section_id' => $section_id,
         ]);
+            // Retrieve the checkbox states from the user_progress table
+        $dropdownStates = DB::table('user_progress')
+        ->where('user_id', $user_id)
+        ->where('course_id', $course_id)
+        ->where('section_id', $section_id)
+        ->pluck('dropdown_value', 'practice_id')
+        ->toArray();
 
         if ($completedSection->exists) {
           $update_at = $completedSection->updated_at;
@@ -342,56 +357,64 @@ class CourseController extends Controller
             case 'uk':
                 $sectionName = $section->section_name_uk;
                 $courseName = $course->course_name_uk;
-                $localizedPhrases = $phrases->map(function($phrase) {
-                    return [
-                        'localized' => $phrase->phrase_uk,
-                        'en' => $phrase->phrase_en,
-                        'id' => $phrase->id,
-                    ];
-                });
-                $localizedQuestions = $questions->map(function($question){
+                $localizedQuestions = $questions->map(function($question) use ($dropdownStates){
+                $underscoreCount = substr_count($question->question, '_');
+
+                if($underscoreCount > 1) {
+                    $id = (int)($question->id + 100);
+                } else {
+                    $id = $question->id;
+                }
+
                     return [
                         'localizedQuestion' => $question->question_uk,
+                      //  'dropdownValue' => $dropdownStates[$id],
                     ];
                 });
                 break;
             case 'ru':
                 $courseName = $course->course_name_ru;
                 $sectionName = $section->section_name_ru;
-                $localizedPhrases = $phrases->map(function($phrase) {
-                    return [
-                        'localized' => $phrase->phrase_ru,
-                        'en' => $phrase->phrase_en,
-                        'id' => $phrase->id,
-                    ];
-                });
-                $localizedQuestions = $questions->map(function($question){
+                $localizedQuestions = $questions->map(function($question) use ($dropdownStates) {
+                    $underscoreCount = substr_count($question->question, '_');
+
+                    if($underscoreCount > 1) {
+                        $id = (int)($question->id + 100);
+                    } else {
+                        $id = $question->id;
+                    }
+
                     return [
                         'localizedQuestion' => $question->question_ru,
+                      //  'dropdownValue' => $dropdownStates[$id],
                     ];
                 });
                 break;
             default:
                 $sectionName = $section->section_name_en;
                 $courseName = $course->course_name_en;
-                $localizedPhrases = $phrases->map(function($phrase) {
-                    return [
-                        'localized' => $phrase->phrase_uk,
-                        'en' => $phrase->phrase_en,
-                        'id' => $phrase->id,
-                    ];
-                });
-                $localizedQuestions = $questions->map(function($question){
+                $localizedQuestions = $questions->map(function($question)  use ($dropdownStates)  {
+                    $underscoreCount = substr_count($question->question, '_');
+
+                if($underscoreCount > 1) {
+                    $id = (int)($question->id + 100);
+                } else {
+                    $id = $question->id;
+                }
                     return [
                         'localizedQuestion' => $question->question_uk,
+                      //  'dropdownValue' => $dropdownStates[$id],
                     ];
                 });
                 break;
         }
 
         $correctAnswers = [];
-
+        $dropdownVals = [];
+        $i = 1;
+        //dd($localizedQuestions);
         foreach ($questions as $question) {
+            $id = (string) $question->id;
             $underscoreCount = substr_count($question->question, '_');
 
             if ($underscoreCount === 2) {
@@ -401,17 +424,37 @@ class CourseController extends Controller
                     'part1' => $answers[0],
                     'part2' => $answers[1]
                 ];
+                if($dropdownStates) {
+                    $dropdownVals[$id] =  [
+                        $question->id."1" => $dropdownStates[$id."1"] ?? null,
+                        $question->id."2" => $dropdownStates[$id."2"] ?? null,
+                    ];
+                 }
+
             } else {
-                $correctAnswers[$question->id] = [
+                $correctAnswers[$id] = [
                     'full' => $question->correct_answer
                 ];
+                if($dropdownStates) {
+                    $dropdownVals[$id] = [
+                        $id => $dropdownStates[$id],
+                    ];
+                }
             }
         }
         //$correctAnswers = $questions->pluck('correct_answer', 'id');
        // Log::info('Completing section', [
        //     'correctAnswers' => $correctAnswers,
        // ]);
-        return view("courses.section.practice", compact('localizedQuestions', 'hasSubscription', 'update_at','completedSections','locale','allSections','localizedPhrases','correctAnswers','questions', 'highestPracticeScore', 'courseName', 'section', 'phrases', 'course_id', 'section_id', 'sectionName'));
+       //dd( $dropdownVals);
+        return view("courses.section.practice", compact('dropdownVals','dropdownStates', 'localizedQuestions', 'hasSubscription', 'update_at','completedSections','locale','allSections','correctAnswers','questions', 'highestPracticeScore', 'courseName', 'section', 'phrases', 'course_id', 'section_id', 'sectionName'));
+    }
+
+    function replaceUnderscoresWithSpans($inputString, $id) {
+        $idCounter = $id;
+        return preg_replace_callback('/_/', function() use (&$idCounter, $id) {
+            return '<span id="' .$idCounter++ . '"></span>';
+        }, $inputString);
     }
 
     public function quiz($course_id, $section_id)
@@ -452,14 +495,36 @@ class CourseController extends Controller
     ]);
 
     $correctAnswers = [];
-    foreach ($questions as $question) {
+    $newAnswersArray = [];
+
+    foreach ($questions as $index => $question) {
         $answers = explode(', ', $question->correct_answer); // Split answers by comma and space
         $points = array_fill(0, count($answers), 5 / count($answers)); // Evenly distribute points
-
         $correctAnswers[$question->id] = [
             'answers' => $answers,
             'points' => $points
         ];
+    }
+    $inputValues = [];
+
+
+    foreach ($correctAnswers as $id => $data) {
+        if (count($data['answers']) > 1) {
+            foreach ($data['answers'] as $index => $answer) {
+                $newId = $id . ($index + 1);
+                $inputValues[$newId] = [
+                    'id' => $newId,
+                    'answer' => $answer,
+                    'point' => $data['points'][$index]
+                ];
+            }
+        } else {
+            $inputValues[$id] = [
+                'id' => $id,
+                'answer' => $data['answers'][0],
+                'point' => $data['points'][0]
+            ];
+        }
     }
 
     $highestPracticeScore = CompletedSection::where('user_id', Auth::id())
@@ -481,7 +546,7 @@ class CourseController extends Controller
             $courseName = $section->course_name_uk;
             $localizedQuestions = $questions->map(function ($question) {
                 return [
-                    'localizedQuestion' => $question->question_uk,
+                    'localizedQuestion' => $this->replaceUnderscoresWithSpans($question->question_uk, $question->id),
                 ];
             });
             break;
@@ -490,7 +555,7 @@ class CourseController extends Controller
             $sectionName = $section->section_name_ru;
             $localizedQuestions = $questions->map(function ($question) {
                 return [
-                    'localizedQuestion' => $question->question_ru,
+                    'localizedQuestion' => $this->replaceUnderscoresWithSpans($question->question_ru, $question->id),
                 ];
             });
             break;
@@ -499,13 +564,15 @@ class CourseController extends Controller
             $courseName = $section->course_name_en;
             $localizedQuestions = $questions->map(function ($question) {
                 return [
-                    'localizedQuestion' => $question->question_uk,
+                    'localizedQuestion' => $this->replaceUnderscoresWithSpans($question->question_uk, $question->id),
                 ];
             });
             break;
     }
 
-    return view("courses.section.quiz", compact('localizedQuestions', 'hasSubscription', 'allSections', 'completedSections', 'update_at', 'questions', 'correctAnswers', 'courseName', 'sectionName', 'section', 'phrases', 'course_id', 'section_id', 'highestPracticeScore', 'highestQuizScore'));
+
+   // dd($newQuestions);
+    return view("courses.section.quiz", compact('inputValues','localizedQuestions', 'hasSubscription', 'allSections', 'completedSections', 'update_at', 'questions', 'correctAnswers', 'courseName', 'sectionName', 'section', 'phrases', 'course_id', 'section_id', 'highestPracticeScore', 'highestQuizScore'));
 }
 
 
@@ -567,7 +634,65 @@ public function updateQuizScore(Request $request, $course_id, $section_id)
     }
 }
 
+public function savePracticeProgress(Request $request, $course_id, $section_id)
+{
+    $user_id = Auth::id();
+    $dropdownVals = $request->input('dropdownValues', []);
 
+    foreach ($dropdownVals as $dropdownVal) {
+        $id = $dropdownVal['id'];
+        $value = $dropdownVal['value'];
+
+        // Update or create the record in the user_progress table
+        UserProgress::updateOrCreate(
+            [
+                'user_id' => $user_id,
+                'course_id' => $course_id,
+                'section_id' => $section_id,
+                'practice_id' => $id,
+            ],
+            [
+                'checkbox_state' => null,
+                'phrase_id' => null,
+                'quiz_id' => null,
+                'input_value' => null,
+                'dropdown_value' => $value,
+            ]
+        );
+    }
+
+    return response()->json(['success' => true]);
+}
+public function savePhraseProgress(Request $request, $course_id, $section_id)
+{
+    $user_id = Auth::id();
+    $phrases = $request->input('phrases', []);
+
+    foreach ($phrases as $phraseData) {
+        $phrase_id = $phraseData['phrase_id'];
+        $checked = $phraseData['checked'];
+
+        // Update or create the record in the user_progress table
+        UserProgress::updateOrCreate(
+            [
+                'user_id' => $user_id,
+                'course_id' => $course_id,
+                'section_id' => $section_id,
+                'phrase_id' => $phrase_id,
+            ],
+            [
+                'checkbox_state' => $checked,
+                // Set practice_id, quiz_id, input_value, dropdown_value to null since they are not relevant for phrases
+                'practice_id' => null,
+                'quiz_id' => null,
+                'input_value' => null,
+                'dropdown_value' => null,
+            ]
+        );
+    }
+
+    return response()->json(['success' => true]);
+}
 
 
 

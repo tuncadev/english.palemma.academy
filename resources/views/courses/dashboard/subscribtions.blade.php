@@ -22,21 +22,21 @@ $currentLocale = session('locale', 'uk');
             <div class="md:max-w-3xl m-auto mx-auto">
                 <div class="container mx-auto p-6 bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <h2 class="pb-4 p-y-4 text-xl text-red-700 uppercase font-bold">@lang('dashboard.courses')</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-900 dark:text-gray-100">
+                    <div class="flex flex-col gap-4 text-gray-900 dark:text-gray-100">
 
                     @foreach ($courses as $course)
                             @if ($course->hasSubscription)
                             @php $badge = "Available"; @endphp
                             @php $badgeClass = "badgeGreen"; @endphp
-                                <x-paid-courses-cards :badgeClass="$badgeClass" :badge="$badge" :href="route('course.sections', ['course_id' => $course->id, 'section_id' => 1])" :course="$course" :locale="$locale" />
+                                <x-paid-courses-cards :badgeClass="$badgeClass" :badge="$badge" :data-href="route('course.sections', ['course_id' => $course->id, 'section_id' => 1])" :course="$course" :locale="$locale" :href="route('course.sections', ['course_id' => $course->id, 'section_id' => 1])" :course="$course" :locale="$locale" />
                             @elseif ($course->pending)
                             @php $badge = "Pending"; @endphp
                             @php $badgeClass = "badgeOrange"; @endphp
-                                <x-pending-courses-cards :badgeClass="$badgeClass" :badge="$badge" :href="route('course.sections', ['course_id' => $course->id, 'section_id' => 1])" :course="$course" :locale="$locale" />
+                                <x-pending-courses-cards :badgeClass="$badgeClass" :badge="$badge" :course="$course" :locale="$locale" />
                             @elseif ($course->isExpired)
                             @php $badge = "Expired"; @endphp
                             @php $badgeClass = "badgeRed"; @endphp
-                                <x-expired-courses-cards :badgeClass="$badgeClass" :badge="$badge" :href="route('course.sections', ['course_id' => $course->id, 'section_id' => 1])" :course="$course" :locale="$locale" />
+                                <x-expired-courses-cards :badgeClass="$badgeClass" :badge="$badge" :course="$course" :locale="$locale" />
                             @else
                                 <div class="p-4 max-w-96 m-auto">
                                     <div id="alert-additional-content-2" class="p-4 mb-4 text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">

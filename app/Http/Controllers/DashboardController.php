@@ -36,7 +36,7 @@ class DashboardController extends Controller
         $courses = Course::whereIn('id', $courseIds)->get();
         $locale = session('locale', config('app.locale'));
         // Transform the courses collection
-        $courses->transform(function($course) use ($subscriptions, $locale) {
+        $courses->transform(function($course) use ($subscriptions, $locale, $user_id) {
             $subscription = $subscriptions->firstWhere('course_id', $course->id);
             $isExpired = $subscription && $subscription->expiry_date <= today();
             $paymentStatus = $subscription && $subscription->payment_status;
@@ -65,7 +65,31 @@ class DashboardController extends Controller
                     break;
             }
 
-            return $course;
+            // Count the number of completed sections for this course by the user
+        $completedSectionsCount = CompletedSection::where('user_id', $user_id)
+        ->where('course_id', $course->id)
+        ->count();
+        $totalSections = Section::where('course_id', $course->id)->count();
+        // Calculate completion percentage
+        $completionPercentage = $totalSections > 0 ? round(($completedSectionsCount / $totalSections) * 100) : 0;
+
+        // Add the completion percentage to the course object
+        $course->completionPercentage = round($completionPercentage, 2); // Round to 2 decimal places
+       // $percentageCompleted = ( 100 * $completedSectionsCount ) / $totalSections;
+        // Add the completed sections count to the course object
+        $course->completedSectionsCount = $completedSectionsCount;
+        $course->totalSections = $totalSections;
+        //$course->percentageCompleted = $percentageCompleted;
+
+        $totalPhrases = Phrase::where('course_id', $course->id)->count();
+        $totalPractice = Practice::where('course_id', $course->id)->count();
+        $totalQuiz = Quiz::where('course_id', $course->id)->count();
+        $course->totalPhrases = $totalPhrases;
+        $course->totalPractice = $totalPractice;
+        $course->totalQuiz = $totalQuiz;
+
+        return $course;
+
         });
 
         // Sort courses: active first, then pending, then expired

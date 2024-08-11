@@ -65,7 +65,7 @@ $currentLocale = session('locale', 'uk');
                     @lang('lesson.not_checked')
                 </div>
                 </div>
-                <form class="w-full max-w-3xl pb-20" id="phrases-form" action="{{ route('course.practice', ['course_id' => $course_id, 'section_id' => $section_id]) }}" method="GET" onsubmit="return validateForm()">
+                <form onsubmit="return validateForm()" class="w-full max-w-3xl pb-20" id="phrases-form" >
                     <ul class="md:grid md:grid-cols-2 md:gap-2">
                         @foreach ($localizedPhrases as $phrase)
                             <x-phrase-card :phrase="$phrase"  class="w-full text-gray-900"/>
@@ -84,6 +84,38 @@ $currentLocale = session('locale', 'uk');
 
 
         <script>
+            document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('phrases-form');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const checkboxes = document.querySelectorAll('.phrase-checkbox');
+        const data = Array.from(checkboxes).map(checkbox => ({
+            phrase_id: checkbox.id.replace('phrase-', ''),
+            checked: checkbox.checked ? 1 : 0
+        }));
+
+        fetch('{{ route("course.savePhraseProgress", ["course_id" => $course_id, "section_id" => $section_id]) }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ phrases: data })
+        }).then(response => response.json())
+          .then(data => {
+                console.log(data);
+              if (data.success) {
+                  window.location.href = '{{ route("course.practice", ["course_id" => $course_id, "section_id" => $section_id]) }}';
+              } else {
+                  alert('Failed to save progress. Please try again.');
+              }
+          });
+    });
+});
+
+
         function toggleTranslation(id) {
             var element = document.getElementById('translation-' + id);
             if (element.style.display === 'none') {

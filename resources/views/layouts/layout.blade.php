@@ -9,6 +9,7 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css','resources/js/app.js'])
     <script src="https://kit.fontawesome.com/d4521e1f6c.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   </head>
   <body class="bg-gray-100 p-0 m-0">
     @yield('navigation')
