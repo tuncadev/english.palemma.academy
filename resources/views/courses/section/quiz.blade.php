@@ -243,8 +243,7 @@
             });
 
             // Display the collected answers in the console
-            console.log("Collected Answers:", answers);
-            console.log("Quiz score: ", score)
+
             fetch('{{ route("course.saveQuizProgress", ["course_id" => $course_id, "section_id" => $section_id]) }}', {
             method: 'POST',
             headers: {

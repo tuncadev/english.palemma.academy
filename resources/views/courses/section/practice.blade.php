@@ -218,7 +218,7 @@ $currentLocale = session('locale', 'uk');
                             <button id="continue"
                             type="submit"
                             class=" p-2 md:p-4 m-auto rounded-md text-white uppercase font-semibold w-btn_purple h-btn_purple bg-btn_green  shadow-md m-auto">
-                                @lang('lesson.next')console.log
+                                @lang('lesson.next')
                             </button>
                         </div>
                     </form>
@@ -279,7 +279,7 @@ $currentLocale = session('locale', 'uk');
 
             window.handlePracticeAnswerChange = function(input) {
                 let answer = atob(input.getAttribute('data-check')); // Decode the base64 encoded answer
-                console.log(answer);
+
                 if (input.value.toLowerCase() === answer) {
                     input.classList.add('border-green-500');
                     input.classList.remove('border-gray-400', 'border-sky-400');

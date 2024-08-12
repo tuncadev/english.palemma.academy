@@ -604,7 +604,7 @@ class CourseController extends Controller
 
 public function updatePracticeScore(Request $request, $course_id, $section_id){
     $user_id = Auth::id();
-    $practice_score = $request->input('practiceScore');
+    $practice_score = $request->input('practiceScore') ?? 0;
 
     $score = Score::firstOrNew([
         'user_id' => $user_id,
@@ -625,7 +625,7 @@ public function updatePracticeScore(Request $request, $course_id, $section_id){
 public function updateQuizScore(Request $request, $course_id, $section_id)
 {
     $user_id = Auth::id();
-    $quiz_score = $request->input('score');
+    $quiz_score = $request->input('score') ?? 0;
 
     $score = Score::firstOrNew([
         'user_id' => $user_id,
@@ -685,7 +685,7 @@ public function savePracticeProgress(Request $request, $course_id, $section_id)
                 'phrase_id' => null,
                 'quiz_id' => null,
                 'input_value' => null,
-                'dropdown_value' => $value,
+                'dropdown_value' => $value ?? null,
             ]
         );
     }
@@ -702,7 +702,6 @@ public function saveQuizProgress(Request $request, $course_id, $section_id)
     foreach ($answers as $answer) {
         $id = $answer['id'];
         $value = $answer['value'];
-
         // Update or create the record in the user_progress table
         UserProgress::updateOrCreate(
             [
@@ -716,7 +715,7 @@ public function saveQuizProgress(Request $request, $course_id, $section_id)
                 'practice_id' => null,
                 'checkbox_state' => null,
                 'phrase_id' => null,
-                'input_value' => $value,
+                'input_value' => $value ?? null,
                 'dropdown_value' => null,
             ]
         );
