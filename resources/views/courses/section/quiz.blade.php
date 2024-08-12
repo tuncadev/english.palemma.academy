@@ -4,6 +4,7 @@
     }
 @endphp
 @php
+//dd($inputValues);
     $locale = session('locale', 'uk');
     $currentLocale = session('locale', 'uk');
 @endphp
@@ -112,13 +113,13 @@
                     <h2>Phrasal Verbs Quiz</h2>
                     <!-- Answers Pack with draggable inputs -->
                     <div id="answers" class="md:max-w-3xl px-2 flex mb-6 flex justify-center items-center w-full  flex-wrap gap-2">
+
                         @foreach ($inputValues as $key => $answerSet)
-                        @php $iVal = isset($prevInputValues) ? "" : $answerSet['answer']; @endphp
-                        @php $bgClass = isset($prevInputValues) ? "border-gray-400 bg-gray-300" : "border-sky-400 bg-sky-300"; @endphp
+                        @php $bgClass = !empty($prevInputValues) ? "border-gray-400 bg-gray-300" : "border-sky-400 bg-sky-300"; @endphp
                             <input type="text"
-                            id="answer-{{ $key }}"
-                            value="{{ $iVal }}"
-                            class=" answer-input p-2 border-1 rounded cursor-pointer max-w-24 text-xs text-center {{$bgClass}}"
+                            id="answer-{{ $answerSet["id"] }}"
+                            value="{{ isset($prevInputValues['question-'.$answerSet["id"]]) ? "" : $answerSet['answer']}}"
+                            class=" answer-input p-2 border-1 rounded cursor-pointer max-w-24 text-xs text-center {{ isset($prevInputValues['question-'.$answerSet["id"]]) ? "border-gray-400 bg-gray-300" : "border-sky-400 bg-sky-300"}}"
                             draggable="true"
                             ondragstart="drag(event)"
                             ondrop="drop(event)"
@@ -126,45 +127,65 @@
                         @endforeach
                     </div>
                     <!-- Questions with empty draggable inputs -->
-                    <form id="quiz-form" method="POST"
+                    <form id="quiz-form" method="GET"
                         action="{{ route('course.show', ['course_id' => $course_id, 'section_id' => $section_id+1]) }}">
-                        <input type="hidden" name="quiz_score" id="quiz_score" value="{{ isset($highestQuizScore) ? $highestQuizScore : 0 }}">
+                        <input type="hidden" name="quiz_score" id="quiz_score" value="">
                         <ul>
                             @csrf
                             @php
+                               // dd($correctAnswers[11]['answers'][0]);
                                 $qnum = 1;
-
-                                //dd($prevInputValues['question-0']);
+                                //dd($correctAnswers);
+                                //dd($prevInputValues);
                             @endphp
                             @foreach ($questions as $index => $question)
                                 @php
                                     $pnum =  $qnum -1;
+
                                     $id = $question->id;
                                     $questionText = $question->question;
                                     $answers = explode(', ', $question->correct_answer);
                                     $points = $correctAnswers[$question->id]['points'];
-                                    $inputs = explode('_', $questionText);
+                                    $parts = explode('_', $questionText);
+
                                     $formattedQuestion = '';
-                                    foreach ($inputs as $key => $part) {
-                                        $formattedQuestion .= $part;
-                                        if ($key < count($inputs) - 1) {
-                                            $answer = base64_encode($answers[$key]);
-                                            $point = $points[$key] ?? 5; // Default to 5 if points not found
-                                            $formattedQuestion .= view('components.quiz-input', [
-                                            'name' => "answer_{$id}_part{$qnum}",
-                                            'id' => "{$id}-{$qnum}",
-                                            'answer' => $answer,
-                                            'point' => $point,
-                                            'index' => $index,
-                                            'prevValue' => $prevInputValues['question-'. $pnum]
-                                            ])->render();
-                                            }
+                                    $underscoreCount = substr_count($questionText, '_');
+                                    $points = "";
+                                    if ($underscoreCount === 2) {
+                                        $questionText = $parts[0] . view('components.quiz-input', [
+                                            'name' => "answer_{$id}_part{$key}",
+                                            'id' => "question-{$id}1",
+                                            'answer' => base64_encode($correctAnswers[$id]['answers'][0]),
+                                            'point' => 2.5,
+                                            'prevValue' => $prevInputValues["question-".$id."1"] ?? null,
+                                        ])->render() .
+                                        $parts[1] .
+                                        view('components.quiz-input', [
+                                            'name' => "answer_{$id}_part{$key}",
+                                            'id' => "question-{$id}2",
+                                            'answer' => base64_encode($correctAnswers[$id]['answers'][1]),
+                                            'point' => 2.5,
+                                            'prevValue' => $prevInputValues["question-".$id."2"] ?? null,
+                                        ])->render() .
+                                        $parts[2];
+
+                                    } else {
+                                        $questionText = $parts[0] . view('components.quiz-input', [
+                                            'name' => "answer_{$id}_part{$key}",
+                                            'id' => "question-{$id}",
+                                            'answer' => base64_encode($correctAnswers[$id]['answers'][0]),
+                                            'point' => 5,
+                                            'prevValue' => $prevInputValues["question-".$id] ?? null,
+                                        ])->render() .
+                                        $parts[1];
                                     }
+
+
                                 @endphp
                                 <li class="px-5 py-3 bg-white phrase_card rounded-lg w-full mb-2">
                                     <div class="flex justify-between">
                                         <div class="text-sm flex w-full justify-start items-center">
-                                            {{ $qnum }}. {!! $formattedQuestion !!}
+                                          <span class="shadow-md flex items-center justify-center w-6 h-6 mr-3 p-2 bg-sky-200 rounded-full">{{$qnum}}</span> {!!$questionText!!}
                                         </div>
                                         <div class="flex items-center">
                                             <a data-tooltip-target="tooltip-left-{{ $id }}" data-tooltip-placement="left" href="javascript:void(0);" onclick="toggleTranslation({{ $id }})" class="r-0 text-gray-800 text-xs flex flex-col items-center hover:text-blue-800">
@@ -319,6 +340,13 @@
         let translationsOpened = new Set();
         var questionInputs = document.querySelectorAll('#quiz-form input');
 
+        questionInputs.forEach(function(input) {
+        if (input.id.startsWith('question-') && input.value) {
+            updateQuizScore();
+        }
+    });
+
+
         window.toggleTranslation = function(id) {
             var element = document.getElementById('translation-' + id);
             if (element.style.display === 'none') {
@@ -335,17 +363,15 @@
 
         function updateQuizScore() {
             let totalScore = 0;
-
-
             questionInputs.forEach(input => {
                 let answer = atob(input.getAttribute('data-check')); // Decode the base64 encoded answer
                 let point = parseFloat(input.getAttribute('data-point'));
 
                 if (input.value.toLowerCase() === answer) {
+
                     totalScore += point;
                 }
             });
-
             totalScore -= translationsOpened.size;
             quizScore = totalScore;
             document.getElementById('score').innerText = 'Score: ' + quizScore;

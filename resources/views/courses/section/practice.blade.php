@@ -187,8 +187,8 @@ $currentLocale = session('locale', 'uk');
                             @endphp
                             <li class="p-6 bg-white phrase_card rounded-lg w-full mb-2">
                                 <div class="flex justify-between divide-gray-800/25 divide-x">
-                                    <div class="pr-2 text-sm">
-                                        {{ $qnum }}. {!! $questionText !!}
+                                    <div class="text-sm flex w-full justify-start items-center">
+                                        <span class="shadow-md flex items-center justify-center w-6 h-6 mr-3 p-2 bg-sky-200 rounded-full">{{$qnum}}</span> {!! $questionText !!}
                                     </div>
                                     <div class="flex items-center pl-2">
                                         <a data-tooltip-target="tooltip-left-{{ $id }}" data-tooltip-placement="left" href="javascript:void(0);" onclick="toggleTranslation({{ $id }})" class="r-0 text-gray-800 text-xs flex flex-col items-center hover:text-blue-800">
