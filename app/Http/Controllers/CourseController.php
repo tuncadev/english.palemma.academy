@@ -602,7 +602,8 @@ class CourseController extends Controller
 }
 
 
-public function updatePracticeScore(Request $request, $course_id, $section_id){
+public function updatePracticeScore(Request $request, $course_id, $section_id)
+{
     $user_id = Auth::id();
     $practice_score = $request->input('practiceScore') ?? 0;
 
@@ -612,14 +613,18 @@ public function updatePracticeScore(Request $request, $course_id, $section_id){
         'section_id' => $section_id,
     ]);
 
+    // Initialize fields to avoid null issues
     $score->practice_score = $practice_score;
-    $score->highest_practice_score = max($score->highest_practice_score, $practice_score);
+    $score->highest_practice_score = $score->highest_practice_score ?? 0;
+    $score->quiz_score = $score->quiz_score ?? 0; // Assuming quiz_score is also involved in the calculation
     $score->overall_score = $score->practice_score + $score->quiz_score;
-    $score->highest_overall_score = max($score->highest_overall_score, $score->overall_score);
+
+    // Initialize highest_overall_score to 0 if it's null
+    $score->highest_overall_score = max($score->highest_overall_score ?? 0, $score->overall_score);
 
     $score->save();
+
     return response()->json(['success' => true]);
-   // return redirect()->route('course.quiz', ['course_id' => $course_id, 'section_id' => $section_id]);
 }
 
 public function updateQuizScore(Request $request, $course_id, $section_id)
@@ -633,10 +638,14 @@ public function updateQuizScore(Request $request, $course_id, $section_id)
         'section_id' => $section_id,
     ]);
 
+    // Ensure that these fields are initialized to avoid null issues
+    $score->practice_score = $score->practice_score ?? 0;
+    $score->highest_practice_score = $score->highest_practice_score ?? 0;
+
     $score->quiz_score = $quiz_score;
-    $score->highest_quiz_score = max($score->highest_quiz_score, $quiz_score);
+    $score->highest_quiz_score = max($score->highest_quiz_score ?? 0, $quiz_score);
     $score->overall_score = $score->practice_score + $score->quiz_score;
-    $score->highest_overall_score = max($score->highest_overall_score, $score->overall_score);
+    $score->highest_overall_score = max($score->highest_overall_score ?? 0, $score->overall_score);
 
     $score->save();
 
@@ -654,13 +663,14 @@ public function updateQuizScore(Request $request, $course_id, $section_id)
         ->first();
 
     if ($nextSection) {
-        // return redirect()->route('course.show', ['course_id' => $course_id, 'section_id' => $nextSection->id]);
+        // Redirect or return the response as per your application logic
         return response()->json(['success' => true]);
     } else {
-        // return redirect()->route('course.index', ['course_id' => $course_id]);
+        // Handle the scenario where there's no next section
         return response()->json(['success' => false]);
     }
 }
+
 
 public function savePracticeProgress(Request $request, $course_id, $section_id)
 {
