@@ -109,7 +109,6 @@ $currentLocale = session('locale', 'uk');
                         @csrf
                         <input type="hidden" name="practice_score" id="practice_score" value="{{ isset($highestPracticeScore) ? $highestPracticeScore : 0 }}">
                         <input type="hidden" name="type" value="practice">
-                        <ul>
                             @php
                                 $qnum = 1;
                             @endphp
@@ -169,14 +168,15 @@ $currentLocale = session('locale', 'uk');
                                     }, $options);
                                    // dd($correctAnswers);
                                     // Generate the question HTML with two select components
-                                    $questionText = $parts[0] .
+                                    $questionText = $parts[0].
                                                     view('components.practice-select', ['answer' => base64_encode($correctAnswers[$doulbeID]['part1']) ,'points' => $points, 'dropdownValues' => $dropdownValues[(int)($id . "1")][(int)($id . "1")] ?? '', 'id' =>  (int)($id . "1"), 'options' => $firstOptions, ])->render() .
-                                                    $parts[1] .
+                                                    $parts[1].
                                                     view('components.practice-select', ['answer' => base64_encode($correctAnswers[$doulbeID]['part2']), 'points' => $points, 'dropdownValues' => $dropdownValues[(int)($id . "2")][(int)($id . "2")] ?? '', 'id' =>  (int)($id . "2"), 'options' => $secondOptions])->render() .
                                                     $parts[2];
 
                                 } else {
                                     $answer = base64_encode($question->correct_answer);
+
                                     $points = 5;
                                     $selectComponent = view('components.practice-select', compact('answer', 'points', 'dropdownValues', 'id', 'options'))->render();
                                     $questionText = str_replace('_', $selectComponent, $questionText);
@@ -185,31 +185,37 @@ $currentLocale = session('locale', 'uk');
                                 $localizedQuestion = $localizedQuestions[$index]['localizedQuestion'] ?? '';
 
                             @endphp
-                            <li class="p-6 bg-white phrase_card rounded-lg w-full mb-2">
-                                <div class="flex justify-between divide-gray-800/25 divide-x">
-                                    <div class="text-sm flex w-full justify-start items-center">
-                                        <span class="shadow-md flex items-center justify-center w-6 h-6 mr-3 p-2 bg-sky-200 rounded-full">{{$qnum}}</span> {!! $questionText !!}
-                                    </div>
-                                    <div class="flex items-center pl-2">
-                                        <a data-tooltip-target="tooltip-left-{{ $id }}" data-tooltip-placement="left" href="javascript:void(0);" onclick="toggleTranslation({{ $id }})" class="r-0 text-gray-800 text-xs flex flex-col items-center hover:text-blue-800">
-                                            <i class="fa-solid fa-language mr-1"></i>
-                                            @lang('lesson.translate')
-                                        </a>
-                                        <div id="tooltip-left-{{ $id }}" role="tooltip" class="text-yellow-300 absolute z-10 invisible inline-block px-2 py-1 text-xs font-medium bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip">
-                                            -1 @lang('lesson.point')
-                                            <div class="tooltip-arrow" data-popper-arrow></div>
+
+                                <div class="flex flex-col pl-2 pr-2 py-4 bg-white phrase_card rounded-lg w-full mb-2 items-center">
+                                    <div class="flex w-full">
+                                        <span class="shadow-md text-xs flex items-center justify-center w-6 h-6 mr-2 p-4 border border-1 border-sky-200 rounded-full">{{$qnum}}</span>
+                                        <div class="flex justify-between w-full ">
+                                            <div class="text-sm ">
+                                                {!! $questionText !!}
+                                            </div>
+                                            <div class="flex items-center pl-2">
+                                                <a data-tooltip-target="tooltip-left-{{ $id }}" data-tooltip-placement="left" href="javascript:void(0);" onclick="toggleTranslation({{ $id }})" class="r-0 text-gray-800 text-xs flex flex-col items-center hover:text-blue-800">
+                                                    <i class="fa-solid fa-language mr-1"></i>
+                                                    @lang('lesson.translate')
+                                                </a>
+                                                <div id="tooltip-left-{{ $id }}" role="tooltip" class="text-yellow-300 absolute z-10 invisible inline-block px-2 py-1 text-xs font-medium bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip">
+                                                    -1 @lang('lesson.point')
+                                                    <div class="tooltip-arrow" data-popper-arrow></div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+                                    <div id="translation-{{ $id }}" style="display: none;" class="bg-sky-200/50 rounded p-2 mt-2 text-sm w-full">
+                                        <p class="text-gray-800"><i class="fa-solid fa-circle-arrow-right mr-2"></i>{{ $localizedQuestion }}</p>
+                                    </div>
                                 </div>
-                                <div id="translation-{{ $id }}" style="display: none;" class="bg-gray-100 rounded p-2 mt-2 text-sm">
-                                    <p class="text-gray-800"><i class="fa-solid fa-circle-arrow-right mr-2"></i>{{ $localizedQuestion }}</p>
-                                </div>
-                            </li>
+
+
                             @php
                                 $qnum += 1;
                             @endphp
                         @endforeach
-                        </ul>
+
                         <span class="" id="score"></span>
                         <div class="flex flex-col md:flex-row gap-y-4 md:justify-between items-center mt-4">
                             <button id="checkanswers" onclick="checkAnswers()" data-modal-target="modal_answers" class="p-2 md:p-4 m-auto rounded-md text-white uppercase font-semibold w-btn_purple h-btn_purple bg-btn_purple  shadow-md m-auto" type="button">
@@ -225,6 +231,8 @@ $currentLocale = session('locale', 'uk');
                 </div>
             </div>
         </div>
+        <x-overlay />
+        <x-spinner class="w-16 h-16" />
         <x-popmsg :section_id="$section_id"  :course_id="$course_id" />
         <script>
             function redirectToSection(button) {
@@ -370,6 +378,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('practice-form');
 
     form.addEventListener('submit', function(event) {
+        document.body.classList.add('overflow-hidden');
+        const overlay = document.getElementById('overlay');
+        const spinner = document.getElementById('spinner');
+        overlay.classList.remove('hidden');
+        spinner.classList.remove('hidden');
         event.preventDefault();
         var currentPracticeScore = document.getElementById('practice_score').value;
 

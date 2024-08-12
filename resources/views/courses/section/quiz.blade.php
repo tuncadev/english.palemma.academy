@@ -112,8 +112,7 @@
                     </div>
                     <h2>Phrasal Verbs Quiz</h2>
                     <!-- Answers Pack with draggable inputs -->
-                    <div id="answers" class="md:max-w-3xl px-2 flex mb-6 flex justify-center items-center w-full  flex-wrap gap-2">
-
+                    <div id="answers" class="w-full bg-gray-100 sticky top-0 pt-2 md:max-w-3xl px-2 flex mb-6 flex justify-center items-center w-full  flex-wrap gap-2">
                         @foreach ($inputValues as $key => $answerSet)
                         @php $bgClass = !empty($prevInputValues) ? "border-gray-400 bg-gray-300" : "border-sky-400 bg-sky-300"; @endphp
                             <input type="text"
@@ -121,6 +120,7 @@
                             value="{{ isset($prevInputValues['question-'.$answerSet["id"]]) ? "" : $answerSet['answer']}}"
                             class=" answer-input p-2 border-1 rounded cursor-pointer max-w-24 text-xs text-center {{ isset($prevInputValues['question-'.$answerSet["id"]]) ? "border-gray-400 bg-gray-300" : "border-sky-400 bg-sky-300"}}"
                             draggable="true"
+                            disabled
                             ondragstart="drag(event)"
                             ondrop="drop(event)"
                             ondragover="allowDrop(event)">
@@ -130,7 +130,6 @@
                     <form id="quiz-form" method="GET"
                         action="{{ route('course.show', ['course_id' => $course_id, 'section_id' => $section_id+1]) }}">
                         <input type="hidden" name="quiz_score" id="quiz_score" value="">
-                        <ul>
                             @csrf
                             @php
                                // dd($correctAnswers[11]['answers'][0]);
@@ -182,28 +181,31 @@
 
 
                                 @endphp
-                                <li class="px-5 py-3 bg-white phrase_card rounded-lg w-full mb-2">
-                                    <div class="flex justify-between">
-                                        <div class="text-sm flex w-full justify-start items-center">
-                                          <span class="shadow-md flex items-center justify-center w-6 h-6 mr-3 p-2 bg-sky-200 rounded-full">{{$qnum}}</span> {!!$questionText!!}
-                                        </div>
-                                        <div class="flex items-center">
-                                            <a data-tooltip-target="tooltip-left-{{ $id }}" data-tooltip-placement="left" href="javascript:void(0);" onclick="toggleTranslation({{ $id }})" class="r-0 text-gray-800 text-xs flex flex-col items-center hover:text-blue-800">
-                                                <i class="fa-solid fa-language mr-1"></i>
-                                                @lang('lesson.translate')
-                                            </a>
-                                            <div id="tooltip-left-{{ $id }}" role="tooltip" class="text-yellow-300 absolute z-10 invisible inline-block px-2 py-1 text-xs font-medium bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip">
-                                                -1 @lang('lesson.point')
-                                                <div class="tooltip-arrow" data-popper-arrow></div>
+                                    <div class="flex flex-col pl-2 pr-2 py-4 bg-white phrase_card rounded-lg w-full mb-2 items-center">
+                                        <div class="flex w-full">
+                                          <span class="shadow-md flex items-center justify-center w-6 h-6 mr-3 p-2 bg-sky-200 rounded-full">{{$qnum}}</span>
+                                            <div class="flex justify-between w-full ">
+                                                <div class="text-sm leading-9">
+                                                    {!!$questionText!!}
+                                                </div>
+                                                <div class="flex items-center pl-2">
+                                                    <a data-tooltip-target="tooltip-left-{{ $id }}" data-tooltip-placement="left" href="javascript:void(0);" onclick="toggleTranslation({{ $id }})" class="r-0 text-gray-800 text-xs flex flex-col items-center hover:text-blue-800">
+                                                        <i class="fa-solid fa-language mr-1"></i>
+                                                        @lang('lesson.translate')
+                                                    </a>
+                                                    <div id="tooltip-left-{{ $id }}" role="tooltip" class="text-yellow-300 absolute z-10 invisible inline-block px-2 py-1 text-xs font-medium bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip">
+                                                        -1 @lang('lesson.point')
+                                                        <div class="tooltip-arrow" data-popper-arrow></div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
+                                        <div id="translation-{{ $id }}" style="display: none;" class="bg-sky-200/50   rounded p-2 mt-2 text-sm">
+                                            <p class="text-gray-800"><i class="fa-solid fa-circle-arrow-right mr-2"></i>
+                                                {{ $localizedQuestions[$index]['localizedQuestion'] ?? '' }}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div id="translation-{{ $id }}" style="display: none;" class="bg-white rounded p-2 mt-2 text-sm">
-                                        <p class="text-gray-800"><i class="fa-solid fa-circle-arrow-right mr-2"></i>
-                                            {{ $localizedQuestions[$index]['localizedQuestion'] ?? '' }}
-                                        </p>
-                                    </div>
-                                </li>
                                 @php
                                     $qnum += 1;
                                 @endphp
@@ -218,11 +220,11 @@
                                     @lang('lesson.next')
                                 </button>
                             </div>
-                        </ul>
                     </form>
                 </div>
             </div>
         </div>
+
         <x-popmsg :section_id="$section_id"  :course_id="$course_id" />
 <script>
     $(document).ready(function() {

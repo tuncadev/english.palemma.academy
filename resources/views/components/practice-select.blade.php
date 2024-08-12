@@ -7,15 +7,12 @@
     $dropdownValues = $dropdownValues;
 }
 @endphp
-
-
-<select name="sentence_{{ $id }}" id="{{$optionID}}" class="py-2.5 pr-4 pl-4 text-xs text-gray-800 bg-transparent appearance-none border-0 focus:border-0 focus:outline-none">
+<select name="sentence_{{ $id }}" id="{{$optionID}}" class="border border-1 border-sky-200 rounded-lg mx-1 inline-block p-2 text-xs text-gray-800 bg-transparent appearance-none focus:border-0 focus:outline-none">
     <!-- "Please select" option -->
     <option value="" {{ is_null($dropdownValues) ? 'selected' : '' }}>Please select</option>
-
     @foreach ($options as $index => $option)
         @php $selected = ($dropdownValues === $option) ? 'selected' : ''; @endphp
-        <option data-id="{{$id}}" value="{{ $option }}" {{ $selected }}>
+        <option class="p-2" data-id="{{$id}}" value="{{ $option }}" {{ $selected }}>
             {{ $option }}
         </option>
     @endforeach
