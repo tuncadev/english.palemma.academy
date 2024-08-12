@@ -17,7 +17,7 @@ class AddPracticeQuestions extends Seeder
             [
                 'course_id' => 1,
                 'section_id' => 1,
-                'question' => '_ all the candles on the birthday cake. Задуй все свечи на именинном пироге?',
+                'question' => '_ all the candles on the birthday cake.',
                 'question_uk' => 'Задуй всі свічки на іменинному торті',
                 'question_ru' => 'Задуй все свечи на именинном пироге',
                 'answers' => '["blow out", "try out", "move out"]',
@@ -27,7 +27,7 @@ class AddPracticeQuestions extends Seeder
             [
                 'course_id' => 1,
                 'section_id' => 1,
-                'question' => 'We could just _ in bed all day. Мы могли просто лежать в постеле весь день.',
+                'question' => 'We could just _ in bed all day.',
                 'question_uk' => 'Ми могли просто лежати в ліжку весь день',
                 'question_ru' => 'Мы могли просто лежать в постеле весь день',
                 'answers' => '["lie around", "move over", "lie down"]',
@@ -37,7 +37,7 @@ class AddPracticeQuestions extends Seeder
             [
                 'course_id' => 1,
                 'section_id' => 1,
-                'question' => 'We want to _ now. Мы хотим въехать сейчас.',
+                'question' => 'We want to _ now.',
                 'question_uk' => 'Ми хочемо заїхати зараз',
                 'question_ru' => 'Мы хотим въехать сейчас',
                 'answers' => '["move in", "try on", "lock up"]',
@@ -47,7 +47,7 @@ class AddPracticeQuestions extends Seeder
             [
                 'course_id' => 1,
                 'section_id' => 1,
-                'question' => 'I can’t wait to _ that plane. Скорее бы сесть на этот самолет.',
+                'question' => 'I can’t wait to _ that plane.',
                 'question_uk' => 'Я не можу дочекатися, щоб сісти на цей літак',
                 'question_ru' => 'Скорее бы сесть на этот самолет',
                 'answers' => '["get on", "turn up", "chill out"]',
@@ -57,7 +57,7 @@ class AddPracticeQuestions extends Seeder
             [
                 'course_id' => 1,
                 'section_id' => 1,
-                'question' => 'Not everyone can afford to _ in a hotel there. Далеко не каждый сможет позволить себе остановку в отеле.',
+                'question' => 'Not everyone can afford to _ in a hotel there.',
                 'question_uk' => 'Не кожен може дозволити собі зупинку в готелі там',
                 'question_ru' => 'Далеко не каждый сможет позволить себе остановку в отеле',
                 'answers' => '["stop over", "pass down", "turn over"]',
@@ -67,7 +67,7 @@ class AddPracticeQuestions extends Seeder
             [
                 'course_id' => 1,
                 'section_id' => 1,
-                'question' => 'Always _ wherever you go. Одевайся хорошо, куда бы ты не шла/шел.',
+                'question' => 'Always _ wherever you go.',
                 'question_uk' => 'Завжди одягайся добре, куди б ти не йшов/йшла',
                 'question_ru' => 'Одевайся хорошо, куда бы ты не шла/шел',
                 'answers' => '["dress up", "feel up to sb", "roll up"]',
@@ -77,7 +77,7 @@ class AddPracticeQuestions extends Seeder
             [
                 'course_id' => 1,
                 'section_id' => 1,
-                'question' => 'The rain continued to _. Дождь продолжал лить.',
+                'question' => 'The rain continued to _.',
                 'question_uk' => 'Дощ продовжував лити',
                 'question_ru' => 'Дождь продолжал лить',
                 'answers' => '["pour down", "shoot off", "stop over"]',
@@ -87,7 +87,7 @@ class AddPracticeQuestions extends Seeder
             [
                 'course_id' => 1,
                 'section_id' => 1,
-                'question' => 'I don’t _ fizzy drinks - I prefer water. Я не люблю газированные напитки, я предпочитаю воду.',
+                'question' => 'I don’t _ fizzy drinks - I prefer water.',
                 'question_uk' => 'Я не люблю газовані напої - я віддаю перевагу воді',
                 'question_ru' => 'Я не люблю газированные напитки, я предпочитаю воду',
                 'answers' => '["care for", "hang out", "watch out for"]',
@@ -97,7 +97,7 @@ class AddPracticeQuestions extends Seeder
             [
                 'course_id' => 1,
                 'section_id' => 1,
-                'question' => 'I came to _ you _. Я приехала тебя подбодрить.',
+                'question' => 'I came to _ you _.',
                 'question_uk' => 'Я приїхала, щоб тебе підбадьорити',
                 'question_ru' => 'Я приехала тебя подбодрить',
                 'answers' => '["cheer up", "think sth up", "laze about"]',
@@ -107,7 +107,7 @@ class AddPracticeQuestions extends Seeder
             [
                 'course_id' => 1,
                 'section_id' => 1,
-                'question' => 'Stop _ – this is serious! Перестань баловаться - это серьезно.',
+                'question' => 'Stop _ – this is serious!',
                 'question_uk' => 'Перестань балуватися - це серйозно',
                 'question_ru' => 'Перестань баловаться - это серьезно',
                 'answers' => '["fooling around", "getting on", "brushing up"]',
