@@ -500,7 +500,7 @@ class CourseController extends Controller
     $section = Section::where('id', $section_id)->where('course_id', $course_id)->firstOrFail();
     $phrases = Phrase::where('section_id', $section_id)->get();
     $questions = Quiz::where('section_id', $section_id)->get();
-
+    $course = Course::where('id', $course_id)->firstOrFail();
     $prevInputValues = DB::table('user_progress')
         ->where('user_id', $user_id)
         ->where('course_id', $course_id)
@@ -553,12 +553,12 @@ class CourseController extends Controller
         }
     }
 
-    $highestPracticeScore = CompletedSection::where('user_id', Auth::id())
+    $highestPracticeScore = score::where('user_id', Auth::id())
         ->where('course_id', $course_id)
         ->where('section_id', $section_id)
         ->max('highest_practice_score');
 
-    $highestQuizScore = CompletedSection::where('user_id', Auth::id())
+    $highestQuizScore = score::where('user_id', Auth::id())
         ->where('course_id', $course_id)
         ->where('section_id', $section_id)
         ->max('highest_quiz_score');
@@ -569,7 +569,7 @@ class CourseController extends Controller
     switch ($locale) {
         case 'uk':
             $sectionName = $section->section_name_uk;
-            $courseName = $section->course_name_uk;
+            $courseName = $course->course_name_uk;
             $localizedQuestions = $questions->map(function ($question) {
                 return [
                     'localizedQuestion' => $this->replaceUnderscoresWithSpans($question->question_uk, $question->id),
@@ -578,7 +578,7 @@ class CourseController extends Controller
             break;
         case 'ru':
             $courseName = $section->course_name_ru;
-            $sectionName = $section->section_name_ru;
+            $sectionName = $course->section_name_ru;
             $localizedQuestions = $questions->map(function ($question) {
                 return [
                     'localizedQuestion' => $this->replaceUnderscoresWithSpans($question->question_ru, $question->id),
@@ -587,7 +587,7 @@ class CourseController extends Controller
             break;
         default:
             $sectionName = $section->section_name_en;
-            $courseName = $section->course_name_en;
+            $courseName = $course->course_name_en;
             $localizedQuestions = $questions->map(function ($question) {
                 return [
                     'localizedQuestion' => $this->replaceUnderscoresWithSpans($question->question_uk, $question->id),

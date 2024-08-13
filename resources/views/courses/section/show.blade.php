@@ -89,7 +89,13 @@ $currentLocale = session('locale', 'uk');
 
     form.addEventListener('submit', function(event) {
         event.preventDefault();
+        document.body.classList.add('overflow-hidden');
 
+        const overlay = document.getElementById('overlay');
+        const spinner = document.getElementById('spinner');
+
+        overlay.classList.remove('hidden');
+        spinner.classList.remove('hidden');
         const checkboxes = document.querySelectorAll('.phrase-checkbox');
         const data = Array.from(checkboxes).map(checkbox => ({
             phrase_id: checkbox.id.replace('phrase-', ''),
@@ -146,6 +152,8 @@ $currentLocale = session('locale', 'uk');
             return true
         }
         </script>
+        <x-overlay />
+        <x-spinner class="w-16 h-16" />
         @else
         <x-error-msg :message="'You haven\'t purchased the ' . $courseName .' course yet.'" />
         @endif

@@ -1,4 +1,4 @@
-<?php 
+<?php
 return [
   'course' => 'Курс',
   'course_name' => 'Фразовые глаголы',
@@ -15,5 +15,8 @@ return [
   'correctanswers' => 'правильные ответы',
   'wronganswers' => 'неправильные ответы',
   'start' => 'начинать!',
+  'continue' => 'продолжать',
+  'completed' => 'завершенно',
+  'not_started' => 'вы еще не завершили ни одного раздела',
 ];
 ?>

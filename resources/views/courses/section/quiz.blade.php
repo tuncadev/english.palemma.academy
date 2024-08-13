@@ -2,6 +2,7 @@
     function base64Encode($string) {
     return base64_encode($string);
     }
+
 @endphp
 @php
 //dd($inputValues);
@@ -74,13 +75,17 @@
                             </ul>
                         </div>
                     </div>
+                    <h2 class="text-lg font-semibold border-b border-b-1 border-sky-200">
+                        <span class=""> {{ $courseName }} </span>  -
+                        @lang('lesson.quiz')
+                    </h2>
                     @if ($highestPracticeScore > 0)
                         <div class="alert alert-info flex items-center">
                             <span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400">
                                 @lang('practice.highest')
                             </span>
                             <span class="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-yellow-300 border border-yellow-300">
-                                {{ $highestPracticeScore }}
+                                {{ $highestQuizScore ?? 0 }}
                             </span>
                             <i class="fa-solid text-blue-600 fa-arrow-right mr-2"></i>
                             <span class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">
@@ -88,10 +93,11 @@
                             </span>
                         </div>
                     @endif
-                    <div class="flex flex-row gap-x-4">
-                        <button class="button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.show' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.show', ['course_id' => $course_id, 'section_id' => $section_id, 'colorClass' => $colorClass]) }}'">Phrasal Verbs</button>
-                        <button class="button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.practice' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.practice', ['course_id' => $course_id, 'section_id' => $section_id, 'colorClass' => $colorClass]) }}'">Practice</button>
-                        <button class="button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.quiz' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.quiz', ['course_id' => $course_id, 'section_id' => $section_id, 'colorClass' => $colorClass]) }}'">Quiz</button>
+
+                    <div class="flex flex-row gap-x-4  ">
+                        <button class="uppercase button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.show' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.show', ['course_id' => $course_id, 'section_id' => $section_id, 'colorClass' => $colorClass]) }}'">{{ $courseName }}</button>
+                        <button class="uppercase button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.practice' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.practice', ['course_id' => $course_id, 'section_id' => $section_id, 'colorClass' => $colorClass]) }}'">@lang('lesson.practice')</button>
+                        <button class="uppercase button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.quiz' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.quiz', ['course_id' => $course_id, 'section_id' => $section_id, 'colorClass' => $colorClass]) }}'">@lang('lesson.quiz')</button>
                     </div>
                     <div id="top" class="w-full md:w-10/12 flex p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800" role="alert">
                         <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -110,20 +116,20 @@
                             @lang('lesson.not_filled')
                         </div>
                     </div>
-                    <h2>Phrasal Verbs Quiz</h2>
+
                     <!-- Answers Pack with draggable inputs -->
-                    <div id="answers" class="w-full bg-gray-100 sticky top-0 pt-2 md:max-w-3xl px-2 flex mb-6 flex justify-center items-center w-full  flex-wrap gap-2">
+                    <div id="answers" class="w-full bg-gray-100 sticky top-0 py-3  border-b-2 md:max-w-3xl px-2 flex mb-6 flex justify-center items-center w-full  flex-wrap gap-2">
                         @foreach ($inputValues as $key => $answerSet)
                         @php $bgClass = !empty($prevInputValues) ? "border-gray-400 bg-gray-300" : "border-sky-400 bg-sky-300"; @endphp
-                            <input type="text"
-                            id="answer-{{ $answerSet["id"] }}"
-                            value="{{ isset($prevInputValues['question-'.$answerSet["id"]]) ? "" : $answerSet['answer']}}"
-                            class=" answer-input p-2 border-1 rounded cursor-pointer max-w-24 text-xs text-center {{ isset($prevInputValues['question-'.$answerSet["id"]]) ? "border-gray-400 bg-gray-300" : "border-sky-400 bg-sky-300"}}"
-                            draggable="true"
-                            disabled
-                            ondragstart="drag(event)"
-                            ondrop="drop(event)"
-                            ondragover="allowDrop(event)">
+                                <input type="text"
+                                id="answer-{{ $answerSet["id"] }}"
+                                value="{{ isset($prevInputValues['question-'.$answerSet["id"]]) &&  $prevInputValues['question-'.$answerSet["id"]] === $answerSet['answer'] ? "" : $answerSet['answer']}}"
+                                class=" answer-input p-2 border-1 rounded cursor-pointer max-w-24 text-xs text-center {{ isset($prevInputValues['question-'.$answerSet["id"]]) &&  $prevInputValues['question-'.$answerSet["id"]] === $answerSet['answer'] ? "border-gray-400 bg-gray-300" : "border-sky-400 bg-sky-300"}}"
+                                draggable="true"
+                                disabled
+                                ondragstart="drag(event)"
+                                ondrop="drop(event)"
+                                ondragover="allowDrop(event)">
                         @endforeach
                     </div>
                     <!-- Questions with empty draggable inputs -->
@@ -224,13 +230,21 @@
                 </div>
             </div>
         </div>
-
+        <x-overlay />
+        <x-spinner class="w-16 h-16" />
         <x-popmsg :section_id="$section_id"  :course_id="$course_id" />
 <script>
     $(document).ready(function() {
         // Form submit event to gather and display all answers
         $('#quiz-form').on('submit', function(event) {
             event.preventDefault(); // Prevent the form from actually submitting
+            document.body.classList.add('overflow-hidden');
+
+            const overlay = document.getElementById('overlay');
+            const spinner = document.getElementById('spinner');
+
+            overlay.classList.remove('hidden');
+            spinner.classList.remove('hidden');
             const score = document.getElementById('quiz_score').value;
             // Collect all values from the question inputs
             let answers = [];

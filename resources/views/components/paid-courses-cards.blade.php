@@ -42,7 +42,7 @@ $hidden = $active ? "" : "hidden";
         <span class="text-xs p-2 bg-green-200 rounded-lg font-semibold">{{$course->completionPercentage}}%</span>
     </div>
     <div class="w-full text-center">
-        <p class="text-xs">completed</p>
+        <p class="text-xs">{{ $course->completionPercentage > 0 ? __('general.completed') : __('general.not_started') }}</p>
     </div>
   <div class="bottom flex flex-col md:flex-row gap-x-6 pt-4 px-4 pb-6 {{ $opacity }}">
     <div class="flex w-full justify-center md:justify-start items-center gap-2 text-gray-900 text-sm w-3/5">
@@ -52,7 +52,11 @@ $hidden = $active ? "" : "hidden";
     </div>
     <div class="btn mt-3 w-2/5 flex items-center justify-center {{$hidden}}">
       <a {{$attributes->merge(['class' => 'font-bold bg-green-400 rounded-lg text-gray-900 py-2 px-6 hover:text-white hover:bg-blue-500', 'href' => ''])}}>
-        @lang('general.start')
+        @if ( $course->completionPercentage > 0 )
+            @lang('general.continue')
+        @else
+            @lang('general.start')
+        @endif
       </a>
     </div>
   </div>

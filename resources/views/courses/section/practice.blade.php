@@ -378,12 +378,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('practice-form');
 
     form.addEventListener('submit', function(event) {
+        event.preventDefault();
         document.body.classList.add('overflow-hidden');
+
         const overlay = document.getElementById('overlay');
         const spinner = document.getElementById('spinner');
+
         overlay.classList.remove('hidden');
         spinner.classList.remove('hidden');
-        event.preventDefault();
+
+
         var currentPracticeScore = document.getElementById('practice_score').value;
 
         const practiceScore = document.getElementById('practice_score').value;

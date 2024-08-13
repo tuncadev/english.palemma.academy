@@ -10,7 +10,9 @@
 .menu-bar {
   max-width: 720px;
 }
-
+.logo-text {
+    font-family: 'Zilla Slab', serif;
+}
 .l1_top {
   background-image: url('../../public/images/bg/section-bg.svg');
 }
@@ -118,15 +120,14 @@
   }
 .button_steps_sections-top {
     position: relative;
-  border: 1px solid #d5d9d9;
-  border-radius: 8px;
-  box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
-  color: #0f1111;
-  cursor: pointer;
-  font-size: 12px;
-  line-height: 29px;
-  padding: 0 10px 0 10px;
-  width: 100px;
+    border: 1px solid #d5d9d9;
+    border-radius: 8px;
+    box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
+    color: #0f1111;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 29px;
+    padding: 5px 10px 5px 10px;
 }
 
 .button_steps_sections-top:hover {
