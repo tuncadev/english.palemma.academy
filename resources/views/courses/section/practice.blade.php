@@ -176,7 +176,6 @@ $currentLocale = session('locale', 'uk');
 
                                 } else {
                                     $answer = base64_encode($question->correct_answer);
-
                                     $points = 5;
                                     $selectComponent = view('components.practice-select', compact('answer', 'points', 'dropdownValues', 'id', 'options'))->render();
                                     $questionText = str_replace('_', $selectComponent, $questionText);
@@ -290,7 +289,7 @@ $currentLocale = session('locale', 'uk');
 
                 if (input.value.toLowerCase() === answer) {
                     input.classList.add('border-green-500');
-                    input.classList.remove('border-gray-400', 'border-sky-400');
+                    input.classList.remove('border-gray-400', 'border-sky-200');
                 } else {
                     input.classList.add('border-gray-400');
                     input.classList.remove('border-green-500');
@@ -313,7 +312,7 @@ $currentLocale = session('locale', 'uk');
                     if (input.value.toLowerCase() === "") {
                         allFilled = false;
                         input.classList.add('border-red-500');
-                        input.classList.remove('border-green-500', 'border-gray-400',  'border-sky-400',  'border-dashed', 'border-1');
+                        input.classList.remove('border-green-500', 'border-gray-400',  'border-sky-200',  'border-dashed', 'border-1');
 
                         document.getElementById("continue").classList.add('hidden');
                         var warn = document.getElementById('warn');
@@ -322,13 +321,13 @@ $currentLocale = session('locale', 'uk');
                     } else if (input.value.toLowerCase() !== answer) {
                         input.classList.add('border-red-500');
                         input.classList.remove('border-0');
-                        input.classList.remove('border-green-500', 'border-gray-400',  'border-sky-400',  'border-dashed', 'border-1');
+                        input.classList.remove('border-green-500', 'border-gray-400',  'border-sky-200',  'border-dashed', 'border-1');
 
                         incorrectCount++;
                     } else {
                         input.classList.add('border-green-500', 'border-2');
                         input.classList.remove('border-0');
-                        input.classList.remove('border-red-500', 'border-sky-400', 'border-dashed', 'border-1');
+                        input.classList.remove('border-red-500', 'border-sky-200', 'border-dashed', 'border-1');
                         correctCount++;
                     }
                 });
