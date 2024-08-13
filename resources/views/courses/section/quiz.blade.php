@@ -200,7 +200,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div id="translation-{{ $id }}" style="display: none;" class="bg-sky-200/50   rounded p-2 mt-2 text-sm">
+                                        <div id="translation-{{ $id }}" style="display: none;" class="w-full bg-sky-200/50   rounded p-2 mt-2 text-sm">
                                             <p class="text-gray-800"><i class="fa-solid fa-circle-arrow-right mr-2"></i>
                                                 {{ $localizedQuestions[$index]['localizedQuestion'] ?? '' }}
                                             </p>
