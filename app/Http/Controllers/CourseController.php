@@ -240,6 +240,7 @@ class CourseController extends Controller
 
     public function show($course_id, $section_id, Request $request)
 {
+
     $user_id = Auth::id();
     $subscription = Subscribtion::where('user_id', $user_id )
                                 ->where('course_id', $course_id)
@@ -277,6 +278,7 @@ class CourseController extends Controller
         case 'uk':
             $courseName = $course->course_name_uk;
             $sectionName = $section->section_name_uk;
+            $pageTitle = $courseName . " - " . $sectionName;
             $localizedPhrases = $phrases->map(function($phrase) use ($phraseStates) {
                 return [
                     'localized' => $phrase->phrase_uk,
@@ -289,6 +291,7 @@ class CourseController extends Controller
         case 'ru':
             $courseName = $course->course_name_ru;
             $sectionName = $section->section_name_ru;
+            $pageTitle = $courseName . " - " . $sectionName;
             $localizedPhrases = $phrases->map(function($phrase) use ($phraseStates) {
                 return [
                     'localized' => $phrase->phrase_ru,
@@ -301,6 +304,7 @@ class CourseController extends Controller
         default:
             $courseName = $course->course_name_uk; // Default to English if locale is not specified
             $sectionName = $section->section_name_uk;
+            $pageTitle = $courseName . " - " . $sectionName;
             $localizedPhrases = $phrases->map(function($phrase) use ($phraseStates) {
                 return [
                     'localized' => $phrase->phrase_uk, // Default to English if locale is not specified
@@ -312,7 +316,7 @@ class CourseController extends Controller
             break;
     }
 
-    return view('courses.section.show', compact('hasSubscription', 'locale', 'allSections', 'completedSections', 'completedSectionNames', 'colorClass', 'locked', 'section_id', 'phrases', 'sectionName', 'localizedPhrases', 'courseName', 'course_id'));
+    return view('courses.section.show', compact('pageTitle','hasSubscription', 'locale', 'allSections', 'completedSections', 'completedSectionNames', 'colorClass', 'locked', 'section_id', 'phrases', 'sectionName', 'localizedPhrases', 'courseName', 'course_id'));
 }
 
 
@@ -368,6 +372,7 @@ class CourseController extends Controller
             case 'uk':
                 $sectionName = $section->section_name_uk;
                 $courseName = $course->course_name_uk;
+                $pageTitle =  __('lesson.practice') . " - " . $courseName . " - " . $sectionName;
                 $localizedQuestions = $questions->map(function($question) use ($dropdownStates){
                 $underscoreCount = substr_count($question->question, '_');
 
@@ -386,6 +391,7 @@ class CourseController extends Controller
             case 'ru':
                 $courseName = $course->course_name_ru;
                 $sectionName = $section->section_name_ru;
+                $pageTitle =  __('lesson.practice') . " - " . $courseName . " - " . $sectionName;
                 $localizedQuestions = $questions->map(function($question) use ($dropdownStates) {
                     $underscoreCount = substr_count($question->question, '_');
 
@@ -404,6 +410,7 @@ class CourseController extends Controller
             default:
                 $sectionName = $section->section_name_en;
                 $courseName = $course->course_name_en;
+                $pageTitle = __('lesson.practice') . " - "  . $courseName . " - " . $sectionName ;
                 $localizedQuestions = $questions->map(function($question)  use ($dropdownStates)  {
                     $underscoreCount = substr_count($question->question, '_');
 
@@ -464,7 +471,7 @@ class CourseController extends Controller
        //     'correctAnswers' => $correctAnswers,
        // ]);
        //dd( $dropdownVals);
-        return view("courses.section.practice", compact('highestPracticeScore', 'highestScoreDate', 'dropdownVals','dropdownStates', 'localizedQuestions', 'hasSubscription', 'update_at','completedSections','locale','allSections','correctAnswers','questions', 'highestPracticeScore', 'courseName', 'section', 'phrases', 'course_id', 'section_id', 'sectionName'));
+        return view("courses.section.practice", compact('pageTitle','highestPracticeScore', 'highestScoreDate', 'dropdownVals','dropdownStates', 'localizedQuestions', 'hasSubscription', 'update_at','completedSections','locale','allSections','correctAnswers','questions', 'highestPracticeScore', 'courseName', 'section', 'phrases', 'course_id', 'section_id', 'sectionName'));
     }
 
     function replaceUnderscoresWithSpans($inputString, $id) {
@@ -570,6 +577,7 @@ class CourseController extends Controller
         case 'uk':
             $sectionName = $section->section_name_uk;
             $courseName = $course->course_name_uk;
+            $pageTitle = __('lesson.quiz') . " - "  . $courseName . " - " . $sectionName ;
             $localizedQuestions = $questions->map(function ($question) {
                 return [
                     'localizedQuestion' => $this->replaceUnderscoresWithSpans($question->question_uk, $question->id),
@@ -579,6 +587,7 @@ class CourseController extends Controller
         case 'ru':
             $courseName = $section->course_name_ru;
             $sectionName = $course->section_name_ru;
+            $pageTitle = __('lesson.quiz') . " - "  . $courseName . " - " . $sectionName ;
             $localizedQuestions = $questions->map(function ($question) {
                 return [
                     'localizedQuestion' => $this->replaceUnderscoresWithSpans($question->question_ru, $question->id),
@@ -588,6 +597,7 @@ class CourseController extends Controller
         default:
             $sectionName = $section->section_name_en;
             $courseName = $course->course_name_en;
+            $pageTitle = __('lesson.quiz') . " - "  . $courseName . " - " . $sectionName ;
             $localizedQuestions = $questions->map(function ($question) {
                 return [
                     'localizedQuestion' => $this->replaceUnderscoresWithSpans($question->question_uk, $question->id),
@@ -598,7 +608,7 @@ class CourseController extends Controller
 
 
    // dd($newQuestions);
-    return view("courses.section.quiz", compact('prevInputValues', 'inputValues','localizedQuestions', 'hasSubscription', 'allSections', 'completedSections', 'update_at', 'questions', 'correctAnswers', 'courseName', 'sectionName', 'section', 'phrases', 'course_id', 'section_id', 'highestPracticeScore', 'highestQuizScore'));
+    return view("courses.section.quiz", compact('pageTitle', 'prevInputValues', 'inputValues','localizedQuestions', 'hasSubscription', 'allSections', 'completedSections', 'update_at', 'questions', 'correctAnswers', 'courseName', 'sectionName', 'section', 'phrases', 'course_id', 'section_id', 'highestPracticeScore', 'highestQuizScore'));
 }
 
 

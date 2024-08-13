@@ -21,6 +21,7 @@ $currentLocale = session('locale', 'uk');
     </div>
     @endsection
     @section('content')
+
     @if ($hasSubscription)
     <div class="sm:ml-64">
         <div class="mt-2 rounded-lg">
@@ -65,6 +66,7 @@ $currentLocale = session('locale', 'uk');
                     @lang('lesson.not_checked')
                 </div>
                 </div>
+
                 <form onsubmit="return validateForm()" class="w-full max-w-3xl pb-20" id="phrases-form" >
                     <ul class="md:grid md:grid-cols-2 md:gap-2">
                         @foreach ($localizedPhrases as $phrase)

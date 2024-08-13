@@ -55,7 +55,7 @@
                         </div>
                         </button>
                     </div>
-                    <x-steps-sidebar :current="$section_id" :allSections="$allSections" :locale="$locale" :completedSections="$completedSections" :course_id="$course_id" />
+                    <x-steps-sidebar :colorClass='$colorClass'  :current="$section_id" :allSections="$allSections" :locale="$locale" :completedSections="$completedSections" :course_id="$course_id" />
                     <div class="flex w-full justify-center p-4 max-w-md flex-col items-end min-h-60 dsection rounded-lg border-gray-300 border shadow-lg">
                         <h1 class="text-xl">
                             {{ $courseName }}
