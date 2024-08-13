@@ -44,7 +44,7 @@ $hidden = $active ? "" : "hidden";
     <div class="w-full text-center">
         <p class="text-xs">{{ $course->completionPercentage > 0 ? __('general.completed') : __('general.not_started') }}</p>
     </div>
-  <div class="bottom flex flex-col md:flex-row gap-x-6 pt-4 px-4 pb-6 {{ $opacity }}">
+  <div class="bottom items-center flex flex-col md:flex-row gap-x-6 pt-4 px-4 pb-6 {{ $opacity }}">
     <div class="flex w-full justify-center md:justify-start items-center gap-2 text-gray-900 text-sm w-3/5">
       <img src="{{ asset('images/flagBlue.svg') }}" /> {{ date('Y-m-d', strtotime($course->subscribtionDate)) }}
       <img src="{{ asset('images/rightArrow.svg') }}" />
