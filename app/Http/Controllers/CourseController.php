@@ -272,12 +272,14 @@ class CourseController extends Controller
         ->where('section_id', $section_id)
         ->pluck('checkbox_state', 'phrase_id')
         ->toArray();
-
+    $courseNameEn = $course->course_name_en;
+    $sectionNameEn = $section->section_name_en;
     // Determine the course name and section name based on the current locale
     switch ($locale) {
         case 'uk':
             $courseName = $course->course_name_uk;
             $sectionName = $section->section_name_uk;
+
             $pageTitle = $courseName . " - " . $sectionName;
             $localizedPhrases = $phrases->map(function($phrase) use ($phraseStates) {
                 return [
@@ -316,7 +318,7 @@ class CourseController extends Controller
             break;
     }
 
-    return view('courses.section.show', compact('pageTitle','hasSubscription', 'locale', 'allSections', 'completedSections', 'completedSectionNames', 'colorClass', 'locked', 'section_id', 'phrases', 'sectionName', 'localizedPhrases', 'courseName', 'course_id'));
+    return view('courses.section.show', compact('sectionNameEn', 'courseNameEn', 'pageTitle','hasSubscription', 'locale', 'allSections', 'completedSections', 'completedSectionNames', 'colorClass', 'locked', 'section_id', 'phrases', 'sectionName', 'localizedPhrases', 'courseName', 'course_id'));
 }
 
 
@@ -426,7 +428,8 @@ class CourseController extends Controller
                 });
                 break;
         }
-
+        $courseNameEn = $course->course_name_en;
+        $sectionNameEn = $section->section_name_en;
         $correctAnswers = [];
         $dropdownVals = [];
         $i = 1;
@@ -436,23 +439,34 @@ class CourseController extends Controller
             $underscoreCount = substr_count($question->question, '_');
 
             if ($underscoreCount === 2) {
-
-                // Separate the correct answer into two parts
-                $answers = explode(' ', $question->correct_answer);
-                $correctAnswers[$question->id] = [
-                    'part1' => $answers[0],
-                    'part2' => $answers[1]
-                ];
-                if($dropdownStates) {
-
-                    $dropdownVals[$id] =  [
-                        $question->id."1" => $dropdownStates[$id."1"] ?? null,
-                        $question->id."2" => $dropdownStates[$id."2"] ?? null,
-
+                if (strpos($question->correct_answer, ', ') !== false) {
+                    // Only explode if there is a comma
+                    $answers = explode(', ', $question->correct_answer);
+                    $correctAnswers[$question->id] = [
+                        'part1' => $answers[0] ?? null,
+                        'part2' => $answers[1] ?? null
                     ];
-                 }
+                } else {
+                    // Fallback to exploding by spaces if no comma is found
+                    $answers = explode(' ', $question->correct_answer);
+                    $correctAnswers[$question->id] = [
+                        'part1' => $answers[0] ?? null,
+                        'part2' => $answers[1] ?? null
+                    ];
+                }
 
-            } else {
+                // Ensure there are at least two parts after the split
+
+
+                // Handle dropdown states
+                if ($dropdownStates) {
+                    $dropdownVals[$id] = [
+                        $question->id . "1" => $dropdownStates[$id . "1"] ?? null,
+                        $question->id . "2" => $dropdownStates[$id . "2"] ?? null,
+                    ];
+                }
+            }
+             else {
                 $correctAnswers[$id] = [
                     'full' => $question->correct_answer
                 ];
@@ -471,7 +485,7 @@ class CourseController extends Controller
        //     'correctAnswers' => $correctAnswers,
        // ]);
        //dd( $dropdownVals);
-        return view("courses.section.practice", compact('pageTitle','highestPracticeScore', 'highestScoreDate', 'dropdownVals','dropdownStates', 'localizedQuestions', 'hasSubscription', 'update_at','completedSections','locale','allSections','correctAnswers','questions', 'highestPracticeScore', 'courseName', 'section', 'phrases', 'course_id', 'section_id', 'sectionName'));
+        return view("courses.section.practice", compact('courseNameEn', 'sectionNameEn', 'pageTitle','highestPracticeScore', 'highestScoreDate', 'dropdownVals','dropdownStates', 'localizedQuestions', 'hasSubscription', 'update_at','completedSections','locale','allSections','correctAnswers','questions', 'highestPracticeScore', 'courseName', 'section', 'phrases', 'course_id', 'section_id', 'sectionName'));
     }
 
     function replaceUnderscoresWithSpans($inputString, $id) {
@@ -559,7 +573,8 @@ class CourseController extends Controller
             ];
         }
     }
-
+    $courseNameEn = $course->course_name_en;
+    $sectionNameEn = $section->section_name_en;
     $highestPracticeScore = score::where('user_id', Auth::id())
         ->where('course_id', $course_id)
         ->where('section_id', $section_id)
@@ -608,7 +623,7 @@ class CourseController extends Controller
 
 
    // dd($newQuestions);
-    return view("courses.section.quiz", compact('pageTitle', 'prevInputValues', 'inputValues','localizedQuestions', 'hasSubscription', 'allSections', 'completedSections', 'update_at', 'questions', 'correctAnswers', 'courseName', 'sectionName', 'section', 'phrases', 'course_id', 'section_id', 'highestPracticeScore', 'highestQuizScore'));
+    return view("courses.section.quiz", compact('courseNameEn', 'sectionNameEn', 'pageTitle', 'prevInputValues', 'inputValues','localizedQuestions', 'hasSubscription', 'allSections', 'completedSections', 'update_at', 'questions', 'correctAnswers', 'courseName', 'sectionName', 'section', 'phrases', 'course_id', 'section_id', 'highestPracticeScore', 'highestQuizScore'));
 }
 
 

@@ -13,13 +13,13 @@
 </p>
 
     @if ($current_id == $id)
-    <div class="{{$class}} mt-1 py-1 px-2 rounded-lg">
+    <div class="mt-1 py-1 px-2 rounded-lg">
     @lang('sidebar.currentsection')
 </div>
 <div class="flex flex-col">
-    <button class="button_steps_sections mt-2 {{ Route::currentRouteName() === 'course.show' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.show', ['course_id' => $course_id, 'section_id' => $id, 'colorClass' => $class]) }}'">Phrasal Verbs</button>
-    <button class="button_steps_sections mt-2 {{ Route::currentRouteName() === 'course.practice' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.practice', ['course_id' => $course_id, 'section_id' => $id, 'colorClass' => $class]) }}'">Practice</button>
-    <button class="button_steps_sections mt-2 {{ Route::currentRouteName() === 'course.quiz' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.quiz', ['course_id' => $course_id, 'section_id' => $id, 'colorClass' => $class]) }}'">Quiz</button>
+    <button class="button_steps_sections mt-2 {{ Route::currentRouteName() === 'course.show' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.show', ['course_id' => $course_id, 'section_id' => $id]) }}'">Phrasal Verbs</button>
+    <button class="button_steps_sections mt-2 {{ Route::currentRouteName() === 'course.practice' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.practice', ['course_id' => $course_id, 'section_id' => $id]) }}'">Practice</button>
+    <button class="button_steps_sections mt-2 {{ Route::currentRouteName() === 'course.quiz' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.quiz', ['course_id' => $course_id, 'section_id' => $id]) }}'">Quiz</button>
 </div>
 
     @else

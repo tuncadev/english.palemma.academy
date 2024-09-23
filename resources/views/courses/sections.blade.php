@@ -46,31 +46,22 @@ $currentLocale = session('locale', 'uk');
         </button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 justify-items-center pt-4">
+        <div class="grid grid-cols-1 gap-6 justify-items-center pt-4">
         @foreach ($localizedSections as $index => $section)
             @php
 
-            $colors = [
-                'bg-s_card-blue',
-                'bg-s_card-gray',
-                'bg-s_card-green',
-                'bg-s_card-rose',
-                'bg-s_card-yellow text-gray-700',
-                'bg-s_card-sky text-gray-700',
-                'bg-s_card-white text-gray-200',
-            ];
-            $colorClass = $colors[$index % count($colors)];
+
             $isCompleted = in_array($section['id'], $completedSections);
             $isUnlocked = $isCompleted || $section['id'] == 1 || in_array($section['id'] - 1, $completedSections);
 
             @endphp
 
             @if($isUnlocked)
-                <a href="{{ route('course.show', ['course_id' => $course_id, 'section_id' => $section['id'], 'colorClass' => $colorClass]) }}"
+                <a href="{{ route('course.show', ['course_id' => $course_id, 'section_id' => $section['id']]) }}"
                 class="relative btn btn-primary ">
-                    <i class="absolute right-3 top-3 font-bold text-white fa-regular fa-square-check"></i>
-                    <div class="md:max-w-[18rem] md:min-h-72 md:min-h-56 hover:shadow-xl border shadow-md hover:border-gray-500 hover:border block rounded-lg {{$colorClass}} text-white shadow-secondary-1 {{ $isUnlocked ? 'opacity-100' : 'opacity-50' }}">
-                        <div class="border-b-2 border-black/20 px-6 py-3 text-white font-semibold uppercase">
+                    <i class="absolute right-3 top-3 font-bold text-gray-900 fa-regular fa-square-check"></i>
+                    <div class="md:w-full  hover:shadow-xl border shadow-md hover:border-gray-500 hover:border block rounded-lg  text-gray-900 shadow-secondary-1 {{ $isUnlocked ? 'opacity-100' : 'opacity-50' }}">
+                        <div class="border-b-2 border-black/20 px-6 py-3 text-gray-900 font-semibold uppercase">
                         @lang('lesson.section') - {{ $section['id']}}
                         </div>
                         <div class="p-6">
@@ -86,8 +77,8 @@ $currentLocale = session('locale', 'uk');
             @else
             <div class="c_container relative">
                 <i class="absolute fa-solid fa-lock z-10 top-3 right-3" style="color: #3b71ca"></i>
-                <div class="md:max-w-[18rem] md:min-h-72 md:min-h-56 border shadow-md  block rounded-lg {{$colorClass}} text-white shadow-secondary-1 {{ $isUnlocked ? 'opacity-100' : 'opacity-50' }}">
-                    <div class="border-b-2 border-black/20 px-6 py-3 text-white font-semibold uppercase">
+                <div class="md:w-full border shadow-md  block rounded-lg  text-gray-900 shadow-secondary-1 {{ $isUnlocked ? 'opacity-100' : 'opacity-50' }}">
+                    <div class="border-b-2 border-black/20 px-6 py-3 text-gray-900 font-semibold uppercase">
                         @lang('lesson.section') - {{ $section['id']}}
                     </div>
                     <div class="p-6">

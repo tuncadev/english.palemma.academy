@@ -28,16 +28,6 @@
         @if ($hasSubscription)
             @php
                 shuffle($inputValues);
-                $sectionColors = [
-                    '1' => 'bg-s_card-blue text-white',
-                    '2' => 'bg-s_card-gray text-gray-800',
-                    '3' => 'bg-s_card-green text-gray-200',
-                    '4' => 'bg-s_card-rose text-gray-200',
-                    '5' => 'bg-s_card-yellow text-gray-700',
-                    '6' => 'bg-s_card-sky text-gray-700',
-                    '7' => 'bg-s_card-white text-gray-200',
-                ];
-                $colorClass = $sectionColors[($section['id'] - 1) % count($sectionColors) + 1];
             @endphp
         <div class=" sm:ml-64">
             <div class="mt-4 rounded-lg">
@@ -55,17 +45,18 @@
                         </div>
                         </button>
                     </div>
-                    <x-steps-sidebar :colorClass='$colorClass'  :current="$section_id" :allSections="$allSections" :locale="$locale" :completedSections="$completedSections" :course_id="$course_id" />
+                    <x-steps-sidebar  :current="$section_id" :allSections="$allSections" :locale="$locale" :completedSections="$completedSections" :course_id="$course_id" />
                     <div class="flex w-full justify-center p-4 max-w-md flex-col items-end min-h-60 dsection rounded-lg border-gray-300 border shadow-lg">
-                        <h1 class="text-xl">
-                            {{ $courseName }}
-                        </h1>
-                        <h1 class="text-4xl px-4 py-1 bg-green-200 rounded-xl mb-2 shadow-md">
-                            @lang('lesson.practice')
-                        </h1>
-                        <h2 class="text-2xl font-bold bg-blue-600/25 px-4 py-2 rounded-xl capitalize shadow-md">
-                            {{ $section_id }} - {{ $sectionName }}
-                        </h2>
+                        <h1  id="top" class="text-xl text-right">
+                            Section {{ $section_id }} <br />
+                         </h1>
+                         <h2 class="flex flex-col text-gray-900 text-gray-200  text-right font-bold  px-4 py-2 rounded-xl capitalize shadow-md">
+                             <span class="font-bold text-2xl">{{$sectionNameEn}}</span>
+                             <span class="font-bold"> {{ $sectionName }}</span>
+                         </h2>
+                         <h3 class="text-2xl mt-4 font-bold text-fuchsia-600 px-4 border-fuchsia-600 border rounded">
+                            Quiz
+                         </h3>
                         <div class="flex items-center gap-x-5 justify-between mt-4 max-w-80 bg-blue-200 p-4 rounded-xl shadow-md">
                             <i class="text-4xl text-red-600 fa-solid fa-triangle-exclamation"></i>
                             <ul class="text-xs list-outside ">
@@ -75,10 +66,7 @@
                             </ul>
                         </div>
                     </div>
-                    <h2 class="text-lg font-semibold border-b border-b-1 border-sky-200">
-                        <span class=""> {{ $courseName }} </span>  -
-                        @lang('lesson.quiz')
-                    </h2>
+
                     @if ($highestPracticeScore > 0)
                         <div class="alert alert-info flex items-center">
                             <span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400">
@@ -95,9 +83,9 @@
                     @endif
 
                     <div class="flex flex-row gap-x-4  ">
-                        <button class="uppercase button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.show' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.show', ['course_id' => $course_id, 'section_id' => $section_id, 'colorClass' => $colorClass]) }}'">{{ $courseName }}</button>
-                        <button class="uppercase button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.practice' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.practice', ['course_id' => $course_id, 'section_id' => $section_id, 'colorClass' => $colorClass]) }}'">@lang('lesson.practice')</button>
-                        <button class="uppercase button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.quiz' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.quiz', ['course_id' => $course_id, 'section_id' => $section_id, 'colorClass' => $colorClass]) }}'">@lang('lesson.quiz')</button>
+                        <button class="uppercase button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.show' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.show', ['course_id' => $course_id, 'section_id' => $section_id]) }}'">Phrasal Verbs</button>
+                        <button class="uppercase button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.practice' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.practice', ['course_id' => $course_id, 'section_id' => $section_id]) }}'">Practice</button>
+                        <button class="uppercase button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.quiz' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.quiz', ['course_id' => $course_id, 'section_id' => $section_id]) }}'">Quiz</button>
                     </div>
                     <div id="top" class="w-full md:w-10/12 flex p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800" role="alert">
                         <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -124,7 +112,7 @@
                                 <input type="text"
                                 id="answer-{{ $answerSet["id"] }}"
                                 value="{{ isset($prevInputValues['question-'.$answerSet["id"]]) &&  $prevInputValues['question-'.$answerSet["id"]] === $answerSet['answer'] ? "" : $answerSet['answer']}}"
-                                class=" answer-input p-2 border-1 rounded cursor-pointer max-w-24 text-xs text-center {{ isset($prevInputValues['question-'.$answerSet["id"]]) &&  $prevInputValues['question-'.$answerSet["id"]] === $answerSet['answer'] ? "border-gray-400 bg-gray-300" : "border-sky-400 bg-sky-300"}}"
+                                class=" answer-input p-2 border-1 rounded cursor-pointer max-w-32 text-xs text-center {{ isset($prevInputValues['question-'.$answerSet["id"]]) &&  $prevInputValues['question-'.$answerSet["id"]] === $answerSet['answer'] ? "border-gray-400 bg-gray-300" : "border-sky-400 bg-sky-300"}}"
                                 draggable="true"
                                 disabled
                                 ondragstart="drag(event)"
@@ -235,6 +223,7 @@
         <x-popmsg :section_id="$section_id"  :course_id="$course_id" />
 <script>
     $(document).ready(function() {
+        console.log("Debug");
         // Form submit event to gather and display all answers
         $('#quiz-form').on('submit', function(event) {
             event.preventDefault(); // Prevent the form from actually submitting
@@ -246,7 +235,7 @@
             overlay.classList.remove('hidden');
             spinner.classList.remove('hidden');
             const score = document.getElementById('quiz_score').value;
-            // Collect all values from the question inputs
+
             let answers = [];
             $('#quiz-form input[type="text"]').each(function() {
                 if ($(this).val()) {

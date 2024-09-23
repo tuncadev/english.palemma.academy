@@ -79,8 +79,8 @@ class SectionsSeeder extends Seeder
         [
             'course_id' => 1,
             'section_name_en' => 'Incident',
-            'section_name_uk' => 'Випадок',
-            'section_name_ru' => 'происшествие',
+            'section_name_uk' => 'Випадок, подія',
+            'section_name_ru' => 'Происшествие, событие',
             'created_at' => now(),
         ],
       ]);

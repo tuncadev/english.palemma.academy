@@ -3361,7 +3361,7 @@ DB::table('phrases')->insert([
   [
       'course_id' => 1,
       'section_id' => 6,
-      'phrase_en' => 'to be booked',
+      'phrase_en' => 'to be booked up',
       'phrase_uk' => 'бути заброньованим/повністю зайнятим (без вільних місць)',
       'phrase_ru' => 'быть забронированным/полностью занятым (без свободных мест)',
       'created_at' => now(),
@@ -3412,6 +3412,16 @@ DB::table('phrases')->insert([
   ],
 ]);
 
+DB::table('phrases')->insert([
+    [
+        'course_id' => 1,
+        'section_id' => 6,
+        'phrase_en' => 'to move in',
+        'phrase_uk' => 'переїхати',
+        'phrase_ru' => 'переехать',
+        'created_at' => now(),
+    ],
+  ]);
 DB::table('phrases')->insert([
   [
       'course_id' => 1,
@@ -4033,8 +4043,8 @@ DB::table('phrases')->insert([
       'course_id' => 1,
       'section_id' => 7,
       'phrase_en' => 'to call sb out',
-      'phrase_uk' => 'викликати кого-що',
-      'phrase_ru' => 'вызывать кого-что',
+      'phrase_uk' => 'викликати когось',
+      'phrase_ru' => 'вызывать кого-то',
       'created_at' => now(),
   ],
 ]);
@@ -5452,7 +5462,7 @@ DB::table('phrases')->insert([
       'course_id' => 1,
       'section_id' => 9,
       'phrase_en' => 'to leap out at sb',
-      'phrase_uk' => 'впадати в очі комусь',
+      'phrase_uk' => 'потрапити на очі комусь',
       'phrase_ru' => 'попасть на глаза кому-то',
       'created_at' => now(),
   ],
@@ -5650,7 +5660,7 @@ DB::table('phrases')->insert([
       'course_id' => 1,
       'section_id' => 10,
       'phrase_en' => 'to come across',
-      'phrase_uk' => 'виробляти враження, здатися',
+      'phrase_uk' => 'справляти враження, здатися',
       'phrase_ru' => 'производить впечатление, показаться',
       'created_at' => now(),
   ],
@@ -7806,7 +7816,7 @@ DB::table('phrases')->insert([
       'course_id' => 1,
       'section_id' => 14,
       'phrase_en' => 'to wise up',
-      'phrase_uk' => 'усвідомлювати, розуміти',
+      'phrase_uk' => 'усвідомлювати, розумнішати',
       'phrase_ru' => 'осознавать, умнеть',
       'created_at' => now(),
   ],
@@ -8554,8 +8564,8 @@ DB::table('phrases')->insert([
       'course_id' => 1,
       'section_id' => 18,
       'phrase_en' => 'to shut up',
-      'phrase_uk' => 'закривати, затикати',
-      'phrase_ru' => 'закрывать, затыкать',
+      'phrase_uk' => 'закривати, "затикати рота"',
+      'phrase_ru' => 'закрывать, "затыкать рот"',
       'created_at' => now(),
   ],
 ]);
@@ -8620,8 +8630,8 @@ DB::table('phrases')->insert([
       'course_id' => 1,
       'section_id' => 18,
       'phrase_en' => 'to go against sth/sb',
-      'phrase_uk' => 'йти проти чогось',
-      'phrase_ru' => 'идти против чего-то',
+      'phrase_uk' => 'йти проти чогось (на перекор)',
+      'phrase_ru' => 'идти против чего-то (на перекор)',
       'created_at' => now(),
   ],
 ]);
@@ -8675,8 +8685,8 @@ DB::table('phrases')->insert([
       'course_id' => 1,
       'section_id' => 18,
       'phrase_en' => 'to come at',
-      'phrase_uk' => 'підходити до, нападати на когось',
-      'phrase_ru' => 'подходить к, нападать на кого-то',
+      'phrase_uk' => 'підходити до (теми питання проблеми), налетіти на когось (з претензіями)',
+      'phrase_ru' => 'подходить к (темы вопроса проблемы), налететь на кого-то (с претензиями)',
       'created_at' => now(),
   ],
 ]);
@@ -8697,8 +8707,8 @@ DB::table('phrases')->insert([
       'course_id' => 1,
       'section_id' => 18,
       'phrase_en' => 'to harp on (about sth)',
-      'phrase_uk' => 'скаржитися',
-      'phrase_ru' => 'жаловаться',
+      'phrase_uk' => 'скаржитися (постійно та багато)',
+      'phrase_ru' => 'жаловаться (постоянно и много)',
       'created_at' => now(),
   ],
 ]);
@@ -9126,8 +9136,8 @@ DB::table('phrases')->insert([
       'course_id' => 1,
       'section_id' => 19,
       'phrase_en' => 'to rub out',
-      'phrase_uk' => 'позбуватися; вбивати',
-      'phrase_ru' => 'избавляться от; убивать',
+      'phrase_uk' => 'позбуватися від, вбивати',
+      'phrase_ru' => 'избавляться от, убивать',
       'created_at' => now(),
   ],
 ]);
@@ -9203,8 +9213,8 @@ DB::table('phrases')->insert([
       'course_id' => 1,
       'section_id' => 19,
       'phrase_en' => 'to wipe out',
-      'phrase_uk' => 'знищувати повністю',
-      'phrase_ru' => 'уничтожать полностью',
+      'phrase_uk' => 'знищувати повністю, вымирать (про населении)',
+      'phrase_ru' => 'уничтожать полностью, вымирать (о населении)',
       'created_at' => now(),
   ],
 ]);
@@ -9214,7 +9224,7 @@ DB::table('phrases')->insert([
       'course_id' => 1,
       'section_id' => 19,
       'phrase_en' => 'to lead on sb',
-      'phrase_uk' => 'обманювати',
+      'phrase_uk' => 'вводити в обману',
       'phrase_ru' => 'вводить в обман',
       'created_at' => now(),
   ],

@@ -40,23 +40,27 @@ $currentLocale = session('locale', 'uk');
                     </button>
                 </div>
                 <x-steps-sidebar :current="$section_id" :allSections="$allSections" :locale="$locale" :completedSections="$completedSections" :course_id="$course_id" />
-                <div class="flex w-full justify-center p-4 max-w-md flex-col items-end min-h-60 dsection rounded-lg border-gray-300 border shadow-lg">
-                    <h1  id="top" class="text-xl">
-                        {{ $courseName }} -
-                    </h1>
-                    <h2 class="{{$colorClass}} text-gray-200 text-xl font-bold  px-4 py-2 rounded-xl capitalize shadow-md">
-                        {{ $section_id }} - {{ $sectionName }}
-                    </h2>
-                    <ul class="text-xs mt-4 max-w-80 list-outside {{$colorClass}}  p-4 rounded-xl shadow-md">
-                        <li><i class="fa-solid fa-language mr-1" style="color: #e7e7e7;"></i>@lang('lesson.click')</li>
-                        <li><i class="mr-2 fa-regular fa-circle-check mr-1" style="color: #e7e7e7;"></i>@lang('lesson.check')</li>
-                        <li><i class="fa-solid fa-check-double mr-1" style="color: #e7e7e7;"></i>@lang('lesson.all_done')</li>
+                <div class="flex w-full  text-gray-900 justify-center p-4 max-w-md flex-col items-end min-h-60 dsection rounded-lg border-gray-300 border shadow-lg">
+                    <h1  id="top" class="text-xl text-right">
+                        Section {{ $section_id }} <br />
+                     </h1>
+                     <h2 class="flex flex-col text-gray-900 text-gray-200  text-right font-bold  px-4 py-2 rounded-xl capitalize shadow-md">
+                         <span class="font-bold text-2xl">{{$sectionNameEn}}</span>
+                         <span class="font-bold"> {{ $sectionName }}</span>
+                     </h2>
+                     <h3 class="text-2xl mt-4 font-bold text-sky-600 px-4 border-sky-600 border rounded">
+                        Phrasal Verbs
+                     </h3>
+                    <ul class="text-xs mt-4 max-w-80 list-outside text-gray-900  p-4 rounded-xl shadow-md">
+                        <li><i class="fa-solid fa-language mr-1 text-blue-900"></i>@lang('lesson.click')</li>
+                        <li><i class="mr-2 fa-regular fa-circle-check mr-1 text-blue-900"></i>@lang('lesson.check')</li>
+                        <li><i class="fa-solid fa-check-double mr-1 text-blue-900"></i>@lang('lesson.all_done')</li>
                     </ul>
                 </div>
                 <div class="flex flex-row gap-x-4">
-                    <button class="button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.show' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.show', ['course_id' => $course_id, 'section_id' => $section_id, 'colorClass' => $colorClass]) }}'">Phrasal Verbs</button>
-                    <button class="button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.practice' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.practice', ['course_id' => $course_id, 'section_id' => $section_id, 'colorClass' => $colorClass]) }}'">Practice</button>
-                    <button class="button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.quiz' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.quiz', ['course_id' => $course_id, 'section_id' => $section_id, 'colorClass' => $colorClass]) }}'">Quiz</button>
+                    <button class="uppercase  button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.show' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.show', ['course_id' => $course_id, 'section_id' => $section_id]) }}'">Phrasal Verbs</button>
+                    <button class="uppercase button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.practice' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.practice', ['course_id' => $course_id, 'section_id' => $section_id]) }}'">Practice</button>
+                    <button class="uppercase button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.quiz' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.quiz', ['course_id' => $course_id, 'section_id' => $section_id]) }}'">Quiz</button>
                 </div>
                 <div id="warn" class="hidden max-w-3xl w-full  flex items-center p-4 mb-4 text-red-800 border-t-4 border-red-300 bg-red-50 dark:text-red-400 dark:bg-gray-800 dark:border-red-800" role="alert">
                 <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">

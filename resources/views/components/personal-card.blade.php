@@ -1,7 +1,7 @@
 <div class="flex flex-col items-center md:flex-row md:max-w-96 p-4 m-auto gap-6">
     <div class="shadow-md ring ring-sky-100 relative overflow-hidden rounded-full w-1/2 h-52 md:w-40 md:h-40 drop-shadow-lg">
         <img
-        class="absolute md:top-2 top-10 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-2 min-w-full min-h-full object-cover"
+        class="absolute md:top-2 ,d:top-10 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-2 min-w-full min-h-full object-cover"
         src="{{asset('images/emma-01.webp')}}" alt="Emma Palchevskaya" />
     </div>
     <div class="flex w-2/3 flex-col justify-between leading-normal text-center md:text-start">

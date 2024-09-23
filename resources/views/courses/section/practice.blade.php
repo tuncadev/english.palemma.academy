@@ -19,19 +19,7 @@ $currentLocale = session('locale', 'uk');
     @endsection
     @section('content')
     @if ($hasSubscription)
-        @php
-        $sectionColors = [
-            '1' => 'bg-s_card-blue text-white',
-            '2' => 'bg-s_card-gray text-gray-800',
-            '3' => 'bg-s_card-green text-gray-200',
-            '4' => 'bg-s_card-rose text-gray-200',
-            '5' => 'bg-s_card-yellow text-gray-700',
-            '6' => 'bg-s_card-sky text-gray-700',
-            '7' => 'bg-s_card-white text-gray-200',
-        ];
 
-        $colorClass = $sectionColors[($section['id'] - 1) % count($sectionColors) + 1];
-        @endphp
         <div class=" sm:ml-64">
             <div class="mt-4 rounded-lg">
                 <div class="p-2 flex flex-col items-center justify-center mb-4 gap-6 rounded bg-gray-100 dark:bg-gray-800">
@@ -48,18 +36,18 @@ $currentLocale = session('locale', 'uk');
                             </div>
                         </button>
                     </div>
-                    <x-steps-sidebar  :colorClass='$colorClass'  :current="$section_id" :allSections="$allSections" :locale="$locale" :completedSections="$completedSections" :course_id="$course_id" />
+                    <x-steps-sidebar  :current="$section_id" :allSections="$allSections" :locale="$locale" :completedSections="$completedSections" :course_id="$course_id" />
                     <div class="flex w-full justify-center p-4 max-w-md flex-col items-end min-h-60 dsection rounded-lg border-gray-300 border shadow-lg">
-                        <h1 class="text-xl">
-                        {{ $courseName }}
-
-                        </h1>
-                        <h1 class="text-4xl px-4 py-1 bg-green-200 rounded-xl mb-2 shadow-md">
-                            @lang('lesson.practice')
-                        </h1>
-                        <h2 class="text-2xl font-bold bg-blue-600/25 px-4 py-2 rounded-xl capitalize shadow-md">
-                            {{ $section_id }} - {{ $sectionName }}
-                        </h2>
+                        <h1  id="top" class="text-xl text-right">
+                            Section {{ $section_id }} <br />
+                         </h1>
+                         <h2 class="flex flex-col text-gray-900 text-gray-200  text-right font-bold  px-4 py-2 rounded-xl capitalize shadow-md">
+                             <span class="font-bold text-2xl">{{$sectionNameEn}}</span>
+                             <span class="font-bold"> {{ $sectionName }}</span>
+                         </h2>
+                         <h3 class="text-2xl mt-4 font-bold text-amber-600 px-4 border-amber-600 border rounded">
+                            Practice
+                         </h3>
                         <div class="flex items-center gap-x-5 justify-between mt-4 max-w-80 bg-blue-200 p-4 rounded-xl shadow-md">
                             <i class="text-4xl text-red-600 fa-solid fa-triangle-exclamation"></i>
                             <ul class="text-xs list-outside ">
@@ -84,9 +72,9 @@ $currentLocale = session('locale', 'uk');
                         </div>
                     @endif
                     <div class="flex flex-row gap-x-4">
-                        <button class="uppercase button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.show' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.show', ['course_id' => $course_id, 'section_id' => $section_id, 'colorClass' => $colorClass]) }}'">{{ $courseName }}</button>
-                        <button class="uppercase button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.practice' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.practice', ['course_id' => $course_id, 'section_id' => $section_id, 'colorClass' => $colorClass]) }}'">@lang('lesson.practice')</button>
-                        <button class="uppercase button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.quiz' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.quiz', ['course_id' => $course_id, 'section_id' => $section_id, 'colorClass' => $colorClass]) }}'">@lang('lesson.quiz')</button>
+                        <button class="uppercase button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.show' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.show', ['course_id' => $course_id, 'section_id' => $section_id]) }}'">Phrasal Verbs</button>
+                        <button class="uppercase button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.practice' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.practice', ['course_id' => $course_id, 'section_id' => $section_id]) }}'">Practice</button>
+                        <button class="uppercase button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.quiz' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.quiz', ['course_id' => $course_id, 'section_id' => $section_id]) }}'">Quiz</button>
                     </div>
                     <div id="top" class="w-full md:w-10/12 flex p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800" role="alert">
                         <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -156,16 +144,37 @@ $currentLocale = session('locale', 'uk');
                                     $points = 2.5;
                                     $doulbeID = $question->id;
                                     // Generate the options for the two dropdowns
-                                    $firstOptions = array_map(function($option) {
-                                        $words = explode(' ', $option);
+                                    if (array_map(function($option) {
+                                        $words = explode(', ', $option);
                                         return $words[0];
-                                    }, $options);
+                                    }, $options)) {
 
-                                    $secondOptions = array_map(function($option) {
-                                        $words = explode(' ', $option);
-                                        $secondPart = isset($words[2]) ? $words[1] . " " . $words[2] : (isset($words[1]) ? $words[1] : "");
-                                        return $secondPart;
-                                    }, $options);
+                                        $firstOptions = array_map(function($option) {
+                                            $words = explode(', ', $option);
+                                            return $words[0];
+                                        }, $options);
+
+                                        $secondOptions = array_map(function($option) {
+                                            $words = explode(', ', $option);
+                                            $secondPart = isset($words[2]) ? $words[1] . " " . $words[2] : (isset($words[1]) ? $words[1] : "");
+                                            return $secondPart;
+                                        }, $options);
+
+                                    } else {
+
+                                       $firstOptions = array_map(function($option) {
+                                            $words = explode(' ', $option);
+                                            return $words[0];
+                                        }, $options);
+                                        $secondOptions = array_map(function($option) {
+                                            $words = explode(' ', $option);
+                                            $secondPart = isset($words[2]) ? $words[1] . " " . $words[2] : (isset($words[1]) ? $words[1] : "");
+                                            return $secondPart;
+                                        }, $options);
+
+                                    }
+
+
                                    // dd($correctAnswers);
                                     // Generate the question HTML with two select components
                                     $questionText = $parts[0].
