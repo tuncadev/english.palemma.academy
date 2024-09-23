@@ -150,12 +150,12 @@ $currentLocale = session('locale', 'uk');
                                     }, $options)) {
 
                                         $firstOptions = array_map(function($option) {
-                                            $words = explode(', ', $option);
+                                            $words = explode(' ', $option);
                                             return $words[0];
                                         }, $options);
 
                                         $secondOptions = array_map(function($option) {
-                                            $words = explode(', ', $option);
+                                            $words = explode(' ', $option);
                                             $secondPart = isset($words[2]) ? $words[1] . " " . $words[2] : (isset($words[1]) ? $words[1] : "");
                                             return $secondPart;
                                         }, $options);
