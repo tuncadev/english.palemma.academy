@@ -41,7 +41,7 @@ class CourseController extends Controller
      //   $completedSections = session()->get('completed_sections', []);
 
         $course = Course::where('id', $course_id)->firstOrFail();
-
+        $courseNameEn = $course->course_name_en;
         switch ($locale) {
           case 'uk':
               $localizedSections = $sections->map(function($section) {
@@ -75,7 +75,7 @@ class CourseController extends Controller
               break;
       }
 
-        return view('courses.sections', compact('hasSubscription','localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
+        return view('courses.sections', compact('courseNameEn','hasSubscription','localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
 
     }
     public function subscribtions() {
@@ -654,6 +654,7 @@ public function updatePracticeScore(Request $request, $course_id, $section_id)
 
 public function updateQuizScore(Request $request, $course_id, $section_id)
 {
+
     $user_id = Auth::id();
     $quiz_score = $request->input('score') ?? 0;
 
@@ -680,14 +681,43 @@ public function updateQuizScore(Request $request, $course_id, $section_id)
         'course_id' => $course_id,
         'section_id' => $section_id,
     ]);
-
+    UserProgress::updateOrCreate(
+        [
+            'user_id' => $user_id,
+            'course_id' => $course_id,
+            'section_id' => $section_id,
+        ],
+        [
+            'input_value' => 1,
+            'dropdown_value' => 2,
+        ]
+    );
     // Redirect to the next section or course index
     $nextSection = Section::where('course_id', $course_id)
         ->where('id', '>', $section_id)
         ->orderBy('id')
         ->first();
 
+    //dd($nextSection);
     if ($nextSection) {
+
+        DB::table('user_progress')
+            ->where('user_id', $user_id)
+            ->where('course_id', $course_id)
+            ->where('section_id', $section_id)
+            ->where('dropdown_value', '!=', '')
+            ->update([
+                'dropdown_value' => Null,
+            ]);
+        DB::table('user_progress')
+        ->where('user_id', $user_id)
+        ->where('course_id', $course_id)
+        ->where('section_id', $section_id)
+        ->where('input_value', '!=', '')
+        ->update([
+            'input_value' => Null
+        ]);
+
         // Redirect or return the response as per your application logic
         return response()->json(['success' => true]);
     } else {
@@ -730,6 +760,7 @@ public function savePracticeProgress(Request $request, $course_id, $section_id)
 
 public function saveQuizProgress(Request $request, $course_id, $section_id)
 {
+
     $user_id = Auth::id();
     $answers = $request->input('answers', []);
     $highestQuizScore = $request->input('score');

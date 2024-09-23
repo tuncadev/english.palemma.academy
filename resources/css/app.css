@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+    font-family: Montserrat, sans-serif;
+}
+
 .dsection {
   background-image: url("../../public/images/bg/lessons/section-1.jpg");
   background-size: cover;
@@ -186,4 +190,50 @@
     top: 40px;
     width: 8px;
     z-index: 1;
+}
+.course-card:hover {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .05), 0 3px 8px rgba(0, 0, 0, .08);
+}
+.course-card {
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    padding: 20px;
+    gap: 16px;
+    cursor: pointer;
+    transition: box-shadow .2s;
+    background-color: #fff;
+    border-radius: 8px;
+}
+.circle {
+    position: relative;
+    border: 1px solid;
+    border-color: #8cc63e;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+  }
+.circle-locked {
+    position: relative;
+    border: 1px solid;
+    border-color: #3b72ca86;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+}
+.circle-locked i {
+    color: #3b72ca86;
+    position: absolute;
+    top: 35%;
+    left: 39%;
+}
+.checkmark {
+position: absolute;
+transform: rotate(45deg) translate(-50%, -50%);
+left: 37%;
+top: 46%;
+height: 20px;
+width: 10px;
+border-bottom: 3px solid #8cc63e;
+border-right: 3px solid #8cc63e;
 }

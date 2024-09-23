@@ -1,13 +1,13 @@
 @php
-$active = $course->active == 1;
-$opacity = $active ? "opacity-100" : "opacity-50";
-$cursor = $active ? "hover:cursor-pointer" : "hover:cursor-default";
-$courseName = $course['course_name_' . $locale];
-$courseDescription = $course['course_description_' . $locale];
-$hidden = $active ? "" : "hidden";
+    $active = $course->active == 1;
+    $opacity = $active ? "opacity-100" : "opacity-50";
+    $cursor = $active ? "hover:cursor-pointer" : "hover:cursor-default";
+    $courseName = $course['course_name_' . $locale];
+    $courseDescription = $course['course_description_' . $locale];
+    $hidden = $active ? "" : "hidden";
 @endphp
 
-<div class="{{$cursor }} mb-4 hover:opacity-100 {{ $active ? 'opacity-90' : '' }} container relative flex flex-col m-auto overflow-hidden border border-teal-300 rounded-lg max-w-96">
+<div class="{{$cursor}} mb-4 hover:opacity-100 {{ $active ? 'opacity-90' : '' }} container relative flex flex-col m-auto overflow-hidden border border-teal-300 rounded-lg max-w-96">
   @if (!$active)
     <div class="flex p-2 font-bold text-rose-500 bg-blue-500/50">
       <p class="bg-white px-2 rounded">

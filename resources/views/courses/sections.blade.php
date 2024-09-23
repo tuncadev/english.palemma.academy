@@ -6,7 +6,7 @@ $currentLocale = session('locale', 'uk');
 @extends('layouts.layout')
     @section('navigation')
         <div class="w-full bg-top_bar shadow-md">
-            <nav class="md:max-w-3xl m-auto border-gray-200 dark:bg-gray-900 ">
+            <nav class=" ">
                 <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                 <x-top-logo />
                 <x-user-menu :currentLocale="$currentLocale" />
@@ -17,8 +17,10 @@ $currentLocale = session('locale', 'uk');
     @endsection
     @section('content')
     @if ($hasSubscription)
-    <div class="flex flex-col text-center w-full justify-center pb-4 border-b-2 border-gray-300 md:max-w-3xl m-auto pt-6">
-        <h1 class="shadow-md p-4 rounded-md text-white bg-s_card-rose text-3xl font-bold mb-6">{{ $courseName }}</h1>
+    <div class="flex flex-col text-center w-full justify-center pb-4 border-b-2 border-gray-300 m-auto pt-6">
+        <h1 class="shadow-md p-2 rounded-md text-white bg-s_card-rose/80 text-3xl font-bold mb-6">
+           {{$courseNameEn}} | {{ $courseName }}
+        </h1>
         <p class="flex">
         Description about the course. What it aims, who it is for, what will the user gain after complating....
         </p>
@@ -49,47 +51,36 @@ $currentLocale = session('locale', 'uk');
         <div class="grid grid-cols-1 gap-6 justify-items-center pt-4">
         @foreach ($localizedSections as $index => $section)
             @php
-
-
-            $isCompleted = in_array($section['id'], $completedSections);
-            $isUnlocked = $isCompleted || $section['id'] == 1 || in_array($section['id'] - 1, $completedSections);
-
+                $isCompleted = in_array($section['id'], $completedSections);
+                $isUnlocked = $isCompleted || $section['id'] == 1 || in_array($section['id'] - 1, $completedSections);
             @endphp
 
             @if($isUnlocked)
                 <a href="{{ route('course.show', ['course_id' => $course_id, 'section_id' => $section['id']]) }}"
-                class="relative btn btn-primary ">
-                    <i class="absolute right-3 top-3 font-bold text-gray-900 fa-regular fa-square-check"></i>
-                    <div class="md:w-full  hover:shadow-xl border shadow-md hover:border-gray-500 hover:border block rounded-lg  text-gray-900 shadow-secondary-1 {{ $isUnlocked ? 'opacity-100' : 'opacity-50' }}">
-                        <div class="border-b-2 border-black/20 px-6 py-3 text-gray-900 font-semibold uppercase">
-                        @lang('lesson.section') - {{ $section['id']}}
+                class="w-full flex relative btn btn-primary course-card">
+                    <div class="block text-gray-900 shadow-secondary-1 {{ $isUnlocked ? 'opacity-100' : 'opacity-50' }}">
+                         <div class="p-6">
+                            <h5 class="mb-2 text-xl font-semibold leading-tight">
+                                <span class=text-sky-900>{{$section['en']}} </span>|  <span>{{ $section['section_name']}}</span>
+                            </h5>
                         </div>
-                        <div class="p-6">
-                        <h5 class="mb-2 text-xl font-semibold leading-tight">
-                            {{ $section['section_name']}}
-                        </h5>
-                        <p class="text-sm">
-                            Here must be a Short Description About This Section, not less than 12 and not more than 18 words.
-                        </p>
-                        </div>
+                    </div>
+                    <div class="circle">
+                        <div class="checkmark"></div>
                     </div>
                 </a>
             @else
-            <div class="c_container relative">
-                <i class="absolute fa-solid fa-lock z-10 top-3 right-3" style="color: #3b71ca"></i>
-                <div class="md:w-full border shadow-md  block rounded-lg  text-gray-900 shadow-secondary-1 {{ $isUnlocked ? 'opacity-100' : 'opacity-50' }}">
-                    <div class="border-b-2 border-black/20 px-6 py-3 text-gray-900 font-semibold uppercase">
-                        @lang('lesson.section') - {{ $section['id']}}
-                    </div>
+            <div class="c_container relative w-full flex relative btn btn-primary course-card">
+                <div class="block text-gray-900 shadow-secondary-1 {{ $isUnlocked ? 'opacity-100' : 'opacity-50' }}">
                     <div class="p-6">
-                        <h5 class="mb-2 text-xl font-medium leading-tight">
-                            {{ $section['section_name']}}
-                        </h5>
-                        <p class="text-sm">
-                            Here must be a Short Description About This Section, not less than 12 and not more than 18 words.
-                        </p>
-                    </div>
-                </div>
+                       <h5 class="mb-2 text-xl font-semibold leading-tight">
+                           <span class=text-sky-900>{{$section['en']}} </span>|  <span>{{ $section['section_name']}}</span>
+                       </h5>
+                   </div>
+               </div>
+               <div class="circle-locked">
+                    <i class="fa-solid fa-lock"></i>
+               </div>
             </div>
             @endif
 
