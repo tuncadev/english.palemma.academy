@@ -1,0 +1,25 @@
+{
+  "public/images/bg/dashboard_bg.png": {
+    "file": "assets/dashboard_bg-DQnqlsz_.png",
+    "src": "public/images/bg/dashboard_bg.png"
+  },
+  "public/images/bg/lessons/section-1.jpg": {
+    "file": "assets/section-1-DgrruObv.jpg",
+    "src": "public/images/bg/lessons/section-1.jpg"
+  },
+  "public/images/bg/section-bg.svg": {
+    "file": "assets/section-bg-DVIl2mJB.svg",
+    "src": "public/images/bg/section-bg.svg"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-DNlKwp5z.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-CBrI-5Om.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  }
+}
