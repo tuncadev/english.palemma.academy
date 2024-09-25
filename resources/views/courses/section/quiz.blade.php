@@ -46,24 +46,32 @@
                         </button>
                     </div>
                     <x-steps-sidebar  :current="$section_id" :allSections="$allSections" :locale="$locale" :completedSections="$completedSections" :course_id="$course_id" />
-                    <div class="flex w-full justify-center p-4 max-w-md flex-col items-end min-h-60 dsection rounded-lg border-gray-300 border shadow-lg">
-                        <h1  id="top" class="text-xl text-right">
+                    <div class="flex items-center text-gray-900 justify-between p-4 w-full flex-col md:flex-row items-start min-h-60 rounded-lg border-gray-300 border shadow-lg">
+                        <div class="">
+                            <h2 class="text-xl mb-2 max-w-48 font-bold text-sky-600 px-4">
+                                {{$courseNameEn}}
+                            </h2>
+                            <p  id="top" class="px-4 mb-4 text-xl text-left">
                             Section {{ $section_id }} <br />
-                         </h1>
-                         <h2 class="flex flex-col text-gray-900 text-gray-200  text-right font-bold  px-4 py-2 rounded-xl capitalize shadow-md">
-                             <span class="font-bold text-2xl">{{$sectionNameEn}}</span>
-                             <span class="font-bold"> {{ $sectionName }}</span>
-                         </h2>
-                         <h3 class="text-2xl mt-4 font-bold text-fuchsia-600 px-4 border-fuchsia-600 border rounded">
-                            Quiz
-                         </h3>
-                        <div class="flex items-center gap-x-5 justify-between mt-4 max-w-80 bg-blue-200 p-4 rounded-xl shadow-md">
-                            <i class="text-4xl text-red-600 fa-solid fa-triangle-exclamation"></i>
-                            <ul class="text-xs list-outside ">
-                                <li><i class="fa-regular fa-thumbs-up mr-2" style="color: #2583cb;"></i>@lang('practice.s1-rule-1')</li>
-                                <li><i class="fa-regular fa-thumbs-down mr-2" style="color: #2583cb;"></i>@lang('practice.s1-rule-2')</li>
-                                <li><i class="fa-solid fa-check-double mr-1" style="color: #2583cb;"></i>@lang('practice.s1-rule-3')</li>
-                            </ul>
+                            </p>
+                            <h1 class="flex  border-sky-600 border rounded flex-col text-gray-900 text-gray-200  text-left font-bold  px-4 py-2 rounded-xl capitalize shadow-md">
+                                <span class="font-bold text-2xl">{{$sectionNameEn}}</span>
+                                <span class="font-bold"> {{ $sectionName }}</span>
+                            </h1>
+                            <h3 class="text-2xl mt-4 font-bold text-rose-600 px-4 border-rose-600 border rounded">
+                                Quiz
+                            </h3>
+                            <div class="flex items-center gap-x-5 justify-between my-4 max-w-80 bg-blue-200 p-4 rounded-xl shadow-md">
+                                <i class="text-4xl text-red-600 fa-solid fa-triangle-exclamation"></i>
+                                <ul class="text-xs list-outside ">
+                                    <li><i class="fa-regular fa-thumbs-up mr-2" style="color: #2583cb;"></i>@lang('practice.s1-rule-1')</li>
+                                    <li><i class="fa-regular fa-thumbs-down mr-2" style="color: #2583cb;"></i>@lang('practice.s1-rule-2')</li>
+                                    <li><i class="fa-solid fa-check-double mr-1" style="color: #2583cb;"></i>@lang('practice.s1-rule-3')</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="max-w-96 rounded overflow-hidden shadow-lg">
+                            <img class="max-h-full" src="{{asset('images/courses/c'.$course_id.'/s'. $section_id.'.jpg')}}" alt="{{$courseNameEn}}">
                         </div>
                     </div>
 
@@ -105,14 +113,14 @@
                         </div>
                     </div>
 
+
                     <!-- Answers Pack with draggable inputs -->
                     <div id="answers" class="w-full bg-gray-100 sticky top-0 py-3  border-b-2 md:max-w-3xl px-2 flex mb-6 flex justify-center items-center w-full  flex-wrap gap-2">
                         @foreach ($inputValues as $key => $answerSet)
-                        @php $bgClass = !empty($prevInputValues) ? "border-gray-400 bg-gray-300" : "border-sky-400 bg-sky-300"; @endphp
                                 <input type="text"
                                 id="answer-{{ $answerSet["id"] }}"
-                                value="{{ isset($prevInputValues['question-'.$answerSet["id"]]) &&  $prevInputValues['question-'.$answerSet["id"]] === $answerSet['answer'] ? "" : $answerSet['answer']}}"
-                                class=" answer-input p-2 border-1 rounded cursor-pointer max-w-32 text-xs text-center {{ isset($prevInputValues['question-'.$answerSet["id"]]) &&  $prevInputValues['question-'.$answerSet["id"]] === $answerSet['answer'] ? "border-gray-400 bg-gray-300" : "border-sky-400 bg-sky-300"}}"
+                                value="{{ isset($prevInputValues) &&  in_array($answerSet['answer'], $prevInputValues) ? "" : $answerSet['answer']}}"
+                                class=" answer-input p-2 border-1 rounded cursor-pointer max-w-32 text-xs text-center {{ isset($prevInputValues) &&  in_array($answerSet['answer'], $prevInputValues) ? "border-gray-400 bg-gray-300" : "border-sky-400 bg-sky-300"}}"
                                 draggable="true"
                                 disabled
                                 ondragstart="drag(event)"
@@ -206,11 +214,16 @@
                             @endforeach
 
                             <span class="" id="score"></span>
-                            <div class="flex flex-col md:flex-row gap-y-4 md:justify-between items-center mt-4">
-                                <button id="checkanswers" onclick="checkQuizAnswers()" data-modal-target="modal_answers" class="p-2 md:p-4 m-auto rounded-md text-white uppercase font-semibold w-btn_purple h-btn_purple bg-btn_purple  shadow-md m-auto" type="button">
-                                    Check Answers
+                            <div class="flex flex-col text-sm md:flex-row gap-y-4 md:justify-between items-center mt-4">
+                                <button
+                                    id="checkanswers"
+                                    onclick="checkQuizAnswers()"
+                                    data-modal-target="modal_answers"
+                                    class="p-2 m-auto text-sm rounded-md text-white uppercase font-semibold w-btn_purple h-btn_purple bg-btn_purple  shadow-md m-auto"
+                                    type="button">
+                                        @lang('lesson.check')
                                 </button>
-                                <button id="continue" type="submit" class="hidden p-2 md:p-4 m-auto rounded-md text-white uppercase font-semibold w-btn_purple h-btn_purple bg-btn_green  shadow-md m-auto">
+                                <button id="continue" type="submit" class="text-sm hidden p-2 md:p-4 m-auto rounded-md text-white uppercase font-semibold w-btn_purple h-btn_purple bg-btn_green  shadow-md m-auto">
                                     @lang('lesson.next')
                                 </button>
                             </div>

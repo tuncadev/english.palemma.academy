@@ -195,11 +195,9 @@ body {
     box-shadow: 0 4px 14px rgba(0, 0, 0, .05), 0 3px 8px rgba(0, 0, 0, .08);
 }
 .course-card {
-    justify-content: space-between;
+
     align-items: center;
     flex-direction: row;
-    padding: 20px;
-    gap: 16px;
     cursor: pointer;
     transition: box-shadow .2s;
     background-color: #fff;
@@ -236,4 +234,152 @@ height: 20px;
 width: 10px;
 border-bottom: 3px solid #8cc63e;
 border-right: 3px solid #8cc63e;
+}
+
+
+/* Progress circles */
+@media only screen and (max-width:500px) {
+    .set-size {
+        font-size: 3em !important;
+      }
+}
+.set-size {
+    font-size: 4em;
+  }
+.charts-container:after {
+  clear: both;
+  content: "";
+  display: table;
+}
+
+.pie-wrapper {
+  height: 1em;
+  width: 1em;
+  float: left;
+  position: relative;
+}
+.pie-wrapper:nth-child(3n+1) {
+  clear: both;
+}
+.pie-wrapper .pie {
+  height: 100%;
+  width: 100%;
+  clip: rect(0, 1em, 1em, 0.5em);
+  left: 0;
+  position: absolute;
+  top: 0;
+}
+.pie-wrapper .pie .half-circle {
+  height: 100%;
+  width: 100%;
+  border: 0.1em solid #3498db;
+  border-radius: 50%;
+  clip: rect(0, 0.5em, 1em, 0);
+  left: 0;
+  position: absolute;
+  top: 0;
+}
+.pie-wrapper .label {
+  background: #34495e;
+  border-radius: 50%;
+  bottom: 0.4em;
+  color: #ecf0f1;
+  cursor: default;
+  display: block;
+  font-size: 0.25em;
+  left: 0.4em;
+  line-height: 2.8em;
+  position: absolute;
+  right: 0.4em;
+  text-align: center;
+  top: 0.4em;
+}
+.pie-wrapper .label .smaller {
+  color: #34495e;
+  font-size: 0.45em;
+  padding-bottom: 20px;
+  vertical-align: super;
+}
+.pie-wrapper .shadow {
+  height: 100%;
+  width: 100%;
+  border: 0.1em solid #bdc3c7;
+  border-radius: 50%;
+}
+.pie-wrapper.style-2 .label {
+  background: none;
+  color: #34495e;
+}
+.pie-wrapper.style-2 .label .smaller {
+  color: #34495e;
+}
+.pie-wrapper.progress-15 .pie .half-circle {
+  border-color: #ff0000; /* Red */
+}
+.pie-wrapper.progress-15 .pie .left-side {
+  transform: rotate(54deg);
+}
+.pie-wrapper.progress-15 .pie .right-side {
+  display: none;
+}
+
+.pie-wrapper.progress-30 .pie .half-circle {
+  border-color: #ff4000; /* Red-Orange */
+}
+.pie-wrapper.progress-30 .pie .left-side {
+  transform: rotate(108deg);
+}
+.pie-wrapper.progress-30 .pie .right-side {
+  display: none;
+}
+
+.pie-wrapper.progress-45 .pie .half-circle {
+  border-color: #ff8000; /* Orange */
+}
+.pie-wrapper.progress-45 .pie .left-side {
+  transform: rotate(162deg);
+}
+.pie-wrapper.progress-45 .pie .right-side {
+  display: none;
+}
+.pie-wrapper.progress-60 .pie {
+  clip: rect(auto, auto, auto, auto);
+}
+.pie-wrapper.progress-60 .pie .half-circle {
+  border-color: #ffbf00; /* Yellow-Orange */
+}
+.pie-wrapper.progress-60 .pie .left-side {
+  transform: rotate(216deg);
+}
+.pie-wrapper.progress-60 .pie .right-side {
+  transform: rotate(180deg);
+  display: block; /* Ensure right-side is visible for 60% and above */
+}
+
+.pie-wrapper.progress-75 .pie {
+  clip: rect(auto, auto, auto, auto);
+}
+.pie-wrapper.progress-75 .pie .half-circle {
+  border-color: #bfff00; /* Yellow-Green */
+}
+.pie-wrapper.progress-75 .pie .left-side {
+  transform: rotate(270deg);
+}
+.pie-wrapper.progress-75 .pie .right-side {
+  transform: rotate(180deg);
+  display: block; /* Ensure right-side is visible */
+}
+
+.pie-wrapper.progress-90 .pie {
+  clip: rect(auto, auto, auto, auto);
+}
+.pie-wrapper.progress-90 .pie .half-circle {
+  border-color: #00ff00; /* Green */
+}
+.pie-wrapper.progress-90 .pie .left-side {
+  transform: rotate(324deg);
+}
+.pie-wrapper.progress-90 .pie .right-side {
+  transform: rotate(180deg);
+  display: block; /* Ensure right-side is visible */
 }

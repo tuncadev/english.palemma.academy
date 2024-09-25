@@ -24,7 +24,6 @@ $locale = session('locale', 'uk');
     @endif
 
         <x-personal-card />
-
         @foreach ($courses as $course)
             <x-course-card :href="route('course.index', ['course_id' => $course->id])" :course="$course" :locale="$locale" />
         @endforeach

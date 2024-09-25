@@ -37,24 +37,32 @@ $currentLocale = session('locale', 'uk');
                         </button>
                     </div>
                     <x-steps-sidebar  :current="$section_id" :allSections="$allSections" :locale="$locale" :completedSections="$completedSections" :course_id="$course_id" />
-                    <div class="flex w-full justify-center p-4 max-w-md flex-col items-end min-h-60 dsection rounded-lg border-gray-300 border shadow-lg">
-                        <h1  id="top" class="text-xl text-right">
+                    <div class="flex items-center text-gray-900 justify-between p-4 w-full flex-col md:flex-row items-start min-h-60 rounded-lg border-gray-300 border shadow-lg">
+                        <div class="">
+                            <h2 class="text-xl mb-2 max-w-48 font-bold text-sky-600 px-4">
+                                {{$courseNameEn}}
+                            </h2>
+                            <p  id="top" class="px-4 mb-4 text-xl text-left">
                             Section {{ $section_id }} <br />
-                         </h1>
-                         <h2 class="flex flex-col text-gray-900 text-gray-200  text-right font-bold  px-4 py-2 rounded-xl capitalize shadow-md">
-                             <span class="font-bold text-2xl">{{$sectionNameEn}}</span>
-                             <span class="font-bold"> {{ $sectionName }}</span>
-                         </h2>
-                         <h3 class="text-2xl mt-4 font-bold text-amber-600 px-4 border-amber-600 border rounded">
-                            Practice
-                         </h3>
-                        <div class="flex items-center gap-x-5 justify-between mt-4 max-w-80 bg-blue-200 p-4 rounded-xl shadow-md">
-                            <i class="text-4xl text-red-600 fa-solid fa-triangle-exclamation"></i>
-                            <ul class="text-xs list-outside ">
-                            <li><i class="fa-regular fa-thumbs-up mr-2" style="color: #2583cb;"></i>@lang('practice.s1-rule-1')</li>
-                            <li><i class="fa-regular fa-thumbs-down mr-2" style="color: #2583cb;"></i>@lang('practice.s1-rule-2')</li>
-                            <li><i class="fa-solid fa-check-double mr-1" style="color: #2583cb;"></i>@lang('practice.s1-rule-3')</li>
-                            </ul>
+                            </p>
+                            <h1 class="flex  border-sky-600 border rounded flex-col text-gray-900 text-gray-200  text-left font-bold  px-4 py-2 rounded-xl capitalize shadow-md">
+                                <span class="font-bold text-2xl">{{$sectionNameEn}}</span>
+                                <span class="font-bold"> {{ $sectionName }}</span>
+                            </h1>
+                            <h3 class="text-2xl mt-4 font-bold text-amber-600 px-4 border-amber-600 border rounded">
+                                Practice
+                            </h3>
+                            <div class="flex items-center gap-x-5 justify-between my-4 max-w-80 bg-blue-200 p-4 rounded-xl shadow-md">
+                                <i class="text-4xl text-red-600 fa-solid fa-triangle-exclamation"></i>
+                                <ul class="text-xs list-outside ">
+                                <li><i class="fa-regular fa-thumbs-up mr-2" style="color: #2583cb;"></i>@lang('practice.s1-rule-1')</li>
+                                <li><i class="fa-regular fa-thumbs-down mr-2" style="color: #2583cb;"></i>@lang('practice.s1-rule-2')</li>
+                                <li><i class="fa-solid fa-check-double mr-1" style="color: #2583cb;"></i>@lang('practice.s1-rule-3')</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="max-w-96 rounded overflow-hidden shadow-lg">
+                            <img class="max-h-full" src="{{asset('images/courses/c'.$course_id.'/s'. $section_id.'.jpg')}}" alt="{{$courseNameEn}}">
                         </div>
                     </div>
                     @if ($highestPracticeScore > 0)
@@ -197,11 +205,11 @@ $currentLocale = session('locale', 'uk');
                                 <div class="flex flex-col pl-2 pr-2 py-4 bg-white phrase_card rounded-lg w-full mb-2 items-center">
                                     <div class="flex w-full">
                                         <span class="shadow-md text-xs flex items-center justify-center w-6 h-6 mr-2 p-4 border border-1 border-sky-200 rounded-full">{{$qnum}}</span>
-                                        <div class="flex justify-between w-full ">
-                                            <div class="text-sm ">
+                                        <div class="flex flex-col md:flex-row justify-between w-full ">
+                                            <div class="text-sm leading-8">
                                                 {!! $questionText !!}
                                             </div>
-                                            <div class="flex items-center pl-2">
+                                            <div class="flex items-center pl-2 justify-end">
                                                 <a data-tooltip-target="tooltip-left-{{ $id }}" data-tooltip-placement="left" href="javascript:void(0);" onclick="toggleTranslation({{ $id }})" class="r-0 text-gray-800 text-xs flex flex-col items-center hover:text-blue-800">
                                                     <i class="fa-solid fa-language mr-1"></i>
                                                     @lang('lesson.translate')
@@ -226,12 +234,16 @@ $currentLocale = session('locale', 'uk');
 
                         <span class="" id="score"></span>
                         <div class="flex flex-col md:flex-row gap-y-4 md:justify-between items-center mt-4">
-                            <button id="checkanswers" onclick="checkAnswers()" data-modal-target="modal_answers" class="p-2 md:p-4 m-auto rounded-md text-white uppercase font-semibold w-btn_purple h-btn_purple bg-btn_purple  shadow-md m-auto" type="button">
-                                Check Answers
+                            <button id="checkanswers"
+                                onclick="checkAnswers()"
+                                data-modal-target="modal_answers"
+                                class="p-2 m-auto text-sm rounded-md text-white uppercase font-semibold w-btn_purple h-btn_purple bg-btn_purple  shadow-md m-auto"
+                                type="button">
+                                    @lang('lesson.check')
                             </button>
                             <button id="continue"
                             type="submit"
-                            class=" p-2 md:p-4 m-auto rounded-md text-white uppercase font-semibold w-btn_purple h-btn_purple bg-btn_green  shadow-md m-auto">
+                            class=" p-2 md:p-4 text-sm m-auto rounded-md text-white uppercase font-semibold w-btn_purple h-btn_purple bg-btn_green  shadow-md m-auto">
                                 @lang('lesson.next')
                             </button>
                         </div>

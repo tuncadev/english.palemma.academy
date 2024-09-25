@@ -75,7 +75,7 @@ class CourseController extends Controller
               break;
       }
 
-        return view('courses.sections', compact('courseNameEn','hasSubscription','localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
+        return view('courses.sections', compact('sections','user_id','courseNameEn','hasSubscription','localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
 
     }
     public function subscribtions() {
@@ -84,35 +84,36 @@ class CourseController extends Controller
         $courses = Course::whereIn('id', $subscribtions)->get();
         $locale = session('locale', config('app.locale'));
         // Prepare the localized courses array
-    $localizedCourses = $courses->map(function($course) use ($user_id, $locale) {
-        $subscription = Subscribtion::where('user_id', $user_id)
-            ->where('course_id', $course->id)
-            ->first();
-        $hasSubscription = $subscription && $subscription->payment_status === 'completed' && $subscription->expiry_date > today();
+        $localizedCourses = $courses->map(function($course) use ($user_id, $locale) {
+            $subscription = Subscribtion::where('user_id', $user_id)
+                ->where('course_id', $course->id)
+                ->first();
+            $hasSubscription = $subscription && $subscription->payment_status === 'completed' && $subscription->expiry_date > today();
 
-        $courseDetails = [
-            'id' => $course->id,
-            'active' => $course->active,
-            'hasSubscription' => $hasSubscription,
-        ];
+            $courseDetails = [
+                'id' => $course->id,
+                'active' => $course->active,
+                'hasSubscription' => $hasSubscription,
+                'nameEn' => $course->course_name_en,
+            ];
 
-        switch ($locale) {
-            case 'uk':
-                $courseDetails['course_name'] = $course->course_name_uk;
-                $courseDetails['course_description'] = $course->course_description_uk;
-                break;
-            case 'ru':
-                $courseDetails['course_name'] = $course->course_name_ru;
-                $courseDetails['course_description'] = $course->course_description_ru;
-                break;
-            default:
-                $courseDetails['course_name'] = $course->course_name_uk;
-                $courseDetails['course_description'] = $course->course_description_uk;
-                break;
-        }
+            switch ($locale) {
+                case 'uk':
+                    $courseDetails['course_name'] = $course->course_name_uk;
+                    $courseDetails['course_description'] = $course->course_description_uk;
+                    break;
+                case 'ru':
+                    $courseDetails['course_name'] = $course->course_name_ru;
+                    $courseDetails['course_description'] = $course->course_description_ru;
+                    break;
+                default:
+                    $courseDetails['course_name'] = $course->course_name_uk;
+                    $courseDetails['course_description'] = $course->course_description_uk;
+                    break;
+            }
 
-        return $courseDetails;
-    });
+            return $courseDetails;
+        });
 
         return view('courses.dashboard.subscribtions', compact('subscribtions', 'localizedCourses'));
 
@@ -177,7 +178,7 @@ class CourseController extends Controller
 
         $response = new BinaryFileResponse($path);
         $response->headers->set('Cache-Control', 'public, max-age=31536000');
-        Log::info('Headers set in controller', ['headers' => $response->headers->all()]);
+
 
         return $response;
     }
@@ -358,8 +359,10 @@ class CourseController extends Controller
         ->where('user_id', $user_id)
         ->where('course_id', $course_id)
         ->where('section_id', $section_id)
+        ->where('finished', '!=', 1)
         ->pluck('dropdown_value', 'practice_id')
         ->toArray();
+
         if (!$dropdownStates) {
             $dropdownStates = []; // Ensure it's an empty array, not null
         }
@@ -526,6 +529,7 @@ class CourseController extends Controller
         ->where('user_id', $user_id)
         ->where('course_id', $course_id)
         ->where('section_id', $section_id)
+        ->where('finished', '!=', 1)
         ->pluck('input_value', 'quiz_id')
         ->toArray();
         if (!$prevInputValues) {
@@ -681,17 +685,6 @@ public function updateQuizScore(Request $request, $course_id, $section_id)
         'course_id' => $course_id,
         'section_id' => $section_id,
     ]);
-    UserProgress::updateOrCreate(
-        [
-            'user_id' => $user_id,
-            'course_id' => $course_id,
-            'section_id' => $section_id,
-        ],
-        [
-            'input_value' => 1,
-            'dropdown_value' => 2,
-        ]
-    );
     // Redirect to the next section or course index
     $nextSection = Section::where('course_id', $course_id)
         ->where('id', '>', $section_id)
@@ -700,23 +693,6 @@ public function updateQuizScore(Request $request, $course_id, $section_id)
 
     //dd($nextSection);
     if ($nextSection) {
-
-        DB::table('user_progress')
-            ->where('user_id', $user_id)
-            ->where('course_id', $course_id)
-            ->where('section_id', $section_id)
-            ->where('dropdown_value', '!=', '')
-            ->update([
-                'dropdown_value' => Null,
-            ]);
-        DB::table('user_progress')
-        ->where('user_id', $user_id)
-        ->where('course_id', $course_id)
-        ->where('section_id', $section_id)
-        ->where('input_value', '!=', '')
-        ->update([
-            'input_value' => Null
-        ]);
 
         // Redirect or return the response as per your application logic
         return response()->json(['success' => true]);
@@ -765,7 +741,16 @@ public function saveQuizProgress(Request $request, $course_id, $section_id)
     $answers = $request->input('answers', []);
     $highestQuizScore = $request->input('score');
 
+    $howManyDone = DB::table('user_progress')
+                    ->where('user_id', $user_id)
+                    ->where('course_id', $course_id)
+                    ->where('section_id', $section_id)
+                    ->where('finished', '!=', 1)
+                    ->where('dropdown_value', "!=", "")
+                    ->orWhere('quiz_id', "!=", "")
+                    ->count();
     foreach ($answers as $answer) {
+
         $id = $answer['id'];
         $value = $answer['value'];
         // Update or create the record in the user_progress table
@@ -785,6 +770,25 @@ public function saveQuizProgress(Request $request, $course_id, $section_id)
                 'dropdown_value' => null,
             ]
         );
+    }
+
+    if ($howManyDone >= 20) {
+        DB::table('user_progress')
+            ->where('user_id', $user_id)
+            ->where('course_id', $course_id)
+            ->where('section_id', $section_id)
+            ->where('dropdown_value', '!=', '')
+            ->update([
+                'finished' => 1,
+            ]);
+        DB::table('user_progress')
+        ->where('user_id', $user_id)
+        ->where('course_id', $course_id)
+        ->where('section_id', $section_id)
+        ->where('input_value', '!=', '')
+        ->update([
+            'finished' => 1
+        ]);
     }
     $this->updateQuizScore($request, $course_id, $section_id);
     return response()->json(['success' => true]);

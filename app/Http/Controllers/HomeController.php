@@ -3,16 +3,36 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Course;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 
+use App\Models\Section;
+use App\Models\Course;
+use App\Models\Subscribtion;
+use App\Models\Phrase;
+use App\Models\Practice;
+use App\Models\Quiz;
 
 class HomeController extends Controller
 {
     public function index()
     {
-      $courses = Course::all();
-      $locale = App::getLocale(); // Get the current locale
+        $courses = Course::all();
+        Log::info($courses);
+        $locale = App::getLocale(); // Get the current locale
+        $courses->transform(function($course) {
+            $totalPhrases = Phrase::where('course_id', $course->id)->count();
+            $totalPractice = Practice::where('course_id', $course->id)->count();
+            $totalQuiz = Quiz::where('course_id', $course->id)->count();
+            $course->totalPhrases = $totalPhrases;
+            $course->totalPractice = $totalPractice;
+            $course->totalQuiz = $totalQuiz;
+            $course->id = $course->id;
+            $totalSections = Section::where('course_id', $course->id)->count();
+            $course->totalSections = $totalSections;
+            return $course;
+        });
+
       return view('pages.homepage', compact('courses', 'locale'));
     }
 }

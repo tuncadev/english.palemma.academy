@@ -20,10 +20,10 @@ export default {
 
         },
         width: {
-            'btn_purple' : '300px'
+            'btn_purple' : '160px'
         },
         height: {
-            'btn_purple' : '75px'
+            'btn_purple' : '50px'
         },
         colors: {
             'btn_active' : 'sky-blue-300',

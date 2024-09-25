@@ -1633,11 +1633,11 @@ class AddPracticeQuestions extends Seeder
         [
             'course_id' => 1,
             'section_id' => 18,
-            'question' => 'I know that you _ your _ daddy.',
-            'question_uk' => 'Я знаю, що ти стала на його бік проти тата.',
-            'question_ru' => 'Я знаю, что ты встала на его сторону против папы.',
-            'answers' => '["reason with", "look down on", "bring in"]',
-            'correct_answer' => 'took, side against',
+            'question' => 'How can you _ him _?',
+            'question_uk' => 'Як ти можеш його виганяти?',
+            'question_ru' => 'Как ты можешь его выгонять?',
+            'answers' => '["kick out", "harp on", "bank on"]',
+            'correct_answer' => 'kick, out',
             'created_at' => now(),
         ],
 

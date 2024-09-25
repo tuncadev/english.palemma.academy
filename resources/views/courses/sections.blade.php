@@ -18,12 +18,14 @@ $currentLocale = session('locale', 'uk');
     @section('content')
     @if ($hasSubscription)
     <div class="flex flex-col text-center w-full justify-center pb-4 border-b-2 border-gray-300 m-auto pt-6">
-        <h1 class="shadow-md p-2 rounded-md text-white bg-s_card-rose/80 text-3xl font-bold mb-6">
-           {{$courseNameEn}} | {{ $courseName }}
-        </h1>
-        <p class="flex">
+        <div class="flex items-center shadow-md px-4 py-8 justify-center">
+            <h1 class="w-full text-left  p-2 rounded-md text-rose-500 text-3xl font-bold">
+            {{$courseNameEn}} | {{ $courseName }}
+            </h1>
+            <p class="flex">
         Description about the course. What it aims, who it is for, what will the user gain after complating....
         </p>
+        </div>
 
         <div id="alert-border-1" class="mt-4 flex items-center p-4 mb-4 text-blue-800 border-t-4 border-blue-300 bg-blue-50 dark:text-blue-400 dark:bg-gray-800 dark:border-blue-800" role="alert">
         <div class="flex flex-col gap-y-2">
@@ -48,39 +50,74 @@ $currentLocale = session('locale', 'uk');
         </button>
         </div>
 
-        <div class="grid grid-cols-1 gap-6 justify-items-center pt-4">
+        <div class="grid grid-cols-1 gap-6 justify-items-center md:pt-4 ">
         @foreach ($localizedSections as $index => $section)
             @php
+                $howManyDone = DB::table('user_progress')
+                    ->where('user_id', $user_id)
+                    ->where('course_id', $course_id)
+                    ->where('section_id', $section['id'])
+                    ->whereNull('phrase_id')
+                    ->where(function ($query) {
+                        $query->where('dropdown_value', '!=', "")
+                            ->orWhere('input_value', '!=', "");
+                    })
+                    ->count();
+
+                $percentage = ($howManyDone / 20) * 100;
+
+               // dd(  $howManyDone . " | ". $percentage . " | ". $user_id . " | " . $course_id ." | ". $section['id']);
                 $isCompleted = in_array($section['id'], $completedSections);
                 $isUnlocked = $isCompleted || $section['id'] == 1 || in_array($section['id'] - 1, $completedSections);
+
             @endphp
 
             @if($isUnlocked)
                 <a href="{{ route('course.show', ['course_id' => $course_id, 'section_id' => $section['id']]) }}"
-                class="w-full flex relative btn btn-primary course-card">
-                    <div class="block text-gray-900 shadow-secondary-1 {{ $isUnlocked ? 'opacity-100' : 'opacity-50' }}">
-                         <div class="p-6">
-                            <h5 class="mb-2 text-xl font-semibold leading-tight">
+                class="w-full flex relative btn btn-primary course-card px-2 md:px-6 md:py-4">
+                    <img src="{{asset('images/courses/c'.$course_id.'/s'.$section['id'].'.jpg')}}" class="max-w-40 rounded shadow-lg" alt="">
+                    <div class="w-full block md:text-left text-gray-900 shadow-secondary-1 {{ $isUnlocked ? 'opacity-100' : 'opacity-50' }}">
+                        <div class="p-6">
+                            <h5 class="mb-2 justify-around md:justify-between text-xs md:text-xl font-semibold leading-tight">
                                 <span class=text-sky-900>{{$section['en']}} </span>|  <span>{{ $section['section_name']}}</span>
                             </h5>
                         </div>
                     </div>
-                    <div class="circle">
-                        <div class="checkmark"></div>
+                    <div class="set-size charts-container">
+                        @if ($percentage === 0 &&  $howManyDone <20 )
+                            <x-0-percent />
+                        @elseif ($percentage <= 15)
+                            <x-15-percent />
+                        @elseif ($percentage <= 30)
+                            <x-30-percent />
+                        @elseif ($percentage <= 45)
+                            <x-45-percent />
+                        @elseif ($percentage <= 60)
+                            <x-60-percent />
+                        @elseif ($percentage <= 75)
+                            <x-75-percent />
+                        @elseif ($percentage <= 90)
+                            <x-90-percent />
+                        @elseif ($percentage <= 100 OR $howManyDone >= 20 )
+                            <x-checkmark-circle />
+                        @else
+                            <x-checkmark-circle />
+                        @endif
                     </div>
                 </a>
             @else
-            <div class="c_container relative w-full flex relative btn btn-primary course-card">
-                <div class="block text-gray-900 shadow-secondary-1 {{ $isUnlocked ? 'opacity-100' : 'opacity-50' }}">
+            <div class="c_container relative w-full flex relative btn btn-primary course-card px-2 md:px-6 md:py-4">
+                <img src="{{asset('images/courses/c'.$course_id.'/s'.$section['id'].'.jpg')}}"
+                class="{{ $isUnlocked ? 'opacity-100' : 'opacity-50' }} md:text-left max-w-40 rounded shadow-lg" alt="">
+                <div class="w-full block text-left text-gray-900 shadow-secondary-1 {{ $isUnlocked ? 'opacity-100' : 'opacity-50' }}">
                     <div class="p-6">
-                       <h5 class="mb-2 text-xl font-semibold leading-tight">
-                           <span class=text-sky-900>{{$section['en']}} </span>|  <span>{{ $section['section_name']}}</span>
-                       </h5>
-                   </div>
-               </div>
-               <div class="circle-locked">
-                    <i class="fa-solid fa-lock"></i>
-               </div>
+                        <h5 class="mb-2 text-xs md:text-xl font-semibold leading-tight">
+                            <span class=text-sky-900>{{$section['en']}} </span>|  <span>{{ $section['section_name']}}</span>
+                        </h5>
+                    </div>
+                </div>
+                <div class="set-size charts-container">
+                </div>
             </div>
             @endif
 

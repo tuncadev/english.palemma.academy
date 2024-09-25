@@ -40,22 +40,28 @@ $currentLocale = session('locale', 'uk');
                     </button>
                 </div>
                 <x-steps-sidebar :current="$section_id" :allSections="$allSections" :locale="$locale" :completedSections="$completedSections" :course_id="$course_id" />
-                <div class="flex w-full  text-gray-900 justify-center p-4 max-w-md flex-col items-end min-h-60 dsection rounded-lg border-gray-300 border shadow-lg">
-                    <h1  id="top" class="text-xl text-right">
+                <div class="flex items-center text-gray-900 justify-between p-4 w-full flex-col md:flex-row items-start min-h-60 rounded-lg border-gray-300 border shadow-lg">
+                    <div class="">
+                        <h2 class="text-xl mb-2 max-w-48 font-bold text-sky-600 px-4">
+                            {{$courseNameEn}}
+                        </h2>
+                        <p  id="top" class="px-4 mb-4 text-xl text-left">
                         Section {{ $section_id }} <br />
-                     </h1>
-                     <h2 class="flex flex-col text-gray-900 text-gray-200  text-right font-bold  px-4 py-2 rounded-xl capitalize shadow-md">
-                         <span class="font-bold text-2xl">{{$sectionNameEn}}</span>
-                         <span class="font-bold"> {{ $sectionName }}</span>
-                     </h2>
-                     <h3 class="text-2xl mt-4 font-bold text-sky-600 px-4 border-sky-600 border rounded">
-                        Phrasal Verbs
-                     </h3>
-                    <ul class="text-xs mt-4 max-w-80 list-outside text-gray-900  p-4 rounded-xl shadow-md">
-                        <li><i class="fa-solid fa-language mr-1 text-blue-900"></i>@lang('lesson.click')</li>
-                        <li><i class="mr-2 fa-regular fa-circle-check mr-1 text-blue-900"></i>@lang('lesson.check')</li>
-                        <li><i class="fa-solid fa-check-double mr-1 text-blue-900"></i>@lang('lesson.all_done')</li>
-                    </ul>
+                        </p>
+                        <h1 class="flex  border-sky-600 border rounded flex-col text-gray-900 text-gray-200  text-left font-bold  px-4 py-2 rounded-xl capitalize shadow-md">
+                            <span class="font-bold text-2xl">{{$sectionNameEn}}</span>
+                            <span class="font-bold"> {{ $sectionName }}</span>
+                        </h1>
+
+                        <ul class="text-xs mt-4 max-w-80 list-outside text-gray-900  p-4 rounded-xl shadow-md">
+                            <li><i class="fa-solid fa-language mr-1 text-blue-900"></i>@lang('lesson.click')</li>
+                            <li><i class="mr-2 fa-regular fa-circle-check mr-1 text-blue-900"></i>@lang('lesson.check')</li>
+                            <li><i class="fa-solid fa-check-double mr-1 text-blue-900"></i>@lang('lesson.all_done')</li>
+                        </ul>
+                    </div>
+                    <div class="max-w-96 rounded overflow-hidden shadow-lg">
+                        <img class="max-h-full" src="{{asset('images/courses/c'.$course_id.'/s'. $section_id.'.jpg')}}" alt="{{$courseNameEn}}">
+                    </div>
                 </div>
                 <div class="flex flex-row gap-x-4">
                     <button class="uppercase  button_steps_sections-top mt-2 {{ Route::currentRouteName() === 'course.show' ? 'bg-sky-200' : ' bg-white' }}" onclick="window.location.href='{{ route('course.show', ['course_id' => $course_id, 'section_id' => $section_id]) }}'">Phrasal Verbs</button>
@@ -79,8 +85,8 @@ $currentLocale = session('locale', 'uk');
                     </ul>
                     <div class="flex justify-between items-center">
                     <span id="score"></span>
-                    <button type="submit" class="my-4 p-4 m-auto rounded-md text-white uppercase font-semibold w-btn_purple h-btn_purple bg-btn_purple  shadow-md m-auto">
-                        @lang('lesson.next') <i class="fa-solid fa-circle-right"></i>
+                    <button type="submit" class="my-4 p-4 text-sm m-auto rounded-md text-white uppercase font-semibold w-btn_purple h-btn_purple bg-btn_purple  shadow-md m-auto">
+                        @lang('lesson.next')
                     </button>
                     </div>
                 </form>

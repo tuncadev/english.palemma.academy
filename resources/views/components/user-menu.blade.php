@@ -6,9 +6,9 @@
       @lang('general.openusermenu')
     </span>
     @if (auth()->user()->avatar)
-      <img class="w-8 h-8 rounded-full" src="{{ asset(auth()->user()->avatar) }}" alt="user photo">
+      <img class="w-8 h-8 rounded-full object-cover" src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="user photo">
     @else
-    <img class="w-8 h-8 rounded-full" src="{{asset('images/avatar.jpg')}}" alt="user photo">
+    <img class="w-8 h-8 rounded-full object-cover" src="{{asset('images/avatar.jpg')}}" alt="user photo">
     @endif
   </button>
   <!-- Dropdown menu -->

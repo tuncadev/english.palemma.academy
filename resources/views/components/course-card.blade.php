@@ -4,6 +4,7 @@
     $cursor = $active ? "hover:cursor-pointer" : "hover:cursor-default";
     $courseName = $course['course_name_' . $locale];
     $courseDescription = $course['course_description_' . $locale];
+    $courseNameEn = $course['course_name_en'];
     $hidden = $active ? "" : "hidden";
 @endphp
 
@@ -23,14 +24,16 @@
     </div>
   @endif
   <div class="top bg-blue-500 pt-10 pb-5 px-4 {{ $opacity }}">
-    <h1 class="font-bold text-gray-200 text-2xl">@lang('general.course') - № {{ $course->id }}</h1>
+    <h1 class="font-bold text-gray-200 text-2xl">{{ $courseNameEn }}</h1>
     <h2 class="font-bold text-white text-4xl mb-6">{{ $courseName }}</h2>
-    <div class="flex flex-col flex-wrap content-center justify-center gap-x-4 text-xs text-gray-900">
-      <span><i class="fa-regular fa-circle-check mr-4" style="color: #B197FC;"></i> 1000 phrases</span>
-      <span><i class="fa-regular fa-circle-check mr-4" style="color: #97d4fc;"></i> 500 quiz questions</span>
-      <span><i class="fa-regular fa-circle-check mr-4" style="color: #97fca4;"></i> 12 sections</span>
-      <span><i class="fa-regular fa-circle-check mr-4" style="color: #fcd997;"></i> 100 practice phrases</span>
-    </div>
+    @if ($course->totalSections > 0)
+        <div class="flex flex-col flex-wrap content-center justify-center gap-x-4 text-xs text-gray-900">
+        <span><i class="fa-regular fa-circle-check mr-4" style="color: #B197FC;"></i>  Total of {{$course->totalSections}} sections</span>
+        <span><i class="fa-regular fa-circle-check mr-4" style="color: #97d4fc;"></i> {{$course->totalPhrases}} phrases in {{$course->totalSections}} sections</span>
+        <span><i class="fa-regular fa-circle-check mr-4" style="color: #97fca4;"></i> {{$course->totalPractice}} practice questions</span>
+        <span><i class="fa-regular fa-circle-check mr-4" style="color: #fcd997;"></i> {{$course->totalQuiz}} quiz questions</span>
+        </div>
+    @endif
   </div>
   <div class="bottom flex flex-row gap-x-6 pt-4 px-4 pb-6 {{ $opacity }}">
     <div class="text-gray-900 text-sm w-3/5">

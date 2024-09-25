@@ -23,6 +23,7 @@ class CreateUserProgressTable extends Migration
             $table->boolean('checkbox_state')->nullable(); // For phrase checkboxes
             $table->string('input_value')->nullable(); // For quiz inputs
             $table->string('dropdown_value')->nullable(); // For practice dropdowns
+            $table->integer('finished')->default(0);
             $table->timestamps();
 
             // Foreign key constraints (if needed)

@@ -1,10 +1,11 @@
 @php
-$active = $course->active == 1;
-$opacity = $active ? "opacity-100" : "opacity-50";
-$cursor = $active ? "hover:cursor-pointer" : "hover:cursor-default";
-$courseName = $course['course_name_' . $locale];
-$courseDescription = $course['course_description_' . $locale];
-$hidden = $active ? "" : "hidden";
+    $active = $course->active == 1;
+    $opacity = $active ? "opacity-100" : "opacity-50";
+    $cursor = $active ? "hover:cursor-pointer" : "hover:cursor-default";
+    $courseName = $course['course_name_' . $locale];
+    $courseDescription = $course['course_description_' . $locale];
+    $hidden = $active ? "" : "hidden";
+    $courseNameEn = $course['course_name_en'];
 @endphp
 
 <div {{$attributes->merge(['data-href' => ''])}} onclick="navigateTo(this)" data-text="{{$badge}}" class="card-sticker card-sticker--{{$badgeClass}} {{$cursor }} hover:opacity-100 {{ $active ? 'opacity-90' : '' }}  relative  overflow-hidden border border-teal-300 rounded-lg">
@@ -22,19 +23,22 @@ $hidden = $active ? "" : "hidden";
       <i class="fa-solid fa-fire" style="color: #fcd997;"></i>
     </div>
   @endif
-  <div class="top bg-blue-500 pt-10 pb-5 px-4 {{ $opacity }}">
-    <h1 class="font-bold text-gray-200 text-2xl">@lang('general.course') - № {{ $course->id }}</h1>
-    <h2 class="font-bold text-white text-2xl mb-2">{{ $courseName }}</h2>
-    <p class="text-xs font-semibold text-white">
-        <i class="fa-solid fa-star mr-1 text-amber-200"></i>{{$course->totalPhrases}} phrases in {{$course->totalSections}} sections
-    </p>
-    <p class="text-xs font-semibold text-white">
-        <i class="fa-solid fa-star mr-1 text-amber-200"></i>{{$course->totalPractice}} practice questions
-    </p>
-    <p class="text-xs font-semibold text-white">
-        <i class="fa-solid fa-star mr-1 text-amber-200"></i>{{$course->totalQuiz}} quiz questions
-    </p>
-  </div>
+    <div class="md:flex-row flex-col flex items-center justify-start">
+        <img src="{{asset("images/course1.jpg")}}" class="w-full md:max-w-64 rounded md:m-2" />
+        <div class="rounded w-full top bg-white p-4 {{ $opacity }}">
+            <h1 class="font-bold text-gray-600 text-2xl">{{ $courseNameEn }}</h1>
+            <h2 class="font-bold text-sky-900 text-2xl mb-2">{{ $courseName }}</h2>
+            <p class="text-xs font-semibold text-sky-800">
+                <i class="fa-solid fa-star mr-1 text-amber-200"></i>{{$course->totalPhrases}} phrases in {{$course->totalSections}} sections
+            </p>
+            <p class="text-xs font-semibold text-sky-800">
+                <i class="fa-solid fa-star mr-1 text-amber-200"></i>{{$course->totalPractice}} practice questions
+            </p>
+            <p class="text-xs font-semibold text-sky-800">
+                <i class="fa-solid fa-star mr-1 text-amber-200"></i>{{$course->totalQuiz}} quiz questions
+            </p>
+        </div>
+    </div>
     <div class="w-11/12 m-auto mt-4 flex items-center gap-2">
         <div class="w-full bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
             <div class="bg-blue-600 h-1.5 rounded-full dark:bg-blue-500" style="width: {{$course->completionPercentage}}%"></div>

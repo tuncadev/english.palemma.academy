@@ -21,11 +21,11 @@ class LocalizationMiddleware
         if ($request->has('locale')) {
             $locale = $request->get('locale');
             Session::put('locale', $locale);
-            Log::info('Locale set from request: ' . $locale);
+
         }
 
         $locale = Session::get('locale', config('app.locale'));
-        Log::info('Locale from session: ' . $locale);
+
         App::setLocale($locale);
 
         return $next($request);
