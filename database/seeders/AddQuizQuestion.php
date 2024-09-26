@@ -652,7 +652,7 @@ class AddQuizQuestion extends Seeder
             'question' => 'The disease _ the liver _.',
             'question_uk' => 'Хвороба знищує печінку.',
             'question_ru' => 'Болезнь медленно уничтожает печень.',
-            'correct_answer' => 'eats away',
+            'correct_answer' => 'eats, away',
             'created_at' => now(),
         ],
 
@@ -692,7 +692,7 @@ class AddQuizQuestion extends Seeder
             'question' => 'Medics tried to _ him _.',
             'question_uk' => 'Медики намагалися привести його до тями.',
             'question_ru' => 'Медики пытались привести его в сознание.',
-            'correct_answer' => 'bring around',
+            'correct_answer' => 'bring, around',
             'created_at' => now(),
         ],
 
@@ -909,7 +909,7 @@ class AddQuizQuestion extends Seeder
             'question' => 'He _ the cards _ on the table.',
             'question_uk' => 'Він розкинув картки на столі.',
             'question_ru' => 'Он раскинул карточки на столе.',
-            'correct_answer' => 'spread out',
+            'correct_answer' => 'spread, out',
             'created_at' => now(),
         ],
 
@@ -1127,7 +1127,7 @@ class AddQuizQuestion extends Seeder
             'question' => 'Don\'t worry about anything - you\'ll _ it all _.',
             'question_uk' => 'Не переживай ни о чём - ты всё уладишь.',
             'question_ru' => 'Ни про что не переживай, в конце концов ты всё решишь.',
-            'correct_answer' => 'work out',
+            'correct_answer' => 'work, out',
             'created_at' => now(),
         ],
 
@@ -1384,7 +1384,7 @@ class AddQuizQuestion extends Seeder
             'question' => 'You can _ the tablet _ the wall there.',
             'question_uk' => 'Ти можеш підключити планшет там.',
             'question_ru' => 'Ты можешь подключить планшет там.',
-            'correct_answer' => 'plug into',
+            'correct_answer' => 'plug, into',
             'created_at' => now(),
         ],
 
@@ -1462,7 +1462,7 @@ class AddQuizQuestion extends Seeder
             'question' => 'My parents had to _ me _ last week.',
             'question_uk' => 'Мої батьки змушені були допомогти мені з грошима на минулому тижні.',
             'question_ru' => 'Моим родителям пришлось помочь мне с деньгами на прошлой неделе.',
-            'correct_answer' => 'bail out',
+            'correct_answer' => 'bail, out',
             'created_at' => now(),
         ],
 
