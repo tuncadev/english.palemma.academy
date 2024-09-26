@@ -13,7 +13,7 @@ $currentLocale = session('locale', 'uk');
     $courseNameLocale = 'course_name_'.$locale
 @endphp
     <div class="mt-4 flex flex-col max-w-96 m-auto bg-[#E3EBFE] p-4 rounded-lg shadow-md">
-        <div class="flex justify-between">
+        <div class="flex justify-between items-center gap-1">
             <x-orange-bubble class="text-2xl font-semibold">
             @lang('general.course')
             </x-orant-bubble>
