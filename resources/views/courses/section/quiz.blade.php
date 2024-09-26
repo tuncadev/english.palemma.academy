@@ -113,7 +113,7 @@
 
 
                     <!-- Answers Pack with draggable inputs -->
-                    <div id="answers" class="w-full bg-gray-100 sticky top-0 py-3  border-b-2 md:max-w-3xl px-2 flex mb-6 flex justify-center items-center w-full  flex-wrap gap-2">
+                    <div id="answers" class="w-full bg-gray-100 lg:sticky top-0 py-3  border-b-2 md:max-w-3xl px-2 flex mb-6 flex justify-center items-center w-full  flex-wrap gap-2">
                         @foreach ($inputValues as $key => $answerSet)
                                 <input type="text"
                                 id="answer-{{ $answerSet["id"] }}"

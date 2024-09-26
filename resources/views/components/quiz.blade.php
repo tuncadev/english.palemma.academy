@@ -20,7 +20,6 @@ $currentLocale = session('locale', 'uk');
         @if ($hasSubscription)
         <div class="container">
             <h2>Phrasal Verbs Quiz</h2>
-
             <!-- Answers Pack with draggable inputs -->
             <div id="answers" class="flex space-x-4 mb-6">
                 @foreach ($correctAnswers as $key => $answerSet)
