@@ -1,25 +1,19 @@
 @php
 $locale = session('locale', 'uk');
 $currentLocale = session('locale', 'uk');
+$section_bg = asset('images/courses/c'.$course_id.'/s'. $section_id.'.jpg');
 @endphp
 @auth
   @extends('layouts.layout')
     @section('navigation')
     <div class="{{ $hasSubscription ? 'sm:ml-64' : ''}}">
-        <div class="w-full bg-top_bar shadow-md">
-            <nav class=" ">
-                <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-                <x-top-logo />
-                <x-user-menu :currentLocale="$currentLocale" />
-                <x-menu />
-                </div>
-            </nav>
+        <div class="relative w-full bg-top_bar shadow-md">
+            <x-nav :locale="$locale" :currentLocale="$currentLocale" />
         </div>
     </div>
     @endsection
     @section('content')
     @if ($hasSubscription)
-
         <div class=" sm:ml-64">
             <div class="mt-4 rounded-lg">
                 <div class="p-2 flex flex-col items-center justify-center mb-4 gap-6 rounded bg-gray-100 dark:bg-gray-800">
@@ -37,7 +31,7 @@ $currentLocale = session('locale', 'uk');
                         </button>
                     </div>
                     <x-steps-sidebar  :current="$section_id" :allSections="$allSections" :locale="$locale" :completedSections="$completedSections" :course_id="$course_id" />
-                    <div class="flex items-center text-gray-900 justify-between p-4 w-full flex-col md:flex-row items-start min-h-60 rounded-lg border-gray-300 border shadow-lg">
+                    <div class="bg-[url('{{$section_bg}}')] lg:bg-none max-w-2xl lg:max-w-full bg-cover flex items-center text-gray-900 justify-between p-4 w-full flex-col lg:flex-row items-start min-h-60 rounded-lg border-gray-300 border shadow-lg">
                         <div class="">
                             <h2 class="text-xl mb-2 max-w-48 font-bold text-sky-600 px-4">
                                 {{$courseNameEn}}
@@ -45,10 +39,13 @@ $currentLocale = session('locale', 'uk');
                             <p  id="top" class="px-4 mb-4 text-xl text-left">
                             Section {{ $section_id }} <br />
                             </p>
-                            <h1 class="flex  border-sky-600 border rounded flex-col text-gray-900 text-gray-200  text-left font-bold  px-4 py-2 rounded-xl capitalize shadow-md">
+                            <h1 class="flex  border-sky-600 border rounded flex-col text-gray-900 text-gray-200  text-left font-bold  px-4 py-2 rounded-t-xl rounded-t-xl rounded-b-none lg:rounded-xl md:rounded-t-xl md:rounded-b-none capitalize shadow-md">
                                 <span class="font-bold text-2xl">{{$sectionNameEn}}</span>
                                 <span class="font-bold"> {{ $sectionName }}</span>
                             </h1>
+                            <div class="max-w-96 lg:hidden md:block rounded md:rounded-t-none rounded-t-none overflow-hidden shadow-lg">
+                                <img class="max-h-full lg:hidden md:block" src="{{asset('images/courses/c'.$course_id.'/s'. $section_id.'.jpg')}}" alt="{{$courseNameEn}}">
+                            </div>
                             <h3 class="text-2xl mt-4 font-bold text-amber-600 px-4 border-amber-600 border rounded">
                                 Practice
                             </h3>
@@ -62,7 +59,7 @@ $currentLocale = session('locale', 'uk');
                             </div>
                         </div>
                         <div class="max-w-96 rounded overflow-hidden shadow-lg">
-                            <img class="max-h-full" src="{{asset('images/courses/c'.$course_id.'/s'. $section_id.'.jpg')}}" alt="{{$courseNameEn}}">
+                            <img class="max-h-full hidden lg:block md:hidden" src="{{asset('images/courses/c'.$course_id.'/s'. $section_id.'.jpg')}}" alt="{{$courseNameEn}}">
                         </div>
                     </div>
                     @if ($highestPracticeScore > 0)

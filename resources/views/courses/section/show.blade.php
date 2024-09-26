@@ -9,14 +9,9 @@ $currentLocale = session('locale', 'uk');
 @extends('layouts.layout')
     @section('navigation')
     <div class="{{ $hasSubscription ? 'sm:ml-64' : ''}}">
-        <div class="w-full bg-top_bar shadow-md">
-            <nav class=" ">
-                <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-                <x-top-logo />
-                <x-user-menu :currentLocale="$currentLocale" />
-                <x-menu />
-                </div>
-            </nav>
+        <div class="relative w-full bg-top_bar shadow-md">
+            <x-nav :locale="$locale" :currentLocale="$currentLocale" />
+        </div>
         </div>
     </div>
     @endsection
@@ -48,11 +43,13 @@ $currentLocale = session('locale', 'uk');
                         <p  id="top" class="px-4 mb-4 text-xl text-left">
                         Section {{ $section_id }} <br />
                         </p>
-                        <h1 class="flex  border-sky-600 border rounded flex-col text-gray-900 text-gray-200  text-left font-bold  px-4 py-2 rounded-xl capitalize shadow-md">
+                        <h1 class="flex  border-sky-600 border rounded flex-col text-gray-900 text-gray-200  text-left font-bold  px-4 py-2 rounded-t-xl rounded-t-xl rounded-b-none lg:rounded-xl md:rounded-t-xl md:rounded-b-none capitalize shadow-md">
                             <span class="font-bold text-2xl">{{$sectionNameEn}}</span>
                             <span class="font-bold"> {{ $sectionName }}</span>
                         </h1>
-
+                        <div class="max-w-96 lg:hidden md:block rounded md:rounded-t-none rounded-t-none overflow-hidden shadow-lg">
+                            <img class="max-h-full lg:hidden md:block" src="{{asset('images/courses/c'.$course_id.'/s'. $section_id.'.jpg')}}" alt="{{$courseNameEn}}">
+                        </div>
                         <ul class="text-xs mt-4 max-w-80 list-outside text-gray-900  p-4 rounded-xl shadow-md">
                             <li><i class="fa-solid fa-language mr-1 text-blue-900"></i>@lang('lesson.click')</li>
                             <li><i class="mr-2 fa-regular fa-circle-check mr-1 text-blue-900"></i>@lang('lesson.check')</li>
@@ -60,7 +57,7 @@ $currentLocale = session('locale', 'uk');
                         </ul>
                     </div>
                     <div class="max-w-96 rounded overflow-hidden shadow-lg">
-                        <img class="max-h-full" src="{{asset('images/courses/c'.$course_id.'/s'. $section_id.'.jpg')}}" alt="{{$courseNameEn}}">
+                        <img class="max-h-full hidden lg:block md:hidden" src="{{asset('images/courses/c'.$course_id.'/s'. $section_id.'.jpg')}}" alt="{{$courseNameEn}}">
                     </div>
                 </div>
                 <div class="flex flex-row gap-x-4">

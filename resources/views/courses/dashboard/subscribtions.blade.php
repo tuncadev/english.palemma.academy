@@ -6,15 +6,9 @@ $currentLocale = session('locale', 'uk');
 
 @extends('layouts.layout')
     @section('navigation')
-            <div class="w-full bg-top_bar shadow-md">
-                <nav class=" ">
-                    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-                    <x-top-logo />
-                    <x-user-menu :currentLocale="$currentLocale" />
-                    <x-menu />
-                    </div>
-                </nav>
-            </div>
+        <div class="relative w-full bg-top_bar shadow-md">
+            <x-nav :locale="$locale" :currentLocale="$currentLocale" />
+        </div>
     @endsection
     @section('content')
 
