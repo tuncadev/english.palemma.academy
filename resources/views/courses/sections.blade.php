@@ -12,9 +12,9 @@ $currentLocale = session('locale', 'uk');
     @section('content')
     @if ($hasSubscription)
     <div class="flex flex-col text-center w-full justify-center pb-4 border-b-2 border-gray-300 m-auto pt-6">
-        <div class="flex items-center shadow-md px-4 py-8 justify-center">
-            <h1 class="w-full text-left  p-2 rounded-md text-rose-500 text-3xl font-bold">
-            {{$courseNameEn}} | {{ $courseName }}
+        <div class="flex items-center md:flex-row  text-center flex-col shadow-md px-4 py-8 justify-center">
+            <h1 class="w-full md:text-left text-center  p-2 rounded-md text-rose-500 text-xl md:text-3xl font-bold">
+            {{$courseNameEn}} | <span class="text-amber-500">{{ $courseName }}</span>
             </h1>
             <p class="flex">
         Description about the course. What it aims, who it is for, what will the user gain after complating....

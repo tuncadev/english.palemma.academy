@@ -1,7 +1,7 @@
 <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
   <x-switch-language :currentLocale="$currentLocale" />
   @auth
-    <button type="button" class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+    <button type="button" style="margin-left: 0px !important; margin-right: 0px !important; --tw-space-x-reverse: none;" class="flex text-sm bg-gray-800 rounded-full  focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
         <span class="sr-only">
         @lang('general.openusermenu')
         </span>

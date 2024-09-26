@@ -1,3 +1,4 @@
+@props(['href', 'course', 'locale'])
 @php
     $active = $course->active == 1;
     $opacity = $active ? "opacity-100" : "opacity-50";
@@ -40,7 +41,7 @@
       {{ $courseDescription }}
     </div>
     <div class="btn w-2/5 flex items-center justify-center {{$hidden}}">
-      <a {{$attributes->merge(['class' => 'font-bold bg-green-400 rounded-lg text-gray-900 py-2 px-6 hover:text-white hover:bg-blue-500', 'href' => ''])}}>
+      <a {{$attributes->merge(['class' => 'font-bold bg-green-400 rounded-lg text-gray-900 py-2 px-4 text-sm hover:text-white hover:bg-blue-500'])}} href="{{ $href }}">
         @lang('general.more')
       </a>
     </div>
