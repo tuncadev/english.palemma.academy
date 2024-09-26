@@ -36,16 +36,5 @@ class CoursesSeeder extends Seeder
                 'created_at' => now(),
             ],
         ]);
-        DB::table('courses')->insert([
-            [
-                'active' => 1,
-                'course_name_en' => 'Test Course',
-                'course_name_ru' => 'Test Course',
-                'course_name_uk' => 'Test Course',
-                'course_description_uk' => 'Для тих, хто ніколи вивчав англійську і все забув і хоче освіжити знання',
-                'course_description_ru' => 'Для тех, кто никогда изучал английский и все позабыл и хочет освежить знания',
-                'created_at' => now(),
-            ],
-        ]);
     }
 }
