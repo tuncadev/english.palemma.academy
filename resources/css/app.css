@@ -197,7 +197,6 @@ body {
 .course-card {
 
     align-items: center;
-    flex-direction: row;
     cursor: pointer;
     transition: box-shadow .2s;
     background-color: #fff;

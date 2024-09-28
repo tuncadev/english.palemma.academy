@@ -5,18 +5,21 @@ namespace App\Http\Controllers;
 use App\Models\Practice;
 use App\Models\Section;
 use App\Models\Score;
-use Illuminate\Support\Facades\DB;
+use App\Models\Course;
 use App\Models\UserProgress;
 use App\Models\Subscribtion;
 use App\Models\Phrase;
 use App\Models\Quiz;
-use Illuminate\Http\Request;
-use App\Models\Course;
-use Illuminate\Support\Facades\App;
 use App\Models\CompletedSection;
+
+use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\App;
+
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class CourseController extends Controller
@@ -42,38 +45,53 @@ class CourseController extends Controller
 
         $course = Course::where('id', $course_id)->firstOrFail();
         $courseNameEn = $course->course_name_en;
-        switch ($locale) {
-          case 'uk':
-              $localizedSections = $sections->map(function($section) {
-                return [
-                    'section_name' => $section->section_name_uk,
-                    'en' => $section->section_name_en,
-                    'id' => $section->id,
-                ];
-               });
-              $courseName = $course->course_name_uk;
-              break;
-          case 'ru':
-              $localizedSections = $sections->map(function($section) {
-                return [
-                    'section_name' => $section->section_name_ru,
-                    'en' => $section->section_name_en,
-                    'id' => $section->id,
-                ];
-              });
-              $courseName = $course->course_name_ru;
-              break;
-          default:
-          $localizedSections = $sections->map(function($section) {
+
+        $localizedSections = $sections->map(function($section) use ($course_id, $locale, &$courseName, $course) {
+            // Determine section name and course name based on locale
+            switch ($locale) {
+                case 'uk':
+                    $sectionName = $section->section_name_uk;
+                    $courseName = $course->course_name_uk;
+                    break;
+                case 'ru':
+                    $sectionName = $section->section_name_ru;
+                    $courseName = $course->course_name_ru;
+                    break;
+                default:
+                    $sectionName = $section->section_name_en; // Fallback to English
+                    $courseName = $course->course_name_en;
+            }
+
+            // Fetch related counts
+            $totalPhrases = DB::table('phrases')
+                ->where('course_id', $course_id)
+                ->where('section_id', $section->id)
+                ->count();
+
+            $totalPractice = DB::table('practice')
+                ->where('course_id', $course_id)
+                ->where('section_id', $section->id)
+                ->count();
+
+            $totalQuiz = DB::table('quiz')
+                ->where('course_id', $course_id)
+                ->where('section_id', $section->id)
+                ->count();
+
+            // Combine section name with count data
             return [
-                'section_name' => $section->section_name_uk,
+                'section_name' => $sectionName,
                 'en' => $section->section_name_en,
                 'id' => $section->id,
+                'courseName' => $courseName,
+                'totalPhrasesInSection' => $totalPhrases,
+                'totalPracticeInSection' => $totalPractice,
+                'totalQuizInSection' => $totalQuiz,
             ];
-           });
-              $courseName = $course->course_name_uk; // Default to English if locale is not specified
-              break;
-      }
+        });
+
+
+      //dd($localizedSections);
 
         return view('courses.sections', compact('sections','user_id','courseNameEn','hasSubscription','localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
 

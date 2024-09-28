@@ -39,20 +39,26 @@
             </p>
         </div>
     </div>
-    <div class="w-11/12 m-auto mt-4 flex items-center gap-2">
-        <div class="w-full bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
-            <div class="bg-blue-600 h-1.5 rounded-full dark:bg-blue-500" style="width: {{$course->completionPercentage}}%"></div>
+    <div class="w-11/12 m-auto mt-4 flex flex-col items-center gap-2">
+        <div class="w-full text-center">
+            <p class="text-xs">{{ $course->completionPercentage > 0 ? __('general.completed') : __('general.not_started') }}</p>
         </div>
-        <span class="text-xs p-2 bg-green-200 rounded-lg font-semibold">{{$course->completionPercentage}}%</span>
+        <div class="w-full flex justify-between items-center bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
+            <div class="w-full bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
+                <div class="bg-blue-600 h-1.5 rounded-full dark:bg-blue-500" style="width: {{$course->completionPercentage}}%"></div>
+            </div>
+            <span class="text-xs p-2 bg-green-200 rounded-lg font-semibold">{{$course->completionPercentage}}%</span>
+        </div>
     </div>
-    <div class="w-full text-center">
-        <p class="text-xs">{{ $course->completionPercentage > 0 ? __('general.completed') : __('general.not_started') }}</p>
+    <div class="w-full text-center mt-4">
+        <p class="text-xs text-amber-600">Total Practice Questions Answered: {{$course->user_practice_progress}} ( %{{$course->practiceProgressPercent}} ) </p>
+        <p class="text-xs text-rose-600">Total Quiz Questions Answered: {{$course->user_quiz_progress}}  ( %{{$course->quizProgressPercent}} )</p>
     </div>
   <div class="bottom items-center flex flex-col md:flex-row gap-x-6 pt-4 px-4 pb-6 {{ $opacity }}">
-    <div class="flex w-full justify-center md:justify-start items-center gap-2 text-gray-900 text-sm w-3/5">
-      <img src="{{ asset('images/flagBlue.svg') }}" /> {{ date('Y-m-d', strtotime($course->subscribtionDate)) }}
-      <img src="{{ asset('images/rightArrow.svg') }}" />
-      <img src="{{ asset('images/flagGreen.svg') }}" /> {{ date('Y-m-d', strtotime($course->expiryDate)) }}
+    <div class="flex w-full justify-center md:justify-start items-center gap-2 text-gray-900 text-xs w-3/5">
+        <i class="text-green-400 fa-regular fa-flag"></i>{{ date('Y-m-d', strtotime($course->subscribtionDate)) }}
+        <i class="text-sky-500 fa-solid fa-right-long"></i>
+        <i class="text-red-400 fa-solid fa-flag-checkered"></i> {{ date('Y-m-d', strtotime($course->expiryDate)) }}
     </div>
     <div class="btn mt-3 w-2/5 flex items-center justify-center {{$hidden}}">
       <a {{$attributes->merge(['class' => 'font-bold bg-green-400 rounded-lg text-gray-900 py-2 px-6 hover:text-white hover:bg-blue-500', 'href' => ''])}}>
