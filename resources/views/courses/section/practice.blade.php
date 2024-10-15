@@ -1,7 +1,7 @@
 @php
-$locale = session('locale', 'uk');
-$currentLocale = session('locale', 'uk');
-$section_bg = asset('images/courses/c'.$course_id.'/s'. $section_id.'.jpg');
+    $locale = session('locale', 'uk');
+    $currentLocale = session('locale', 'uk');
+    $section_bg = asset('images/courses/c'.$course_id.'/s'. $section_id.'.jpg');
 @endphp
 @auth
   @extends('layouts.layout')
@@ -16,21 +16,9 @@ $section_bg = asset('images/courses/c'.$course_id.'/s'. $section_id.'.jpg');
     @if ($hasSubscription)
         <div class=" sm:ml-64">
             <div class="mt-4 rounded-lg">
-                <div class="p-2 flex flex-col items-center justify-center mb-4 gap-6 rounded bg-gray-100 dark:bg-gray-800">
-                    <div class="flex w-full items-left">
-                        <button data-drawer-target="cta-button-sidebar" data-drawer-toggle="cta-button-sidebar" aria-controls="cta-button-sidebar" type="button" class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
-                            <span class="sr-only">
-                                @lang('sidebar.opensidebar')
-                            </span>
-                            <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
-                            </svg>
-                            <div class="ml-2 text-lg">
-                                @lang('sidebar.allsections')
-                            </div>
-                        </button>
-                    </div>
-                    <x-steps-sidebar  :current="$section_id" :allSections="$allSections" :locale="$locale" :completedSections="$completedSections" :course_id="$course_id" />
+                <div class=" flex flex-col items-center justify-center mb-4 gap-6 rounded bg-gray-100 dark:bg-gray-800">
+                    <x-sidebar-responsive />
+                    <x-steps-sidebar :courseNameEn="$courseNameEn" :current="$section_id" :allSections="$allSections" :locale="$locale" :completedSections="$completedSections" :course_id="$course_id" />
                     <div class="bg-[url('{{$section_bg}}')] lg:bg-none max-w-2xl lg:max-w-full bg-cover flex items-center text-gray-900 justify-between p-4 w-full flex-col lg:flex-row items-start min-h-60 rounded-lg border-gray-300 border shadow-lg">
                         <div class="">
                             <h2 class="text-xl mb-2 max-w-48 font-bold text-sky-600 px-4">
@@ -144,56 +132,53 @@ $section_bg = asset('images/courses/c'.$course_id.'/s'. $section_id.'.jpg');
                                 $underscoreCount = substr_count($questionText, '_');
                                 $points = "";
                                 if ($underscoreCount === 2) {
-                                    // Split the question text into parts
-                                    $parts = explode('_', $questionText);
-                                    $points = 2.5;
-                                    $doulbeID = $question->id;
-                                    // Generate the options for the two dropdowns
-                                    if (array_map(function($option) {
-                                        $words = explode(', ', $option);
-                                        return $words[0];
-                                    }, $options)) {
+    // Split the question text into parts (at underscores)
+    $parts = explode('_', $questionText);
+    $points = 2.5;
+    $doubleID = $question->id;
 
-                                        $firstOptions = array_map(function($option) {
-                                            $words = explode(' ', $option);
-                                            return $words[0];
-                                        }, $options);
+    // Separate the answer options into first and second parts based on whether they contain a comma
+    $firstOptions = [];
+    $secondOptions = [];
 
-                                        $secondOptions = array_map(function($option) {
-                                            $words = explode(' ', $option);
-                                            $secondPart = isset($words[2]) ? $words[1] . " " . $words[2] : (isset($words[1]) ? $words[1] : "");
-                                            return $secondPart;
-                                        }, $options);
+    foreach ($options as $option) {
+        if (strpos($option, ',') !== false) {
+            // Option contains a comma, split by comma for two dropdowns
+            $phrases = explode(', ', $option);
+            $firstOptions[] = $phrases[0];  // First part before the comma
+            $secondOptions[] = $phrases[1]; // Second part after the comma
+        } else {
+            // Option doesn't contain a comma, split by space for two dropdowns
+            $words = explode(' ', $option);
+            $firstOptions[] = $words[0];  // First word
+            $secondOptions[] = isset($words[1]) ? $words[1] : '';  // Second word if available
+        }
+    }
 
-                                    } else {
-
-                                       $firstOptions = array_map(function($option) {
-                                            $words = explode(' ', $option);
-                                            return $words[0];
-                                        }, $options);
-                                        $secondOptions = array_map(function($option) {
-                                            $words = explode(' ', $option);
-                                            $secondPart = isset($words[2]) ? $words[1] . " " . $words[2] : (isset($words[1]) ? $words[1] : "");
-                                            return $secondPart;
-                                        }, $options);
-
-                                    }
-
-
-                                   // dd($correctAnswers);
-                                    // Generate the question HTML with two select components
-                                    $questionText = $parts[0].
-                                                    view('components.practice-select', ['answer' => base64_encode($correctAnswers[$doulbeID]['part1']) ,'points' => $points, 'dropdownValues' => $dropdownValues[(int)($id . "1")][(int)($id . "1")] ?? '', 'id' =>  (int)($id . "1"), 'options' => $firstOptions, ])->render() .
-                                                    $parts[1].
-                                                    view('components.practice-select', ['answer' => base64_encode($correctAnswers[$doulbeID]['part2']), 'points' => $points, 'dropdownValues' => $dropdownValues[(int)($id . "2")][(int)($id . "2")] ?? '', 'id' =>  (int)($id . "2"), 'options' => $secondOptions])->render() .
-                                                    $parts[2];
-
-                                } else {
-                                    $answer = base64_encode($question->correct_answer);
-                                    $points = 5;
-                                    $selectComponent = view('components.practice-select', compact('answer', 'points', 'dropdownValues', 'id', 'options'))->render();
-                                    $questionText = str_replace('_', $selectComponent, $questionText);
-                                }
+    // Now generate the question HTML with two select components
+    $questionText = $parts[0] .
+                    view('components.practice-select', [
+                        'answer' => base64_encode($correctAnswers[$doubleID]['part1']),
+                        'points' => $points,
+                        'dropdownValues' => $dropdownValues[(int)($id . "1")][(int)($id . "1")] ?? '',
+                        'id' => (int)($id . "1"),
+                        'options' => $firstOptions
+                    ])->render() .
+                    $parts[1] .
+                    view('components.practice-select', [
+                        'answer' => base64_encode($correctAnswers[$doubleID]['part2']),
+                        'points' => $points,
+                        'dropdownValues' => $dropdownValues[(int)($id . "2")][(int)($id . "2")] ?? '',
+                        'id' => (int)($id . "2"),
+                        'options' => $secondOptions
+                    ])->render() .
+                    $parts[2];
+} else {
+    $answer = base64_encode($question->correct_answer);
+    $points = 5;
+    $selectComponent = view('components.practice-select', compact('answer', 'points', 'dropdownValues', 'id', 'options'))->render();
+    $questionText = str_replace('_', $selectComponent, $questionText);
+}
 
                                 $localizedQuestion = $localizedQuestions[$index]['localizedQuestion'] ?? '';
 

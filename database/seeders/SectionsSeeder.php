@@ -70,7 +70,7 @@ class SectionsSeeder extends Seeder
         [
             'course_id' => 1,
             'section_name_en' => 'Health',
-            'section_name_uk' => 'Здоров\'я',
+            'section_name_uk' => 'Здоров`я',
             'section_name_ru' => 'здоровье',
             'created_at' => now(),
         ],

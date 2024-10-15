@@ -26,20 +26,8 @@
         <div class=" sm:ml-64">
             <div class="mt-4 rounded-lg">
                 <div class="p-2 flex flex-col items-center justify-center mb-4 gap-6 rounded bg-gray-100 dark:bg-gray-800">
-                    <div class="flex w-full items-left">
-                        <button data-drawer-target="cta-button-sidebar" data-drawer-toggle="cta-button-sidebar" aria-controls="cta-button-sidebar" type="button" class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
-                        <span class="sr-only">
-                        @lang('sidebar.opensidebar')
-                        </span>
-                        <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
-                        </svg>
-                        <div class="ml-2 text-lg">
-                            @lang('sidebar.allsections')
-                        </div>
-                        </button>
-                    </div>
-                    <x-steps-sidebar  :current="$section_id" :allSections="$allSections" :locale="$locale" :completedSections="$completedSections" :course_id="$course_id" />
+                    <x-sidebar-responsive />
+                    <x-steps-sidebar :courseNameEn="$courseNameEn" :current="$section_id" :allSections="$allSections" :locale="$locale" :completedSections="$completedSections" :course_id="$course_id" />
                     <div class="flex items-center text-gray-900 justify-between p-4 w-full flex-col lg:flex-row items-start min-h-60 rounded-lg border-gray-300 border shadow-lg">
                         <div class="">
                             <h2 class="text-xl mb-2 max-w-48 font-bold text-sky-600 px-4">
@@ -127,8 +115,7 @@
                         @endforeach
                     </div>
                     <!-- Questions with empty draggable inputs -->
-                    <form id="quiz-form" method="GET"
-                        action="{{ route('course.show', ['course_id' => $course_id, 'section_id' => $section_id+1]) }}">
+                    <form id="quiz-form" method="GET">
                         <input type="hidden" name="quiz_score" id="quiz_score" value="">
                             @csrf
                             @php
@@ -234,7 +221,6 @@
         <x-popmsg :section_id="$section_id"  :course_id="$course_id" />
 <script>
     $(document).ready(function() {
-        console.log("Debug");
         // Form submit event to gather and display all answers
         $('#quiz-form').on('submit', function(event) {
             event.preventDefault(); // Prevent the form from actually submitting
@@ -273,8 +259,8 @@
         }).then(response => response.json())
           .then(data => {
               if (data.success) {
-                  //window.location.href = '{{ route("course.quiz", ["course_id" => $course_id, "section_id" => $section_id]) }}';
-                 document.getElementById('quiz-form').submit(); // Submit the form
+                  window.location.href = '{{ route("course.show", ["course_id" => $course_id, "section_id" => $section_id+1]) }}';
+                 //document.getElementById('quiz-form').submit(); // Submit the form
               } else {
                   alert('Failed to save progress. Please try again.');
               }
@@ -477,7 +463,7 @@
 
             if (allFilled) {
                 document.getElementById('quiz_score').value = quizScore; // Set quiz score
-                return true; // Allow form submission
+                window.location.href = '{{ route("course.show", ["course_id" => $course_id, "section_id" => $section_id]) }}';
             } else {
                 return false; // Prevent form submission
             }

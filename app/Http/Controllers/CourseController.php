@@ -24,6 +24,35 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class CourseController extends Controller
 {
+    public function introduction($course_id) {
+        $locale = session('locale', config('app.locale'));
+        $user_id = Auth::id();
+        $allSections = Section::where('course_id', $course_id)->get();
+        $completedSections = CompletedSection::where('user_id', $user_id)
+                                          ->where('course_id', $course_id)
+                                          ->pluck('section_id')
+                                          ->toArray();
+        $course = Course::where('id', $course_id)->firstOrFail();
+        $courseNameEn = $course->course_name_en;
+        $subscription = Subscribtion::where('user_id', $user_id)
+        ->where('course_id', $course_id)
+        ->first();
+        $hasSubscription = $subscription && $subscription->payment_status === 'completed';
+        return view('courses.video.index', compact('user_id', 'courseNameEn', 'course_id', 'completedSections', 'allSections', 'hasSubscription'));
+    }
+
+    public function instructions($course_id, $section_id) {
+        $locale = session('locale', config('app.locale'));
+        $user_id = Auth::id();
+        $allSections = Section::where('course_id', $course_id)->get();
+        $completedSections = CompletedSection::where('user_id', $user_id)
+                                          ->where('course_id', $course_id)
+                                          ->pluck('section_id')
+                                          ->toArray();
+
+        return view('courses.video.instructions', compact('course_id', 'section_id', 'completedSections', 'allSections'));
+    }
+
     public function sections($course_id) {
         $locale = session('locale', config('app.locale'));
         $user_id = Auth::id();
@@ -186,7 +215,7 @@ class CourseController extends Controller
 
     }
 
-    public function serveVideo($filename)
+   /* public function serveVideo($filename)
     {
         $path = public_path('video/' . $filename);
 
@@ -200,10 +229,10 @@ class CourseController extends Controller
 
         return $response;
     }
-
-    public function index($course_id, Request $request)
+*/
+    public function index($course_id)
     {
-        $colorClass = $request->query('colorClass', null);
+
         $user_id = Auth::id();
         $sections = Section::where('course_id', $course_id)->get();
         $completedSections = CompletedSection::where('user_id', $user_id)
@@ -253,11 +282,11 @@ class CourseController extends Controller
               break;
       }
 
-        return view('courses.course', compact('course', 'colorClass', 'localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
+        return view('courses.course', compact('course', 'localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
     }
 
 
-    public function show($course_id, $section_id, Request $request)
+    public function show($course_id, $section_id)
 {
 
     $user_id = Auth::id();
@@ -266,9 +295,11 @@ class CourseController extends Controller
                                 ->first();
 
     $hasSubscription = $subscription && $subscription->payment_status === 'completed' && $subscription->expiry_date > today();
-    $colorClass = $request->query('colorClass', null);
     $locale = session('locale', config('app.locale'));
-    $completedSections = CompletedSection::pluck('section_id')->toArray();
+    $completedSections = CompletedSection::where('user_id', $user_id)
+                                          ->where('course_id', $course_id)
+                                          ->pluck('section_id')
+                                          ->toArray();
     $completedSectionNames = Section::whereIn('id', $completedSections)
                              ->where('id', '!=', $section_id)
                              ->pluck('section_name_' . $locale)
@@ -337,7 +368,7 @@ class CourseController extends Controller
             break;
     }
 
-    return view('courses.section.show', compact('sectionNameEn', 'courseNameEn', 'pageTitle','hasSubscription', 'locale', 'allSections', 'completedSections', 'completedSectionNames', 'colorClass', 'locked', 'section_id', 'phrases', 'sectionName', 'localizedPhrases', 'courseName', 'course_id'));
+    return view('courses.section.show', compact('user_id', 'sectionNameEn', 'courseNameEn', 'pageTitle','hasSubscription', 'locale', 'allSections', 'completedSections', 'completedSectionNames', 'locked', 'section_id', 'phrases', 'sectionName', 'localizedPhrases', 'courseName', 'course_id'));
 }
 
 
@@ -366,7 +397,10 @@ class CourseController extends Controller
 
 
         $allSections = Section::where('course_id', $course_id)->get();
-        $completedSections = CompletedSection::pluck('section_id')->toArray();
+        $completedSections = CompletedSection::where('user_id', $user_id)
+                                          ->where('course_id', $course_id)
+                                          ->pluck('section_id')
+                                          ->toArray();
         $completedSection = CompletedSection::firstOrNew([
           'user_id' => $user_id,
           'course_id' => $course_id,
@@ -397,13 +431,13 @@ class CourseController extends Controller
                 $courseName = $course->course_name_uk;
                 $pageTitle =  __('lesson.practice') . " - " . $courseName . " - " . $sectionName;
                 $localizedQuestions = $questions->map(function($question) use ($dropdownStates){
-                $underscoreCount = substr_count($question->question, '_');
+                    $underscoreCount = substr_count($question->question, '_');
 
-                if($underscoreCount > 1) {
-                    $id = (int)($question->id + 100);
-                } else {
-                    $id = $question->id;
-                }
+                    if($underscoreCount > 1) {
+                        $id = (int)($question->id + 100);
+                    } else {
+                        $id = $question->id;
+                    }
 
                     return [
                         'localizedQuestion' => $question->question_uk,
@@ -555,7 +589,10 @@ class CourseController extends Controller
         }
 
     $allSections = Section::where('course_id', $course_id)->get();
-    $completedSections = CompletedSection::pluck('section_id')->toArray();
+    $completedSections = CompletedSection::where('user_id', $user_id)
+                                          ->where('course_id', $course_id)
+                                          ->pluck('section_id')
+                                          ->toArray();
 
     $completedSection = CompletedSection::firstOrNew([
         'user_id' => $user_id,
@@ -711,7 +748,6 @@ public function updateQuizScore(Request $request, $course_id, $section_id)
 
     //dd($nextSection);
     if ($nextSection) {
-
         // Redirect or return the response as per your application logic
         return response()->json(['success' => true]);
     } else {
@@ -749,6 +785,7 @@ public function savePracticeProgress(Request $request, $course_id, $section_id)
         );
     }
     $this->updatePracticeScore($request, $course_id, $section_id);
+
     return response()->json(['success' => true]);
 }
 
@@ -809,6 +846,7 @@ public function saveQuizProgress(Request $request, $course_id, $section_id)
         ]);
     }
     $this->updateQuizScore($request, $course_id, $section_id);
+
     return response()->json(['success' => true]);
 }
 
