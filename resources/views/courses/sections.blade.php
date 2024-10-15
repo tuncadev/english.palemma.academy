@@ -106,7 +106,7 @@ $currentLocale = session('locale', 'uk');
                     </a>
                 @else
                 <div class="c_container relative w-full flex relative btn btn-primary course-card px-2 md:px-6 md:py-4">
-                    <img src="{{asset('images/courses/c'.$course_id.'/s'.$section['id'].'.jpg')}}" class="max-w-40 sm:max-w-48 rounded shadow-lg" alt="Section {{$section['en']}}">
+                    <img src="{{asset('images/courses/c'.$course_id.'/s'.$section['id'].'.jpg')}}" class="{{ $isUnlocked ? 'opacity-100' : 'opacity-50' }} max-w-40 sm:max-w-48 rounded shadow-lg" alt="Section {{$section['en']}}">
                     <div class="w-full block text-left text-gray-900 shadow-secondary-1 {{ $isUnlocked ? 'opacity-100' : 'opacity-50' }}">
                         <div class="p-6">
                             <h5 class="mb-2 text-xs md:text-xl font-semibold leading-tight">
