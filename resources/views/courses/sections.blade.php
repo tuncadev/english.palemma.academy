@@ -111,7 +111,7 @@ $currentLocale = session('locale', 'uk');
                     <div class="w-full block text-left text-gray-900 shadow-secondary-1 {{ $isUnlocked ? 'opacity-100' : 'opacity-50' }}">
                         <div class="p-6">
                             <h5 class="mb-2 text-xs md:text-xl font-semibold leading-tight">
-                                <span class=text-sky-900>{{$section['en']}} </span>|  <span>{{ $section['section_name']}}</span>
+                                <span class=text-sky-900>{{$section['id']}}. {{$section['en']}} </span>|  <span>{{ $section['section_name']}}</span>
                             </h5>
                         </div>
                     </div>
