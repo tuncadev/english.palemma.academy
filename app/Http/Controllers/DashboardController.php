@@ -73,7 +73,11 @@ class DashboardController extends Controller
 
             $totalSections = Section::where('course_id', $course->id)->count();
 
-
+            $allSections = Section::where('course_id', $course->id)->get();
+            $completedSections = CompletedSection::where('user_id', $user_id)
+                                          ->where('course_id', $course->id)
+                                          ->pluck('section_id')
+                                          ->toArray();
             $subscription = $subscriptions->firstWhere('course_id', $course->id);
             $isExpired = $subscription && $subscription->expiry_date <= today();
             $paymentStatus = $subscription && $subscription->payment_status;
@@ -112,7 +116,8 @@ class DashboardController extends Controller
             //$course->percentageCompleted = $percentageCompleted;
 
 
-
+            $course->allSections = $allSections;
+            $course->completedSections = $completedSections;
             $course->totalPhrases = $totalPhrases;
             $course->totalPractice = $totalPractice;
             $course->totalQuiz = $totalQuiz;

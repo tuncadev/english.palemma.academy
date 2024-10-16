@@ -12,7 +12,10 @@
                 </div>
             @if (Auth::user()->avatar)
                 <img id="current-avatar" src="{{ asset('storage/' . Auth::user()->avatar) }}" class=" w-full h-full object-cover" alt="Avatar">
-                <div onclick="removeAvatar()" id="remove-avatar" title="remove" class="absolute z-10 text-sky-800 hover:text-amber-200 hover:cursor-pointer left-1/2 transform -translate-x-1/2 bottom-0">
+                <div
+                onclick="removeAvatar()"
+                id="remove-avatar" title="remove"
+                class="bg-sky-500/60 p-1 rounded-full hover:bg-white/100 absolute z-10 text-sky-100 hover:text-gray-600 hover:cursor-pointer left-1/2 transform -translate-x-1/2 bottom-0">
                     <i class=" fa-regular fa-trash-can"></i>
                 </div>
             @else

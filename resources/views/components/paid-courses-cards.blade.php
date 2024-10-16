@@ -1,3 +1,4 @@
+@props(['data-href', 'course', 'locale', 'badge', 'badgeClass'])
 @php
     $active = $course->active == 1;
     $opacity = $active ? "opacity-100" : "opacity-50";
@@ -8,7 +9,8 @@
     $courseNameEn = $course['course_name_en'];
 @endphp
 
-<div {{$attributes->merge(['data-href' => ''])}} onclick="navigateTo(this)" data-text="{{$badge}}" class="card-sticker card-sticker--{{$badgeClass}} {{$cursor }} hover:opacity-100 {{ $active ? 'opacity-90' : '' }}  relative  overflow-hidden border border-teal-300 rounded-lg">
+<div {{$attributes->merge(['data-href' => ''])}} onclick="navigateTo(this)" data-text="{{$badge}}"
+    class="card-sticker card-sticker--{{$badgeClass}} hover:opacity-100 {{ $active ? 'opacity-90' : '' }}  relative  overflow-hidden border border-teal-300 rounded-lg">
   @if (!$active)
         <div class="flex absolute w-full p-2 font-bold text-rose-500 bg-red-500/50">
             <p class="bg-white px-2 rounded">
@@ -54,22 +56,34 @@
         <p class="text-xs text-amber-600">Total Practice Questions Answered: {{$course->user_practice_progress}} ( %{{$course->practiceProgressPercent}} ) </p>
         <p class="text-xs text-rose-600">Total Quiz Questions Answered: {{$course->user_quiz_progress}}  ( %{{$course->quizProgressPercent}} )</p>
     </div>
-  <div class="bottom items-center flex flex-col md:flex-row gap-x-6 pt-4 px-4 pb-6 {{ $opacity }}">
-    <div class="flex w-full justify-center md:justify-start items-center gap-2 text-gray-900 text-xs w-3/5">
-        <i class="text-green-400 fa-regular fa-flag"></i>{{ date('Y-m-d', strtotime($course->subscribtionDate)) }}
-        <i class="text-sky-500 fa-solid fa-right-long"></i>
-        <i class="text-red-400 fa-solid fa-flag-checkered"></i> {{ date('Y-m-d', strtotime($course->expiryDate)) }}
+    <div class="bottom items-center flex flex-col md:flex-row gap-x-6 pt-4 px-4 pb-6 {{ $opacity }}">
+        <div class="flex w-full justify-center md:justify-start items-center gap-2 text-gray-900 text-xs w-3/5">
+            <i class="text-green-400 fa-regular fa-flag"></i>{{ date('Y-m-d', strtotime($course->subscribtionDate)) }}
+            <i class="text-sky-500 fa-solid fa-right-long"></i>
+            <i class="text-red-400 fa-solid fa-flag-checkered"></i> {{ date('Y-m-d', strtotime($course->expiryDate)) }}
+        </div>
+        <div class="btn mt-3 w-2/5 flex items-center justify-center {{$hidden}}">
+        <a {{$attributes->merge(['class' => 'font-bold bg-green-400 rounded-lg text-gray-900 py-2 px-6 hover:text-white hover:bg-blue-500', 'href' => ''])}}>
+            @if ( $course->completionPercentage > 0 )
+                @lang('general.continue')
+            @else
+                @lang('general.start')
+            @endif
+        </a>
+        </div>
     </div>
-    <div class="btn mt-3 w-2/5 flex items-center justify-center {{$hidden}}">
-      <a {{$attributes->merge(['class' => 'font-bold bg-green-400 rounded-lg text-gray-900 py-2 px-6 hover:text-white hover:bg-blue-500', 'href' => ''])}}>
-        @if ( $course->completionPercentage > 0 )
-            @lang('general.continue')
-        @else
-            @lang('general.start')
-        @endif
-      </a>
+    <div class="p-4 flex flex-wrap items-center justify-start gap-2">
+        <span class="text-xs">@lang('course.available_sections'):</span>
+        @foreach ($course->allSections as $section)
+            @if ( !in_array($section->id - 1, $course->completedSections ) && $section->id != 1 )
+                <span class="hover:cursor-default px-2 py-1 bg-gray-200 rounded text-xs">{{$section->section_name_en}}</span>
+            @else
+            <a href="{{ route('course.show', ['course_id' => $course->id, 'section_id' => $section->id]) }}">
+                <span class="hover:bg-sky-300 px-2 py-1 bg-green-200 rounded text-xs">{{$section->section_name_en}}</span>
+            </a>
+            @endif
+        @endforeach
     </div>
-  </div>
 </div>
 
 <script>

@@ -136,7 +136,10 @@ class CourseController extends Controller
         $courses = Course::whereIn('id', $subscribtions)->get();
         $locale = session('locale', config('app.locale'));
         // Prepare the localized courses array
+
         $localizedCourses = $courses->map(function($course) use ($user_id, $locale) {
+
+
             $subscription = Subscribtion::where('user_id', $user_id)
                 ->where('course_id', $course->id)
                 ->first();

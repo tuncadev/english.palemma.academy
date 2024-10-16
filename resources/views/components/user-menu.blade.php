@@ -57,7 +57,7 @@
         data-modal-toggle="authentication-modal"
         class="capitalize block text-blue-700 hover:text-green-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs  py-1 text-center"
         type="button">
-        <i class="fa-solid fa-right-to-bracket"></i>
+        <i class="fa-solid fa-right-to-bracket mr-1"></i>@lang('general.login')
 
     </button>
   @endauth
