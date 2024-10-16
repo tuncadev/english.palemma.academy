@@ -5,10 +5,10 @@
         <h1  id="top" class="text-xl">
             {{ $courseName }} -
         </h1>
-        <h2 class="{{$colorClass}} text-gray-200 text-xl font-bold  px-4 py-2 rounded-xl capitalize shadow-md">
+        <h2 class="text-gray-200 text-xl font-bold  px-4 py-2 rounded-xl capitalize shadow-md">
             {{ $section_id }} - {{ $sectionName }}
         </h2>
-        <ul class="text-xs mt-4 max-w-80 list-outside {{$colorClass}}  p-4 rounded-xl shadow-md">
+        <ul class="text-xs mt-4 max-w-80 list-outside  p-4 rounded-xl shadow-md">
             <li><i class="fa-solid fa-language mr-1" style="color: #e7e7e7;"></i>@lang('lesson.click')</li>
             <li><i class="mr-2 fa-regular fa-circle-check mr-1" style="color: #e7e7e7;"></i>@lang('lesson.check')</li>
             <li><i class="fa-solid fa-check-double mr-1" style="color: #e7e7e7;"></i>@lang('lesson.all_done')</li>
@@ -46,7 +46,7 @@
     <form class="w-full md:w-10/12 pb-20" id="phrases-form" action="{{ route('course.practice', ['course_id' => $course_id, 'section_id' => $section_id]) }}" method="GET" onsubmit="return validateForm()">
         <ul>
             @foreach ($localizedPhrases as $phrase)
-                <x-phrase-card :phrase="$phrase" class="max-w-96 {{$colorClass}} text-gray-200"/>
+                <x-phrase-card :phrase="$phrase" class="max-w-96 text-gray-200"/>
             @endforeach
         </ul>
         <div class="flex justify-between items-center">

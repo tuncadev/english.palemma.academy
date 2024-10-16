@@ -41,7 +41,7 @@ class CourseController extends Controller
         return view('courses.video.index', compact('user_id', 'courseNameEn', 'course_id', 'completedSections', 'allSections', 'hasSubscription'));
     }
 
-    public function instructions($course_id, $section_id) {
+    public function instructions($course_id) {
         $locale = session('locale', config('app.locale'));
         $user_id = Auth::id();
         $allSections = Section::where('course_id', $course_id)->get();
@@ -49,8 +49,13 @@ class CourseController extends Controller
                                           ->where('course_id', $course_id)
                                           ->pluck('section_id')
                                           ->toArray();
-
-        return view('courses.video.instructions', compact('course_id', 'section_id', 'completedSections', 'allSections'));
+        $course = Course::where('id', $course_id)->firstOrFail();
+        $courseNameEn = $course->course_name_en;
+        $subscription = Subscribtion::where('user_id', $user_id)
+        ->where('course_id', $course_id)
+        ->first();
+        $hasSubscription = $subscription && $subscription->payment_status === 'completed';
+        return view('courses.video.instructions', compact('user_id', 'courseNameEn', 'course_id', 'completedSections', 'allSections', 'hasSubscription'));
     }
 
     public function sections($course_id) {
@@ -304,6 +309,19 @@ class CourseController extends Controller
                              ->where('id', '!=', $section_id)
                              ->pluck('section_name_' . $locale)
                              ->toArray();
+    // Step 2: Find the maximum completed section ID
+    $maxCompletedSection = !empty($completedSections) ? max($completedSections) : 0;
+
+    // Step 3: Unlock the next section (max + 1)
+    $unlockedSectionIds = array_merge($completedSections, [$maxCompletedSection + 1]);
+
+    // Step 4: Retrieve sections with IDs in the unlockedSectionIds array
+    $unlockedSections = Section::whereIn('id', $unlockedSectionIds)->get();
+    // Add the localized section name to each section
+    $unlockedSections = $unlockedSections->map(function($section) use ($locale) {
+        $section->localized_name = $section["section_name_" . $locale];
+        return $section;
+    });
     $locked = false;
 
     if (!in_array($section_id - 1, $completedSections) && $section_id != 1) {
@@ -314,7 +332,7 @@ class CourseController extends Controller
     $course = Course::where('id', $course_id)->firstOrFail();
     $phrases = Phrase::where('section_id', $section_id)->get();
     $allSections = Section::where('course_id', $course_id)->get();
-
+    $sectionNames =  Section::where('course_id', $course_id)->get();
     // Retrieve the checkbox states from the user_progress table
     $phraseStates = DB::table('user_progress')
         ->where('user_id', $user_id)
@@ -368,7 +386,7 @@ class CourseController extends Controller
             break;
     }
 
-    return view('courses.section.show', compact('user_id', 'sectionNameEn', 'courseNameEn', 'pageTitle','hasSubscription', 'locale', 'allSections', 'completedSections', 'completedSectionNames', 'locked', 'section_id', 'phrases', 'sectionName', 'localizedPhrases', 'courseName', 'course_id'));
+    return view('courses.section.show', compact('unlockedSections', 'user_id', 'sectionNameEn', 'courseNameEn', 'pageTitle','hasSubscription', 'locale', 'allSections', 'completedSections', 'completedSectionNames', 'locked', 'section_id', 'phrases', 'sectionName', 'localizedPhrases', 'courseName', 'course_id'));
 }
 
 
@@ -401,6 +419,19 @@ class CourseController extends Controller
                                           ->where('course_id', $course_id)
                                           ->pluck('section_id')
                                           ->toArray();
+                                          // Step 2: Find the maximum completed section ID
+        $maxCompletedSection = !empty($completedSections) ? max($completedSections) : 0;
+
+        // Step 3: Unlock the next section (max + 1)
+        $unlockedSectionIds = array_merge($completedSections, [$maxCompletedSection + 1]);
+
+        // Step 4: Retrieve sections with IDs in the unlockedSectionIds array
+        $unlockedSections = Section::whereIn('id', $unlockedSectionIds)->get();
+        // Add the localized section name to each section
+        $unlockedSections = $unlockedSections->map(function($section) use ($locale) {
+            $section->localized_name = $section["section_name_" . $locale];
+            return $section;
+        });
         $completedSection = CompletedSection::firstOrNew([
           'user_id' => $user_id,
           'course_id' => $course_id,
@@ -540,7 +571,7 @@ class CourseController extends Controller
        //     'correctAnswers' => $correctAnswers,
        // ]);
        //dd( $dropdownVals);
-        return view("courses.section.practice", compact('courseNameEn', 'sectionNameEn', 'pageTitle','highestPracticeScore', 'highestScoreDate', 'dropdownVals','dropdownStates', 'localizedQuestions', 'hasSubscription', 'update_at','completedSections','locale','allSections','correctAnswers','questions', 'highestPracticeScore', 'courseName', 'section', 'phrases', 'course_id', 'section_id', 'sectionName'));
+        return view("courses.section.practice", compact('unlockedSections', 'courseNameEn', 'sectionNameEn', 'pageTitle','highestPracticeScore', 'highestScoreDate', 'dropdownVals','dropdownStates', 'localizedQuestions', 'hasSubscription', 'update_at','completedSections','locale','allSections','correctAnswers','questions', 'highestPracticeScore', 'courseName', 'section', 'phrases', 'course_id', 'section_id', 'sectionName'));
     }
 
     function replaceUnderscoresWithSpans($inputString, $id) {
@@ -552,6 +583,7 @@ class CourseController extends Controller
 
     public function quiz($course_id, $section_id)
 {
+    $locale = session('locale', config('app.locale'));
     $allquizquestions = Quiz::where('course_id', $course_id)->get();
     $allpracticequestions = Practice::where('course_id', $course_id)->get();
     // Log IDs of questions with multiple underscores
@@ -593,7 +625,18 @@ class CourseController extends Controller
                                           ->where('course_id', $course_id)
                                           ->pluck('section_id')
                                           ->toArray();
+    $maxCompletedSection = !empty($completedSections) ? max($completedSections) : 0;
 
+    // Step 3: Unlock the next section (max + 1)
+    $unlockedSectionIds = array_merge($completedSections, [$maxCompletedSection + 1]);
+
+    // Step 4: Retrieve sections with IDs in the unlockedSectionIds array
+    $unlockedSections = Section::whereIn('id', $unlockedSectionIds)->get();
+    // Add the localized section name to each section
+    $unlockedSections = $unlockedSections->map(function($section) use ($locale) {
+        $section->localized_name = $section["section_name_" . $locale];
+        return $section;
+    });
     $completedSection = CompletedSection::firstOrNew([
         'user_id' => $user_id,
         'course_id' => $course_id,
@@ -682,7 +725,7 @@ class CourseController extends Controller
 
 
    // dd($newQuestions);
-    return view("courses.section.quiz", compact('courseNameEn', 'sectionNameEn', 'pageTitle', 'prevInputValues', 'inputValues','localizedQuestions', 'hasSubscription', 'allSections', 'completedSections', 'update_at', 'questions', 'correctAnswers', 'courseName', 'sectionName', 'section', 'phrases', 'course_id', 'section_id', 'highestPracticeScore', 'highestQuizScore'));
+    return view("courses.section.quiz", compact('unlockedSections', 'courseNameEn', 'sectionNameEn', 'pageTitle', 'prevInputValues', 'inputValues','localizedQuestions', 'hasSubscription', 'allSections', 'completedSections', 'update_at', 'questions', 'correctAnswers', 'courseName', 'sectionName', 'section', 'phrases', 'course_id', 'section_id', 'highestPracticeScore', 'highestQuizScore'));
 }
 
 

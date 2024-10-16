@@ -6,7 +6,6 @@
 
                 if ($current == 0) {
                     $introduction = true;
-                    $current = 1;
                 } else {
 
                     $introduction = false;
@@ -28,8 +27,6 @@
                     if ( $current == $id) {
                         $current_section = true;
                     }
-
-
                     if ( !in_array($mySection->id - 1, $completedSections ) && $mySection->id != 1 ) {
                         $locked = true;
                     } else {

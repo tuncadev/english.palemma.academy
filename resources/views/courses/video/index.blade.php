@@ -17,7 +17,7 @@
             <div class="mt-2 rounded-lg">
                 <div class="p-2 flex flex-col items-center justify-center mb-4 gap-6 rounded bg-gray-50 dark:bg-gray-800">
                     <x-sidebar-responsive />
-                    <x-steps-sidebar  :current=0 :allSections="$allSections" :locale="$locale" :completedSections="$completedSections" :course_id="$course_id" />
+                    <x-steps-sidebar :courseNameEn="$courseNameEn" :current=0 :allSections="$allSections" :locale="$locale" :completedSections="$completedSections" :course_id="$course_id" />
 
                     <div class="flex flex-col text-center w-full justify-center items-center pb-4 border-b-2 border-gray-300 m-auto pt-6">
                         <div class="flex w-full justify-center video-container items-center">
