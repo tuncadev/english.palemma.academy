@@ -22,6 +22,7 @@ return [
   'paidlessons' => 'оплачені курси',
   'othercompleted' => 'інші завершені розділи:',
   'check' =>  'перевірити',
+  'videotutorials' => 'Відео-уроки',
 ];
 
 ?>

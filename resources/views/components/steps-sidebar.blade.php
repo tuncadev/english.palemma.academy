@@ -3,20 +3,16 @@
     <div class="   p-6 bg-gray-50 dark:bg-gray-800 overflow-y-auto">
         <ol class="relative text-sm text-gray-500 border-l-2 border-gray-200 dark:border-gray-700 dark:text-gray-400">
             @php
+                $video = false;
 
-                if ($current == 0) {
-                    $introduction = true;
+               if ($current == "video") {
+                    $video = true;
                 } else {
-
-                    $introduction = false;
                     $current = $current;
                 }
             @endphp
-            @if ( $introduction )
-                <x-introduction-section-active  :course_id="$course_id" :current_id="$current" />
-            @else
-                <x-introduction-section-passive  :course_id="$course_id" :current_id="$current" />
-            @endif
+                <x-introduction-section-active  :current="$current" :course_id="$course_id" :current_id="$current" />
+                <x-video-section-active  :current="$current" :course_id="$course_id" :current_id="$current" />
             @foreach ($allSections as $index => $mySection)
                 @php
                     $section_name = "section_name_" . $locale;
@@ -51,7 +47,6 @@
 
         const element = document.getElementById('cta-button-sidebar');
         const savedScrollPosition = localStorage.getItem('sidebarScrollPosition');
-        console.log('position: ' + savedScrollPosition);
         if (element) {
             element.scrollTop =  savedScrollPosition - 270;
             localStorage.removeItem('sidebarScrollPosition');

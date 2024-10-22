@@ -11,6 +11,7 @@ use App\Models\Subscribtion;
 use App\Models\Phrase;
 use App\Models\Quiz;
 use App\Models\CompletedSection;
+use App\Models\Video;
 
 use Illuminate\Http\Request;
 
@@ -38,8 +39,9 @@ class CourseController extends Controller
         ->where('course_id', $course_id)
         ->first();
         $hasSubscription = $subscription && $subscription->payment_status === 'completed';
-        return view('courses.video.index', compact('user_id', 'courseNameEn', 'course_id', 'completedSections', 'allSections', 'hasSubscription'));
+        return view('courses.video.introduction', compact('user_id', 'courseNameEn', 'course_id', 'completedSections', 'allSections', 'hasSubscription'));
     }
+
 
     public function instructions($course_id) {
         $locale = session('locale', config('app.locale'));
@@ -56,6 +58,25 @@ class CourseController extends Controller
         ->first();
         $hasSubscription = $subscription && $subscription->payment_status === 'completed';
         return view('courses.video.instructions', compact('user_id', 'courseNameEn', 'course_id', 'completedSections', 'allSections', 'hasSubscription'));
+    }
+
+
+    public function tutorials($course_id) {
+        $locale = session('locale', config('app.locale'));
+        $user_id = Auth::id();
+        $course = Course::where('id', $course_id)->firstOrFail();
+        $courseNameEn = $course->course_name_en;
+        $allSections = Section::where('course_id', $course_id)->get();
+        $subscription = Subscribtion::where('user_id', $user_id)
+        ->where('course_id', $course_id)
+        ->first();
+        $hasSubscription = $subscription && $subscription->payment_status === 'completed';
+        $allVideos = Video::where('course_id', $course_id)->get();
+        $completedSections = CompletedSection::where('user_id', $user_id)
+                                          ->where('course_id', $course_id)
+                                          ->pluck('section_id')
+                                          ->toArray();
+        return view('courses.video.tutorials', compact('user_id', 'courseNameEn', 'completedSections', 'allVideos', 'allSections', 'course_id', 'hasSubscription'));
     }
 
     public function sections($course_id) {
@@ -76,6 +97,7 @@ class CourseController extends Controller
                                           ->pluck('section_id')
                                           ->toArray();
      //   $completedSections = session()->get('completed_sections', []);
+     $allVideos = Video::where('course_id', $course_id)->get();
 
         $course = Course::where('id', $course_id)->firstOrFail();
         $courseNameEn = $course->course_name_en;
@@ -127,7 +149,7 @@ class CourseController extends Controller
 
       //dd($localizedSections);
 
-        return view('courses.sections', compact('sections','user_id','courseNameEn','hasSubscription','localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
+        return view('courses.sections', compact('allVideos', 'sections','user_id','courseNameEn','hasSubscription','localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
 
     }
     public function subscribtions() {

@@ -128,7 +128,6 @@
                             body: JSON.stringify({ phrases: data })
                         }).then(response => response.json())
                         .then(data => {
-                                console.log(data);
                             if (data.success) {
                                 window.location.href = '{{ route("course.practice", ["course_id" => $course_id, "section_id" => $section_id]) }}';
                             } else {

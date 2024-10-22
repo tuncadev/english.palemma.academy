@@ -19,7 +19,7 @@ class CreateUserProgressTable extends Migration
             $table->unsignedBigInteger('section_id');
             $table->unsignedBigInteger('phrase_id')->nullable(); // For phrases page
             $table->unsignedBigInteger('practice_id')->nullable(); // For practice page
-            $table->unsignedBigInteger('quiz_id')->nullable(); // For quiz page
+            $table->string('quiz_id')->nullable(); // For quiz page
             $table->boolean('checkbox_state')->nullable(); // For phrase checkboxes
             $table->string('input_value')->nullable(); // For quiz inputs
             $table->string('dropdown_value')->nullable(); // For practice dropdowns

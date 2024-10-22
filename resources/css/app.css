@@ -5,7 +5,36 @@
 body {
     font-family: Montserrat, sans-serif;
 }
+.video_text h1 {
+    font-size: 32px;
+    color: #202060;
+    padding: 10px 0;
+    text-decoration: underline;
+}
+.video_text h2 {
+    font-size: 24px;
+    color: #1d134f;
+    padding: 10px 0;
+    text-decoration: underline;
+}
+.video_text h3 {
+    font-size: 20px;
+    font-weight: 500;
+    color: #1d134f;
+    padding: 10px 0;
 
+}
+.video_text table tr:first-child {
+    @apply bg-gray-200;
+    @apply border-l;
+}
+.video_text table tr td {
+    @apply text-xs;
+    @apply font-normal;
+    @apply p-2;
+    @apply border-gray-400;
+    @apply border;
+}
 .dsection {
   background-image: url("../../public/images/bg/lessons/section-1.jpg");
   background-size: cover;

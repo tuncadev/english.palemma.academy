@@ -13,7 +13,7 @@ class accessAllSections extends Seeder
      */
     public function run(): void
     {
-        for ($i = 1; $i<=19; $i++){
+        for ($i = 1; $i<=20; $i++){
             DB::table('completed_sections')->insert([
                 [
                     'user_id' => 1,
@@ -23,7 +23,7 @@ class accessAllSections extends Seeder
                 ],
             ]);
         }
-        for ($s = 1; $s<=19; $s++){
+        for ($s = 1; $s<=20; $s++){
             DB::table('completed_sections')->insert([
                 [
                     'user_id' => 2,

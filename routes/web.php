@@ -38,6 +38,11 @@ Route::post('/course/{course_id}/section/{section_id}/complete', [CourseControll
 Route::get('/course/{course_id}/introduction', [CourseController::class, 'introduction'])->name('course.introduction');
 Route::get('/course/{course_id}/instructions', [CourseController::class, 'instructions'])->name('course.instructions');
 
+Route::get('/course/{course_id}/videotutorials', [CourseController::class, 'tutorials'])->name('course.tutorials');
+
+Route::get('/generatetext', function () {
+    return view('textgenerate');
+});
 //Route::get('/dashboard/paid/courses', [DashboardController::class, 'subscribtions'])->middleware(['auth', 'verified'])->name('dashboard.paid_courses');
 //Route::get('/dashboard/paid/course-{course_id}', [DashboardController::class, 'dashboard'])->name('course.dashboard');
 

@@ -22,7 +22,7 @@ $currentLocale = session('locale', 'uk');
                             @if ($course->hasSubscription)
                             @php $badge = "Available"; @endphp
                             @php $badgeClass = "badgeGreen"; @endphp
-                                <x-paid-courses-cards :badgeClass="$badgeClass" :badge="$badge" :data-href="route('course.introduction', ['course_id' => $course->id])" :course="$course" :locale="$locale" :href="route('course.introduction', ['course_id' => $course->id])" :course="$course" :locale="$locale" />
+                                <x-paid-courses-cards :badgeClass="$badgeClass" :badge="$badge" :data-href="route('course.sections', ['course_id' => $course->id])" :course="$course" :locale="$locale" :href="route('course.sections', ['course_id' => $course->id])" :course="$course" :locale="$locale" />
                             @elseif ($course->pending)
                             @php $badge = "Pending"; @endphp
                             @php $badgeClass = "badgeOrange"; @endphp
