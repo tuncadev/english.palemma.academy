@@ -84,18 +84,6 @@ class VideosSeeder extends Seeder
 
             ],
           ]);
-          DB::table('videos')->insert([
-            [
-                'course_id' => 1,
-                'video_order' => 7,
-                'video_name_en' => 'Phrasal Verb - Structures',
-                'video_name_uk' => 'Конструкції фразових дієслів - П\'ятий тип',
-                'video_name_ru' => 'Конструкции фразовых глаголов - Пятый тип',
-                'video_short_description_uk' => 'Дієслово + прислівник + прийменник + об\'єкт',
-                'video_short_description_ru' => 'Глагол + наречие + предлог + объект',
-
-            ],
-          ]);
     }
 
 }
