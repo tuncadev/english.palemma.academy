@@ -20,12 +20,16 @@
                     <x-steps-sidebar :courseNameEn="$courseNameEn" current="video" :allSections="$allSections" :locale="$locale" :completedSections="$completedSections" :course_id="$course_id" />
                     <div class="flex ">
                         <ul class=" grid grid-cols-2 sm:grid-cols-3 gap-4">
-                            @php $id = 1; @endphp
+                            @php $id = 1;  @endphp
                             @foreach ($allVideos as $video)
+                                @php
+                                    $title_locale = "video_name_" . $locale;
+                                    $title = $video->$title_locale;
+                                @endphp
                                 <a href="#" data-modal-target="crud-modal-{{$id}}" data-modal-toggle="crud-modal-{{$id}}">
                                     <x-video-tutorials :id="$id" :video="$video" :locale="$locale" />
                                 </a>
-                                <x-video-pop-up :id="$id" />
+                                <x-video-pop-up :title="$title" :id="$id" />
                                 @php $id += 1; @endphp
                             @endforeach
                         </ul>

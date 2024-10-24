@@ -31,11 +31,17 @@ body {
 .video_text table tr td {
     @apply text-xs;
     @apply font-normal;
-    @apply p-2;
+    @apply p-1;
     @apply border-gray-400;
     @apply border;
 }
+.video_text table tr th {
+    @apply text-sm;
+    @apply font-semibold;
+    @apply border-gray-400;
+    @apply border;
 
+}
 
 
 .dsection {
@@ -262,6 +268,12 @@ border-right: 3px solid #8cc63e;
       .space-x-3 > :not([hidden]) ~ :not([hidden]) {
         --tw-space-x-reverse: none;
       }
+      .video_text table tr td {
+        font-size: 10px;
+    }
+    .video_text table tr th {
+        font-size: 10px;
+    }
 }
 
 /* Progress circles */

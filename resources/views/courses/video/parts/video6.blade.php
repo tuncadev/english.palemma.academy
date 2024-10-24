@@ -6,147 +6,108 @@
         <table>
             <tbody>
               <tr valign="top">
-                <td>
-                  <p><strong>Глагол (Verb)</strong></p>
+                <td><strong>Глагол (Verb)</strong>
                 </td>
                 <td>
-                  <p><strong>Наречие (Adverb)</strong></p>
+                  <strong>Наречие (Adverb)</strong>
                 </td>
                 <td>
-                  <p><strong>Предлог (Preposition)</strong></p>
+                  <strong>Предлог (Preposition)</strong>
                 </td>
                 <td>
-                  <p><strong>Объект (Object)</strong></p>
+                  <strong>Объект (Object)</strong>
                 </td>
                 <td>
-                  <p><strong>Перевод (Translation)</strong></p>
-                </td>
-              </tr>
-              <tr valign="top">
-                <td>
-                  <p>Make</p>
-                </td>
-                <td>
-                  <p>off</p>
-                </td>
-                <td>
-                  <p>with</p>
-                </td>
-                <td>
-                  <p>the money</p>
-                </td>
-                <td>
-                  <p>Скрыться с деньгами</p>
+                  <strong>Перевод (Translation)</strong>
                 </td>
               </tr>
               <tr valign="top">
                 <td>
-                  <p>Come</p>
+                  Make
                 </td>
                 <td>
-                  <p>down</p>
+                  off
                 </td>
                 <td>
-                  <p>with</p>
+                  with
                 </td>
                 <td>
-                  <p>a cold</p>
+                  the money
                 </td>
                 <td>
-                  <p>Слечь с простудой</p>
+                  Скрыться с деньгами
+                </td>
+              </tr>
+              <tr valign="top">
+                <td>
+                  Come
+                </td>
+                <td>
+                  down
+                </td>
+                <td>
+                  with
+                </td>
+                <td>
+                  a cold
+                </td>
+                <td>
+                  Слечь с простудой
                 </td>
               </tr>
             </tbody>
           </table>
 
-        <p>Во фразовых глаголах наречие или предлог всегда стоит после глагола, а в существительных, которые были образованы от этих глаголов, наречие практически всегда ставится впереди</p>
+        Во фразовых глаголах наречие или предлог всегда стоит после глагола, а в существительных, которые были образованы от этих глаголов, наречие практически всегда ставится впереди
         <table>
-            <tbody>
               <tr valign="top">
                 <td>
-                  <p><strong>Фразовый глагол</strong></p>
-                  <p><strong>(Phrasal verb)</strong></p>
+                  <strong>Фразовый глагол</strong>
+                  <strong>(Phrasal verb)</strong>
                 </td>
                 <td>
-                  <p><strong>Перевод</strong></p>
-                  <p><strong>(Translation)</strong></p>
+                  <strong>Перевод</strong>
+                  <strong>(Translation)</strong>
                 </td>
                 <td>
-                  <p><strong>Существительное</strong></p>
-                  <p><strong>(Noun)</strong></p>
+                  <strong>Существительное</strong>
+                  <strong>(Noun)</strong>
                 </td>
                 <td>
-                  <p><strong>Перевод (Translation)</strong></p>
+                  <strong>Перевод (Translation)</strong>
                 </td>
               </tr>
               <tr valign="top">
-                <td>
-                  <p>Fit out</p>
-                </td>
-                <td>
-                  <p>снимать мерки</p>
-                </td>
-                <td>
-                  <p>Outfit</p>
-                </td>
-                <td>
-                  <p>одежда</p>
-                </td>
+                <td>Fit out</td>
+                <td>снимать мерки</td>
+                <td>Outfit</td>
+                <td>одежда</td>
               </tr>
               <tr valign="top">
-                <td>
-                  <p>Let out</p>
-                </td>
-                <td>
-                  <p>выпускать</p>
-                </td>
-                <td>
-                  <p>Outlet</p>
-                </td>
-                <td>
-                  <p>выпуск,</p>
-                  <p>рынок сбыта</p>
-                </td>
+                <td>Let out</td>
+                <td>выпускать</td>
+                <td>Outlet</td>
+                <td>выпуск, рынок сбыта</td>
               </tr>
               <tr valign="top">
-                <td>
-                  <p>Cast out</p>
-                </td>
-                <td>
-                  <p>Выгонять,изгонять</p>
-                </td>
-                <td>
-                  <p>Outcast</p>
-                </td>
-                <td>
-                  <p>изгнанник, изгой</p>
-                  <p>(отверженный )</p>
-                </td>
+                <td>Cast out</td>
+                <td>Выгонять,изгонять</td>
+                <td>Outcast</td>
+                <td>изгнанник, изгой
+                  (отверженный )</td>
               </tr>
               <tr valign="top">
-                <td>
-                  <p>Look out</p>
+                <td>Look out
                 </td>
-                <td>
-                  <p>Быть настороже,</p>
-                  <p>высматривать</p>
-                </td>
-                <td>
-                  <p>Outlook</p>
-                </td>
-                <td>
-                  <p>точка зрения</p>
-                </td>
+                <td>Быть настороже, высматривать</td>
+                <td>Outlook</td>
+                <td>точка зрения</td>
               </tr>
-            </tbody>
           </table>
-
-
         @else
         <h2>Основні конструкції фразових дієслів:</h2>
         <h3>5. Дієслово + прислівник + прийменник + об'єкт</h3>
         <table>
-          <thead>
             <tr>
               <th>Дієслово (Verb)</th>
               <th>Прислівник (Adverb)</th>
@@ -154,8 +115,6 @@
               <th>Об'єкт (Object)</th>
               <th>Переклад (Translation)</th>
             </tr>
-          </thead>
-          <tbody>
             <tr>
               <td>Make</td>
               <td>off</td>
@@ -170,19 +129,15 @@
               <td>a cold</td>
               <td>Злягти з застудою</td>
             </tr>
-          </tbody>
         </table>
         <p>У фразових дієсловах прислівник або прийменник завжди стоїть після дієслова, а в іменниках, що були утворені від цих дієслів, прислівник майже завжди ставиться попереду.</p>
         <table>
-          <thead>
             <tr>
               <th>Фразове дієслово (Phrasal verb)</th>
               <th>Переклад (Translation)</th>
               <th>Іменник (Noun)</th>
               <th>Переклад (Translation)</th>
             </tr>
-          </thead>
-          <tbody>
             <tr>
               <td>Fit out</td>
               <td>знімати мірки</td>
@@ -207,9 +162,7 @@
               <td>Outlook</td>
               <td>точка зору</td>
             </tr>
-          </tbody>
         </table>
-
         @endif
     </div>
 </div>
