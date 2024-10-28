@@ -8,6 +8,9 @@ use App\Http\Controllers\LocaleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckSubscription;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\PaymentController;
+
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('locale/{lang}', [LocaleController::class, 'setLocale'])->name('setLocale');
 
@@ -19,8 +22,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/profile/avatar', [ProfileController::class, 'uploadAvatar'])->name('profile.avatar');
     Route::get('/course/{course_id}/sections', [CourseController::class, 'sections'])->name('course.sections');
     Route::get('/dashboard', [DashboardController::class, 'subscribtions'])->name('dashboard.courses');
+    Route::get('/generatetext', function () {
+        return view('textgenerate');
+    });
 });
 
+
+// Route to display the payment form (GET request)
+Route::get('/course/{course_id}/payment', [PaymentController::class, 'showPaymentForm'])->name('payment.form');
+// Route to handle the payment submission (POST request)
+Route::post('/course/{course_id}/payment', [PaymentController::class, 'create'])->name('payment.create');
+Route::match(['get', 'post'], '/payment/callback', [PaymentController::class, 'handleCallback'])->name('payment.callback');
 
 
 
@@ -40,13 +52,23 @@ Route::get('/course/{course_id}/instructions', [CourseController::class, 'instru
 
 Route::get('/course/{course_id}/videotutorials', [CourseController::class, 'tutorials'])->name('course.tutorials');
 
-Route::get('/generatetext', function () {
-    return view('textgenerate');
-});
+
 //Route::get('/dashboard/paid/courses', [DashboardController::class, 'subscribtions'])->middleware(['auth', 'verified'])->name('dashboard.paid_courses');
 //Route::get('/dashboard/paid/course-{course_id}', [DashboardController::class, 'dashboard'])->name('course.dashboard');
 
+Route::get('/terms', function () {
+    return view('terms');
+});
+Route::get('/privacy', function () {
+    return view('privacy');
+});
 
+Route::get('/contact-us', function () {
+    return view('contact-us');
+});
+Route::get('/about-me', function () {
+    return view('about-me');
+});
 Route::get('/guest/course/{course_id}', [CourseController::class, 'index'])->name('course.index');
 //Route::patch('/video/{filename}', [CourseController::class, 'serveVideo'])->name('video.serve')->middleware('cache.video');
 

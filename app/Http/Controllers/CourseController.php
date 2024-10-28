@@ -97,7 +97,7 @@ class CourseController extends Controller
                                           ->pluck('section_id')
                                           ->toArray();
      //   $completedSections = session()->get('completed_sections', []);
-     $allVideos = Video::where('course_id', $course_id)->get();
+        $allVideos = Video::where('course_id', $course_id)->get();
 
         $course = Course::where('id', $course_id)->firstOrFail();
         $courseNameEn = $course->course_name_en;
@@ -279,6 +279,10 @@ class CourseController extends Controller
 
         $course = Course::where('id', $course_id)->firstOrFail();
 
+        $phrases = Phrase::get()->count();
+        $quizes = Quiz::get()->count();
+        $practices = Practice::get()->count();
+
         switch ($locale) {
           case 'uk':
               $localizedSections = $sections->map(function($section) {
@@ -312,7 +316,8 @@ class CourseController extends Controller
               break;
       }
 
-        return view('courses.course', compact('course', 'localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
+
+        return view('courses.course', compact('quizes','practices','phrases', 'course', 'localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
     }
 
 

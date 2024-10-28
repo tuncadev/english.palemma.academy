@@ -12,8 +12,8 @@ $currentLocale = session('locale', 'uk');
 @php
     $courseNameLocale = 'course_name_'.$locale
 @endphp
-    <div class="mt-4 flex flex-col max-w-96 m-auto bg-[#E3EBFE] p-4 rounded-lg shadow-md">
-        <div class="flex justify-between items-center gap-1">
+    <div class="mt-4 flex flex-col max-w-2xl m-auto bg-[#E3EBFE] p-4 rounded-lg shadow-md">
+        <div class="flex max-w-96 m-auto justify-between items-center gap-4">
             <x-orange-bubble class="text-2xl font-semibold">
             @lang('general.course')
             </x-orant-bubble>
@@ -21,24 +21,24 @@ $currentLocale = session('locale', 'uk');
                 {{ $course->course_name_en }}
             </x-purple-bubble>
         </div>
-        <x-blue-gradient-box-up class="mt-4 p-8 text-gray-800 text-lg font-semibold">
+        <x-blue-gradient-box-up class="max-w-96 mt-4 p-8 text-gray-800 text-lg font-semibold">
         @lang('course1.section1_p')
         </x-blue-gradient-box-up>
-        <x-purple-button>
+        <x-purple-button href="#subscribe">
             @lang('course1.join_btn')
         </x-purple-button>
-        <div class="flex">
+        <div class="flex m-auto">
             <img src="{{asset('images/emma/emma-01.png')}}" class="rounded-2xl shadow-md" alt="" style="clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 90%, 0 100%);">
         </div>
-        <x-orange-gradient-box-up class="p-8 text-md font-semibold">
+        <x-orange-gradient-box-up class="max-w-96 m-auto p-8 text-md font-semibold">
             @lang('course1.section5_p')
         </x-orange-gradient-box-up>
     </div>
-    <div class="bg-blue-200/50 max-w-96 m-auto  p-4 relative flex flex-col mt-4 items-center rounded-xl overflow-show">
-        <div id='vid_placeholder' class="bubble absolute -top-3 pl-2 pr-4 py-4 right-2 z-10">
+    <div class="bg-blue-200/50 max-w-2xl m-auto  p-4 relative flex flex-col mt-4 items-center rounded-xl overflow-show">
+        <div id='vid_placeholder' class="bubble absolute -top-3 pl-2 pr-4 py-4 right-4 sm:right-44 z-10">
             @lang('general.watch_video')
         </div>
-        <div class="relative max-h-96 overflow-hidden rounded-xl mt-4">
+        <div class="relative max-h-96 max-w-96 m-auto  overflow-hidden rounded-xl mt-4">
             <img class="" src="{{ asset('images/emma/emma-video.png') }}" alt="Emma Video Placeholder">
             <div class="bg-white/60 absolute top-0 w-full h-full items-center justify-center flex inset-0 text-white cursor-pointer" data-modal-target="videoModal" data-modal-toggle="videoModal">
                 <i class="text-8xl fa-solid fa-play"></i>
@@ -65,7 +65,7 @@ $currentLocale = session('locale', 'uk');
                 @lang('course1.section3_p')
             </p>
         </x-purple-gradient-box>
-        <x-purple-button>
+        <x-purple-button  href="#subscribe">
             @lang('course1.subscribe_btn')
         </x-purple-button>
         {{-- What you get --}}
@@ -104,9 +104,33 @@ $currentLocale = session('locale', 'uk');
                 </li>
             </x-blue-gradient-box-up>
         </ul>
-        <x-purple-button>
-        @lang('course1.getpass_btn')
-        </x-purple-button>
+
+    </div>
+    <!--  Subscribe -->
+    <div id="subscribe" class="relative shadow-md flex flex-col max-w-xl m-auto rounded-lg border border-purple-500 p-8 mt-8 mb-6">
+        <h2 class="font-bold uppercase text-3xl text-sky-700 ">
+            @lang('course1.course_name')
+        </h2>
+        <ul class="ml-6 mt-6">
+            <li class="list-image-[url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxNCAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBmaWxsPSIjMzhiZGY4Ij48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMy42ODUuMTUzYS43NTIuNzUyIDAgMCAxIC4xNDMgMS4wNTJsLTggMTAuNWEuNzUuNzUgMCAwIDEtMS4xMjcuMDc1bC00LjUtNC41YS43NS43NSAwIDAgMSAxLjA2LTEuMDZsMy44OTQgMy44OTMgNy40OC05LjgxN2EuNzUuNzUgMCAwIDEgMS4wNS0uMTQzWiIgLz48L3N2Zz4=)]">
+                <span class="font-semibold text-amber-700">  {{ $phrases }} </span> -  <span class="font-semibold text-sky-800"> @lang('course1.phrasal_verbs')</span>
+            </li>
+            <li class="list-image-[url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxNCAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBmaWxsPSIjMzhiZGY4Ij48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMy42ODUuMTUzYS43NTIuNzUyIDAgMCAxIC4xNDMgMS4wNTJsLTggMTAuNWEuNzUuNzUgMCAwIDEtMS4xMjcuMDc1bC00LjUtNC41YS43NS43NSAwIDAgMSAxLjA2LTEuMDZsMy44OTQgMy44OTMgNy40OC05LjgxN2EuNzUuNzUgMCAwIDEgMS4wNS0uMTQzWiIgLz48L3N2Zz4=)]">
+               <span class="font-semibold text-amber-700"> {{ $practices }} </span> -  <span class="font-semibold text-sky-800"> @lang('course1.practice_questions') </span>
+            </li>
+            <li class="list-image-[url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxNCAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBmaWxsPSIjMzhiZGY4Ij48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMy42ODUuMTUzYS43NTIuNzUyIDAgMCAxIC4xNDMgMS4wNTJsLTggMTAuNWEuNzUuNzUgMCAwIDEtMS4xMjcuMDc1bC00LjUtNC41YS43NS43NSAwIDAgMSAxLjA2LTEuMDZsMy44OTQgMy44OTMgNy40OC05LjgxN2EuNzUuNzUgMCAwIDEgMS4wNS0uMTQzWiIgLz48L3N2Zz4=)]">
+                <span class="font-semibold text-amber-700"> {{ $quizes }} </span> -  <span class="font-semibold text-sky-800"> @lang('course1.quiz_questions') </span>
+            </li>
+        </ul>
+        <a href="{{ route('payment.form', ['course_id'=> $course->id]) }}" class="text-center hover:cursor-pointer uppercase px-2 py-4 rounded-lg mt-8 hover:bg-violet-800 hover:shadow-md bg-violet-500 max-w-52 text-xl text-gray-100 font-bold ">
+            @lang('general.buy') @lang('general.course')
+        </a>
+        <div class="absolute bottom-6 right-6 p-6 rounded-lg">
+            <span class="uppercase font-bold text-gray-600 text-6xl">{{ $course->course_price }}</span><span class="text-orange-600  text-3xl font-semibold">₴</span>
+        </div>
+    </div>
+    <div class="flex flex-col max-w-xl m-auto rounded-lg p-6 mt-4 mb-6">
+        <!-- Footer -->
     </div>
     <!-- Modal -->
     <div id="videoModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
@@ -118,7 +142,7 @@ $currentLocale = session('locale', 'uk');
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                         {{$course->$courseNameLocale}} - {{ $course->course_name_en}}
                     </h3>
-                    <button id="closeModalBtn" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="videoModal">
+                    <button id="closeModalBtn" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="videoModal" >
                         <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                         </svg>
