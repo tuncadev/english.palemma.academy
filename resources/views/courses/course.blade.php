@@ -166,7 +166,7 @@ $currentLocale = session('locale', 'uk');
             </div>
         </div>
     </div>
-    <x-payment-pop :course="$course" :courseNameLocale="$course->$courseNameLocale" />
+    <x-payment-pop :course="$course" :courseNameLocale="$course->$courseNameLocale" :price="$course->course_price" />
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const videoModal = document.getElementById('videoModal');
