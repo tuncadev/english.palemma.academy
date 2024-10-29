@@ -2,7 +2,7 @@
     <div class="bg-sky-200 w-52 h-52 rounded-full overflow-hidden">
         <img class="-mt-6 max-w-52" src="{{asset('images/emma-01.webp')}}" alt="Emma Palchevskaya" />
     </div>
-    <div class="flex w-1/2 flex-col justify-between leading-normal text-center md:text-start">
+    <div class="flex sm:w-1/2 flex-col justify-between leading-normal text-center md:text-start">
         <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 uppercase">@lang('emma.name')</h5>
         <p class="mb-3 font-normal text-gray-700 uppercase">@lang('emma.profession')</p>
         <p class="mb-3 font-xs text-gray-700 lowercase">
