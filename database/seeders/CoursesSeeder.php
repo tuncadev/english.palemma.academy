@@ -21,13 +21,14 @@ class CoursesSeeder extends Seeder
                 'course_name_uk' => 'Фразові дієслова',
                 'course_description_uk' => 'Для тих, хто ніколи вивчав англійську і все забув і хоче освіжити знання',
                 'course_description_ru' => 'Для тех, кто никогда изучал английский и все позабыл и хочет освежить знания',
+                'course_price' => 1000,
                 'created_at' => now(),
             ],
         ]);
 
         DB::table('courses')->insert([
             [
-                'active' => 1,
+                'active' => 0,
                 'course_name_en' => 'Irregular verbs',
                 'course_name_ru' => 'Неправильные глаголы',
                 'course_name_uk' => 'Неправильні дієслова',
