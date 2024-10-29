@@ -68,7 +68,7 @@
                                 </span>
                                 <i class="fa-solid text-blue-600 fa-arrow-right mr-2"></i>
                                 <span class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">
-                                {{ $highestScoreDate }}
+                                {{ $highesPUpdate }}
                                 </span>
                             </div>
                         @endif
@@ -196,7 +196,7 @@
                                         <div class="flex w-full">
                                             <span class="shadow-md text-xs flex items-center justify-center w-6 h-6 mr-2 p-4 border border-1 border-sky-200 rounded-full">{{$qnum}}</span>
                                             <div class="flex flex-col md:flex-row justify-between w-full ">
-                                                <div class="text-sm leading-8">
+                                                <div class="text-[12px] leading-8">
                                                     {!! $questionText !!}
                                                 </div>
                                                 <div class="flex items-center pl-2 justify-end">

@@ -3,7 +3,7 @@
     data-point="{{ $point }}"
     data-check="{{ $answer }}"
     name="answers[{{ $id }}]"
-    class="mx-2 w-24 dropzone p-2 border-1 border-dashed rounded cursor-pointer text-xs text-center border-gray-400 bg-gray-300/30 "
+    class="mx-2 w-20 text-xs dropzone p-1 border-1 border-dashed rounded cursor-pointer text-xs text-center border-gray-400 bg-gray-300/30 "
     draggable="true"
     ondragstart="drag(event)"
     ondrop="drop(event)"

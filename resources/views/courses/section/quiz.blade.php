@@ -69,17 +69,17 @@
                             </div>
                         </div>
 
-                        @if ($highestPracticeScore > 0)
+                        @if ($highestQuizScore > 0)
                             <div class="alert alert-info flex items-center">
                                 <span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400">
                                     @lang('practice.highest')
                                 </span>
                                 <span class="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-yellow-300 border border-yellow-300">
-                                    {{ $highestQuizScore ?? 0 }}
+                                    {{ $highestQuizScore }}
                                 </span>
                                 <i class="fa-solid text-blue-600 fa-arrow-right mr-2"></i>
                                 <span class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">
-                                    {{ $update_at }}
+                                    {{ $highesQUpdate }}
                                 </span>
                             </div>
                         @endif
@@ -179,11 +179,11 @@
                                         <div class="flex flex-col pl-2 pr-2 py-4 bg-white phrase_card rounded-lg w-full mb-2 items-center">
                                             <div class="flex w-full">
                                             <span class="shadow-md flex items-center justify-center w-6 h-6 mr-3 p-2 bg-sky-200 rounded-full">{{$qnum}}</span>
-                                                <div class="flex justify-between w-full ">
-                                                    <div class="text-sm leading-9">
+                                                <div class="flex flex-col md:flex-row justify-between w-full">
+                                                    <div class="text-[12px] leading-9">
                                                         {!!$questionText!!}
                                                     </div>
-                                                    <div class="flex items-center pl-2">
+                                                    <div class="flex items-center pl-2 justify-end">
                                                         <a data-tooltip-target="tooltip-left-{{ $id }}" data-tooltip-placement="left" href="javascript:void(0);" onclick="toggleTranslation({{ $id }})" class="r-0 text-gray-800 text-xs flex flex-col items-center hover:text-blue-800">
                                                             <i class="fa-solid fa-language mr-1"></i>
                                                             @lang('lesson.translate')
@@ -216,7 +216,7 @@
                                         type="button">
                                             @lang('lesson.check')
                                     </button>
-                                    <button id="continue" type="submit" class="text-sm hidden p-2 md:p-4 m-auto rounded-md text-white uppercase font-semibold w-btn_purple h-btn_purple bg-btn_green  shadow-md m-auto">
+                                    <button id="continue" type="submit" class="text-sm p-2 md:p-4 m-auto rounded-md text-white uppercase font-semibold w-btn_purple h-btn_purple bg-btn_green  shadow-md m-auto">
                                         @lang('lesson.next')
                                     </button>
                                 </div>
@@ -244,33 +244,33 @@
         <x-spinner class="w-16 h-16" />
         <x-popmsg :section_id="$section_id"  :course_id="$course_id" />
 <script>
-    $(document).ready(function() {
-        // Form submit event to gather and display all answers
-        $('#quiz-form').on('submit', function(event) {
-            event.preventDefault(); // Prevent the form from actually submitting
-            document.body.classList.add('overflow-hidden');
+$(document).ready(function() {
+    // Form submit event to gather and display all answers
+    $('#quiz-form').on('submit', function(event) {
+        event.preventDefault(); // Prevent the form from actually submitting
 
-            const overlay = document.getElementById('overlay');
-            const spinner = document.getElementById('spinner');
+        document.body.classList.add('overflow-hidden');
 
-            overlay.classList.remove('hidden');
-            spinner.classList.remove('hidden');
-            const score = document.getElementById('quiz_score').value;
+        const overlay = document.getElementById('overlay');
+        const spinner = document.getElementById('spinner');
 
-            let answers = [];
-            $('#quiz-form input[type="text"]').each(function() {
-                if ($(this).val()) {
-                    answers.push({
-                        name: $(this).attr('name'),
-                        id: $(this).attr('id'),
-                        value: $(this).val()
-                    });
-                }
+        overlay.classList.remove('hidden');
+        spinner.classList.remove('hidden');
+
+        const score = document.getElementById('quiz_score').value;
+
+        let answers = [];
+        $('#quiz-form input[type="text"]').each(function() {
+            answers.push({
+                name: $(this).attr('name'),
+                id: $(this).attr('id'),
+                value: $(this).val()
             });
+        });
+        console.log(answers);
+        // Display the collected answers in the console
 
-            // Display the collected answers in the console
-
-            fetch('{{ route("course.saveQuizProgress", ["course_id" => $course_id, "section_id" => $section_id]) }}', {
+        fetch('{{ route("course.saveQuizProgress", ["course_id" => $course_id, "section_id" => $section_id]) }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -281,218 +281,213 @@
                 score : score
             })
         }).then(response => response.json())
-          .then(data => {
-              if (data.success) {
-                  window.location.href = '{{ route("course.show", ["course_id" => $course_id, "section_id" => $section_id+1]) }}';
-                 //document.getElementById('quiz-form').submit(); // Submit the form
-              } else {
-                  alert('Failed to save progress. Please try again.');
-              }
-          });
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '{{ route("course.show", ["course_id" => $course_id, "section_id" => $section_id+1]) }}';
+                    //document.getElementById('quiz-form').submit(); // Submit the form
+                } else {
+                    alert('Failed to save progress. Please try again.');
+                }
+            });
 
-            // Optionally, you can submit the form here if needed
-            // this.submit(); // Uncomment this line if you want to submit the form after logging the answers
-        });
     });
+});
 
   // Function to log changes to the input value
 
-  function allowDrop(ev) {
-      ev.preventDefault();
-  }
+function allowDrop(ev) {
+    ev.preventDefault();
+}
 
-  function drag(ev) {
+function drag(ev) {
       ev.dataTransfer.setData("text", ev.target.id);
       var data = ev.dataTransfer.getData("text");
       var draggedElement = document.getElementById(data);
       draggedElement.blur();
-  }
+}
 
-  function drop(ev) {
-      ev.preventDefault();
-      var data = ev.dataTransfer.getData("text");
-      var draggedElement = document.getElementById(data);
+function drop(ev) {
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("text");
+    var draggedElement = document.getElementById(data);
 
-      var targetElement = ev.target;
+    var targetElement = ev.target;
 
-   //   var inputElement = document.getElementById(targetElement.id);
+        //   var inputElement = document.getElementById(targetElement.id);
 
-
-
-        if (targetElement.tagName === 'INPUT' && draggedElement !== targetElement) {
-            // Swap values between dragged element and target element
-            var tempValue = targetElement.value;
+    if (targetElement.tagName === 'INPUT' && draggedElement !== targetElement) {
+        // Swap values between dragged element and target element
+        var tempValue = targetElement.value;
 
 
-            targetElement.classList.add("border-sky-400", "bg-sky-300");
-            targetElement.classList.remove("border-gray-400", "bg-gray-300");
+        targetElement.classList.add("border-sky-400", "bg-sky-300");
+        targetElement.classList.remove("border-gray-400", "bg-gray-300");
 
-            // Reset the dragged element style to empty
-            draggedElement.classList.add("border-gray-400", "bg-gray-300");
-            draggedElement.classList.remove("border-sky-400", "bg-sky-300");
+        // Reset the dragged element style to empty
+        draggedElement.classList.add("border-gray-400", "bg-gray-300");
+        draggedElement.classList.remove("border-sky-400", "bg-sky-300");
 
-            targetElement.value = draggedElement.value;
+        targetElement.value = draggedElement.value;
+        draggedElement.value = tempValue;
+        draggedElement.blur();
 
-            draggedElement.value = tempValue;
-            draggedElement.blur();
+        // Update styles to reflect changes
+        updateInputStyle(targetElement);
+        updateInputStyle(draggedElement);
 
-            // Update styles to reflect changes
-            updateInputStyle(targetElement);
-            updateInputStyle(draggedElement);
-
-            handleQuizAnswerChange(targetElement);
-        }
+        handleQuizAnswerChange(targetElement);
     }
+}
 
-  function updateInputStyle(inputElement) {
-      if (inputElement.value === "") {
-          inputElement.classList.remove('bg-blue-200');
-          inputElement.classList.add('border-gray-300');
-      } else {
-          inputElement.classList.add('bg-blue-200');
-          inputElement.classList.remove('border-gray-300');
-      }
-  }
+function updateInputStyle(inputElement) {
+    if (inputElement.value === "") {
+        inputElement.classList.remove('bg-blue-200');
+        inputElement.classList.add('border-gray-300');
+    } else {
+        inputElement.classList.add('bg-blue-200');
+        inputElement.classList.remove('border-gray-300');
+    }
+}
 </script>
 <script>
-    function closeModal() {
-        const modal = new Modal(document.getElementById('modal_answers'));
-        modal.hide();
-    }
+function closeModal() {
+    const modal = new Modal(document.getElementById('modal_answers'));
+    modal.hide();
+}
 
-    document.addEventListener('DOMContentLoaded', function() {
-        let quizScore = 0;
-        let translationsOpened = new Set();
-        var questionInputs = document.querySelectorAll('#quiz-form input');
+document.addEventListener('DOMContentLoaded', function() {
+    let quizScore = 0;
+    let translationsOpened = new Set();
+    var questionInputs = document.querySelectorAll('#quiz-form input');
 
-        questionInputs.forEach(function(input) {
+    questionInputs.forEach(function(input) {
         if (input.id.startsWith('question-') && input.value) {
             updateQuizScore();
         }
     });
 
 
-        window.toggleTranslation = function(id) {
-            var element = document.getElementById('translation-' + id);
-            if (element.style.display === 'none') {
-                element.style.display = 'block';
-                if (!translationsOpened.has(id)) {
-                    translationsOpened.add(id);
-                    quizScore -= 1;
-                }
-            } else {
-                element.style.display = 'none';
+    window.toggleTranslation = function(id) {
+        var element = document.getElementById('translation-' + id);
+        if (element.style.display === 'none') {
+            element.style.display = 'block';
+            if (!translationsOpened.has(id)) {
+                translationsOpened.add(id);
+                quizScore -= 1;
             }
-            updateQuizScore();
-        };
-
-        function updateQuizScore() {
-            let totalScore = 0;
-            questionInputs.forEach(input => {
-                let answer = atob(input.getAttribute('data-check')); // Decode the base64 encoded answer
-                let point = parseFloat(input.getAttribute('data-point'));
-
-                if (input.value.toLowerCase() === answer) {
-
-                    totalScore += point;
-                }
-            });
-            totalScore -= translationsOpened.size;
-            quizScore = totalScore;
-            document.getElementById('score').innerText = 'Score: ' + quizScore;
-            document.getElementById('quiz_score').value = quizScore;
+        } else {
+            element.style.display = 'none';
         }
+        updateQuizScore();
+    };
 
-        window.handleQuizAnswerChange = function(input) {
+    function updateQuizScore() {
+        let totalScore = 0;
+        questionInputs.forEach(input => {
             let answer = atob(input.getAttribute('data-check')); // Decode the base64 encoded answer
+            let point = parseFloat(input.getAttribute('data-point'));
 
             if (input.value.toLowerCase() === answer) {
-                input.classList.add('border-green-500');
-                input.classList.remove('border-gray-400', 'border-sky-400');
-            } else {
-                input.classList.add('border-gray-400');
-                input.classList.remove('border-green-500');
+
+                totalScore += point;
             }
+        });
+        totalScore -= translationsOpened.size;
+        quizScore = totalScore;
+        document.getElementById('score').innerText = 'Score: ' + quizScore;
+        document.getElementById('quiz_score').value = quizScore;
+    }
 
-            updateQuizScore();
-        };
+    window.handleQuizAnswerChange = function(input) {
+        let answer = atob(input.getAttribute('data-check')); // Decode the base64 encoded answer
 
-        window.checkQuizAnswers = function() {
-            const modal = new Modal(document.getElementById('modal_answers'));
+        if (input.value.toLowerCase() === answer.toLowerCase()) {
+            input.classList.add('border-green-500');
+            input.classList.remove('border-gray-400', 'border-sky-400');
+        } else {
+            input.classList.add('border-gray-400');
+            input.classList.remove('border-green-500');
+        }
 
-            let allFilled = true;
-            let correctCount = 0;
-            let incorrectCount = 0;
+        updateQuizScore();
+    };
 
+    window.checkQuizAnswers = function() {
+        const modal = new Modal(document.getElementById('modal_answers'));
 
-            questionInputs.forEach(function(input) {
-                let answer = atob(input.getAttribute('data-check')); // Decode the base64 encoded answer
+        let allFilled = true;
+        let correctCount = 0;
+        let incorrectCount = 0;
 
-                if (input.value.toLowerCase() === "") {
-                    allFilled = false;
-                    input.classList.add('border-red-500');
-                    input.classList.remove('border-green-500', 'border-gray-400',  'border-sky-400',  'border-dashed', 'border-1');
-
-                    document.getElementById("continue").classList.add('hidden');
-                    var warn = document.getElementById('warn');
-                    warn.style.display = 'flex';
-                    location.href = "#top";
-                } else if (input.value.toLowerCase() !== answer) {
-                    input.classList.add('border-red-500');
-                    input.classList.remove('border-0');
-                    input.classList.remove('border-green-500', 'border-gray-400',  'border-sky-400',  'border-dashed', 'border-1');
-
-                    incorrectCount++;
-                } else {
-                    input.classList.add('border-green-500', 'border-2');
-                    input.classList.remove('border-0');
-                    input.classList.remove('border-red-500', 'border-sky-400', 'border-dashed', 'border-1');
-                    correctCount++;
-                }
-            });
-
-            window.translations = {
-                correct: "{{ __('general.correctanswers') }}",
-                incorrect: "{{ __('general.wronganswers') }}"
-            };
-
-            document.getElementById("continue").classList.remove('hidden');
-
-        };
 
         questionInputs.forEach(function(input) {
-            input.addEventListener('change', function() {
-                handleQuizAnswerChange(this);
-            });
-        });
+            let answer = atob(input.getAttribute('data-check')); // Decode the base64 encoded answer
 
-        document.querySelectorAll('[data-translation-button]').forEach(function(button) {
-            button.addEventListener('click', function() {
-                const id = button.dataset.translationButton;
-                toggleTranslation(id);
-            });
-        });
+            if (input.value.toLowerCase() === "") {
+                allFilled = false;
+                input.classList.add('border-red-500');
+                input.classList.remove('border-green-500', 'border-gray-400',  'border-sky-400',  'border-dashed', 'border-1');
 
-        window.validateQuizForm = function() {
-            let allFilled = true;
+                document.getElementById("continue").classList.add('hidden');
+                var warn = document.getElementById('warn');
+                warn.style.display = 'flex';
+                location.href = "#top";
+            } else if (input.value.toLowerCase() !== answer) {
+                input.classList.add('border-red-500');
+                input.classList.remove('border-0');
+                input.classList.remove('border-green-500', 'border-gray-400',  'border-sky-400',  'border-dashed', 'border-1');
 
-            document.querySelectorAll('input[type="text"]').forEach(function(input) {
-                if (input.value.toLowerCase() === "") {
-                    allFilled = false;
-                    var warn = document.getElementById('warn');
-                    warn.style.display = 'flex';
-                    location.href = "#top";
-                }
-            });
-
-            if (allFilled) {
-                document.getElementById('quiz_score').value = quizScore; // Set quiz score
-                window.location.href = '{{ route("course.show", ["course_id" => $course_id, "section_id" => $section_id]) }}';
+                incorrectCount++;
             } else {
-                return false; // Prevent form submission
+                input.classList.add('border-green-500', 'border-2');
+                input.classList.remove('border-0');
+                input.classList.remove('border-red-500', 'border-sky-400', 'border-dashed', 'border-1');
+                correctCount++;
             }
+        });
+
+        window.translations = {
+            correct: "{{ __('general.correctanswers') }}",
+            incorrect: "{{ __('general.wronganswers') }}"
         };
+
+        document.getElementById("continue").classList.remove('hidden');
+
+    };
+
+    questionInputs.forEach(function(input) {
+        input.addEventListener('change', function() {
+            handleQuizAnswerChange(this);
+        });
     });
+
+    document.querySelectorAll('[data-translation-button]').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const id = button.dataset.translationButton;
+            toggleTranslation(id);
+        });
+    });
+
+    window.validateQuizForm = function() {
+        let allFilled = true;
+
+        document.querySelectorAll('input[type="text"]').forEach(function(input) {
+            if (input.value.toLowerCase() === "") {
+                allFilled = false;
+                var warn = document.getElementById('warn');
+                warn.style.display = 'flex';
+                location.href = "#top";
+            }
+        });
+
+        if (allFilled) {
+            document.getElementById('quiz_score').value = quizScore; // Set quiz score
+            window.location.href = '{{ route("course.show", ["course_id" => $course_id, "section_id" => $section_id]) }}';
+        } else {
+            return false; // Prevent form submission
+        }
+    };
+});
 </script>
 @else
 <x-error-msg :message="'You haven\'t purchased the ' . $courseName .' course yet.'" />

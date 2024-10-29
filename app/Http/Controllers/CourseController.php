@@ -432,11 +432,21 @@ class CourseController extends Controller
         $course = Course::where('id', $course_id)->firstOrFail();
         $phrases = Phrase::where('section_id', $section_id)->get();
         $locale = session('locale', config('app.locale'));
-        $highestPracticeScore = Score::where('user_id', Auth::id())
+        $currentScore =  Score::where('user_id', Auth::id())
+                            ->where('course_id', $course_id)
+                            ->where('section_id', $section_id)
+                            ->max('practice_score');
+        $highestPScore = Score::where('user_id', Auth::id())
                                             ->where('course_id', $course_id)
                                             ->where('section_id', $section_id)
                                             ->max('highest_practice_score');
-
+        $highesPUpdate = Score::where('user_id', Auth::id())
+                            ->where('course_id', $course_id)
+                            ->where('section_id', $section_id)
+                            ->where('practice_score', '>', '0' )
+                            ->value('updated_at');
+        $highestPracticeScore = $highestPScore > $currentScore ? $highestPScore : $currentScore;
+        //dd($highestPracticeScore);
         $highestScoreDate = Score::where('user_id', Auth::id())
         ->where('course_id', $course_id)
         ->where('section_id', $section_id)
@@ -601,7 +611,7 @@ class CourseController extends Controller
        //     'correctAnswers' => $correctAnswers,
        // ]);
        //dd( $dropdownVals);
-        return view("courses.section.practice", compact('unlockedSections', 'courseNameEn', 'sectionNameEn', 'pageTitle','highestPracticeScore', 'highestScoreDate', 'dropdownVals','dropdownStates', 'localizedQuestions', 'hasSubscription', 'update_at','completedSections','locale','allSections','correctAnswers','questions', 'highestPracticeScore', 'courseName', 'section', 'phrases', 'course_id', 'section_id', 'sectionName'));
+        return view("courses.section.practice", compact('highesPUpdate', 'unlockedSections', 'courseNameEn', 'sectionNameEn', 'pageTitle','highestPracticeScore', 'highestScoreDate', 'dropdownVals','dropdownStates', 'localizedQuestions', 'hasSubscription', 'update_at','completedSections','locale','allSections','correctAnswers','questions', 'highestPracticeScore', 'courseName', 'section', 'phrases', 'course_id', 'section_id', 'sectionName'));
     }
 
     function replaceUnderscoresWithSpans($inputString, $id) {
@@ -707,15 +717,24 @@ class CourseController extends Controller
     }
     $courseNameEn = $course->course_name_en;
     $sectionNameEn = $section->section_name_en;
-    $highestPracticeScore = score::where('user_id', Auth::id())
+    $highestPracticeScore = Score::where('user_id', Auth::id())
         ->where('course_id', $course_id)
         ->where('section_id', $section_id)
         ->max('highest_practice_score');
-
-    $highestQuizScore = score::where('user_id', Auth::id())
+    $currentQScore = Score::where('user_id', Auth::id())
+        ->where('course_id', $course_id)
+        ->where('section_id', $section_id)
+        ->max('quiz_score');
+    $highestQScore = Score::where('user_id', Auth::id())
         ->where('course_id', $course_id)
         ->where('section_id', $section_id)
         ->max('highest_quiz_score');
+    $highesQUpdate = Score::where('user_id', Auth::id())
+        ->where('course_id', $course_id)
+        ->where('section_id', $section_id)
+        ->where('quiz_score', '>', '0' )
+        ->value('updated_at');
+    $highestQuizScore = $highestQScore >= $currentQScore ? $highestQScore : $currentQScore;
     $locale = session('locale', config('app.locale'));
 
     $update_at = $completedSection->exists ? $completedSection->updated_at : "";
@@ -755,7 +774,7 @@ class CourseController extends Controller
 
 
    // dd($newQuestions);
-    return view("courses.section.quiz", compact('unlockedSections', 'courseNameEn', 'sectionNameEn', 'pageTitle', 'prevInputValues', 'inputValues','localizedQuestions', 'hasSubscription', 'allSections', 'completedSections', 'update_at', 'questions', 'correctAnswers', 'courseName', 'sectionName', 'section', 'phrases', 'course_id', 'section_id', 'highestPracticeScore', 'highestQuizScore'));
+    return view("courses.section.quiz", compact('highesQUpdate', 'unlockedSections', 'courseNameEn', 'sectionNameEn', 'pageTitle', 'prevInputValues', 'inputValues','localizedQuestions', 'hasSubscription', 'allSections', 'completedSections', 'update_at', 'questions', 'correctAnswers', 'courseName', 'sectionName', 'section', 'phrases', 'course_id', 'section_id', 'highestPracticeScore', 'highestQuizScore'));
 }
 
 
@@ -875,8 +894,9 @@ public function saveQuizProgress(Request $request, $course_id, $section_id)
                     ->where('section_id', $section_id)
                     ->where('finished', '!=', 1)
                     ->where('dropdown_value', "!=", "")
-                    ->orWhere('quiz_id', "!=", "")
+                    ->orWhere('input_value', "!=", "")
                     ->count();
+
     foreach ($answers as $answer) {
 
         $id = $answer['id'];
