@@ -11,7 +11,7 @@ $locale = session('locale', 'uk');
 
     @endsection
     @section('content')
-    <div class="container pb-12">
+    <div class="container pb-12 m-auto">
 
         <!-- Display success or error messages -->
         @if (session('success'))
@@ -26,13 +26,29 @@ $locale = session('locale', 'uk');
             </div>
         @endif
 
-        <div class="relative flex flex-col m-auto justify-center max-w-5xl p-6">
-            <div class="">
+        <div class="relative flex flex-col m-auto justify-center sm:max-w-5xl max-w-96">
+            <div class="border-b border-b-sky-600 ">
                 <h1 class="text-3xl font-bold py-4 text-pink-700">
                     @lang('payment.checkout')
                 </h1>
             </div>
             <!-- Payment Form -->
+            <div class="relative flex justify-between mt-2 w-full gap-4 border-b border-b-sky-600  p-6">
+                <div class="absolute top-0 right-2">
+                    <i class="fa-solid fa-xmark hover:cursor-pointer hover:text-red-600" title="remove"></i>
+                </div>
+                <div class="max-w-32 rounded-full overflow-hidden">
+                    <img src="{{asset('images/checkout_thumbnail.jpg')}}" alt="">
+                </div>
+                <div class="">
+                    <h3 class="text-xl text-right font-bold">
+                        {{$course->localized_name }}
+                    </h3>
+                    <p class="text-lg text-right font-semibold text-sky-600">
+                        {{ $course->course_price }} ₴
+                    </p>
+                </div>
+            </div>
             <div class="my-6 p-10 bg-sky-500/10 rounded-lg border border-sky-200 mb-6 hover:shadow-lg">
                 <h2 class="text-xl  font-semibold uppercase mb-2 text-sky-800">
                     @lang('payment.details'):
@@ -181,7 +197,6 @@ $locale = session('locale', 'uk');
             </div>
         </div>
     </div>
-
 <script>
     document.getElementById("expires").addEventListener("input", function (e) {
         let value = e.target.value.replace(/\D/g, ""); // Remove non-digit characters

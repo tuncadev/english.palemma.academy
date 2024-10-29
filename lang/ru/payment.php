@@ -1,7 +1,7 @@
 <?php
 
 return [
-    "checkout" => "Оформление заказа",
+    "checkout" => "ваш заказа:",
     "personaldetails" => "Личные данные",
     "firstname" => "Имя",
     "lastname" => "Фамилия",
@@ -16,5 +16,7 @@ return [
     "error_expire_year" => "Пожалуйста, введите действительный год в формате MM/ГГ",
     'details' => 'детали заказа',
     'termsagree' => 'Я прочитал(-а) и согласен(-на) с <a  class="underline text-sky-600" href=":link" target="_blank">условиями сайта</a> и <a  class="underline text-sky-600" href=":linkp" target="_blank">политикой конфиденциальности</a>.',
-
+    'order' => 'ваш заказ',
+    'sum' => 'сумма',
+    'pay' => 'оплатить',
 ];

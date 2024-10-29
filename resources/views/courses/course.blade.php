@@ -14,10 +14,10 @@ $currentLocale = session('locale', 'uk');
 @endphp
     <div class="mt-4 flex flex-col max-w-2xl m-auto bg-[#E3EBFE] p-4 rounded-lg shadow-md">
         <div class="flex max-w-96 m-auto justify-between items-center gap-4">
-            <x-orange-bubble class="text-2xl font-semibold">
+            <x-orange-bubble class="text-xl sm:text-2xl font-semibold">
             @lang('general.course')
             </x-orant-bubble>
-            <x-purple-bubble class="text-4xl font-semibold">
+            <x-purple-bubble class="text-2xl sm:text-4xl font-semibold">
                 {{ $course->course_name_en }}
             </x-purple-bubble>
         </div>
@@ -107,8 +107,8 @@ $currentLocale = session('locale', 'uk');
 
     </div>
     <!--  Subscribe -->
-    <div id="subscribe" class="relative shadow-md flex flex-col max-w-xl m-auto rounded-lg border border-purple-500 p-8 mt-8 mb-6">
-        <h2 class="font-bold uppercase text-3xl text-sky-700 ">
+    <div id="subscribe" class=" max-w-96 relative shadow-md flex flex-col sm:max-w-xl m-auto rounded-lg border border-purple-500 p-6 mt-8 mb-6">
+        <h2 class=" uppercase font-geometria font-black text-4xl sm:text-5xl text-sky-700 ">
             @lang('course1.course_name')
         </h2>
         <ul class="ml-6 mt-6">
@@ -122,11 +122,16 @@ $currentLocale = session('locale', 'uk');
                 <span class="font-semibold text-amber-700"> {{ $quizes }} </span> -  <span class="font-semibold text-sky-800"> @lang('course1.quiz_questions') </span>
             </li>
         </ul>
-        <a href="{{ route('payment.form', ['course_id'=> $course->id]) }}" class="text-center hover:cursor-pointer uppercase px-2 py-4 rounded-lg mt-8 hover:bg-violet-800 hover:shadow-md bg-violet-500 max-w-52 text-xl text-gray-100 font-bold ">
-            @lang('general.buy') @lang('general.course')
-        </a>
-        <div class="absolute bottom-6 right-6 p-6 rounded-lg">
-            <span class="uppercase font-bold text-gray-600 text-6xl">{{ $course->course_price }}</span><span class="text-orange-600  text-3xl font-semibold">₴</span>
+        <div class="mt-8 flex flex-col flex-col-reverse sm:flex-row items-center justify-between">
+            <button data-modal-target="payment-modal" data-modal-toggle="payment-modal"  type="button" class="text-center hover:cursor-pointer uppercase sm:px-2 px-6 py-4 rounded-lg hover:bg-violet-800 hover:shadow-md bg-violet-500 max-w-52 text-xl text-gray-100 font-bold ">
+                @lang('general.buy') @lang('general.course')
+            </button>
+            <div class="  mb-6 rounded-lg">
+                <span class="font-geometria font-black text-5xl uppercase font-geometria text-gray-600 sm:text-6xl">{{ $course->course_price }}</span><span class="text-orange-600  text-xl font-semibold">₴</span>
+                <div class=" text-center rounded-lg">
+                    <span class="font-geometria line-through font-geometria text-2xl text-gray-600">{{ ($course->course_price)+700 }}</span><span class="text-orange-600  text-xl font-semibold">₴</span>
+                </div>
+            </div>
         </div>
     </div>
     <div class="flex flex-col max-w-xl m-auto rounded-lg p-6 mt-4 mb-6">
@@ -161,6 +166,7 @@ $currentLocale = session('locale', 'uk');
             </div>
         </div>
     </div>
+    <x-payment-pop :course="$course" :courseNameLocale="$course->$courseNameLocale" />
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const videoModal = document.getElementById('videoModal');

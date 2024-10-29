@@ -3,7 +3,11 @@
 @tailwind utilities;
 
 body {
-    font-family: Montserrat, sans-serif;
+    font-family: 'Montserrat', sans-serif;
+}
+.font-geometria {
+    color: #4e425e;
+
 }
 .video_text h1 {
     font-size: 32px;
