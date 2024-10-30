@@ -1,4 +1,4 @@
-  @props(['course', 'courseNameLocale', 'price'])
+  @props(['course', 'courseNameLocale', 'price','invoice_number'])
 
   <div id="payment-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
       <div class="relative p-4 w-full max-w-2xl max-h-full">
@@ -6,9 +6,14 @@
           <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
               <!-- Modal header -->
               <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                <div class="flex flex-col">
                   <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                     @lang('payment.checkout')
                   </h3>
+                  <h4 class="text-sm">
+                    @lang('payment.invoice_number'): {{ $invoice_number }}
+                  </h4>
+                </div>
                   <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="payment-modal">
                       <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
@@ -47,13 +52,19 @@
               <div class="p-4">
                 <form method="POST" class="" id="paymentGo"  action="{{ route('payment.create', ['course_id' => $course->id])  }}">
                     @csrf
+                    <input type="hidden" name="invoice_number" id="invoice_number" value="{{$invoice_number}}">
                     <!-- Personal Details -->
                     <div class=" rounded-lg mb-6">
-                        <div class="flex items-center gap-4 bg-white rounded-lg mb-4">
-                            <i class="text-3xl text-sky-500 fa-regular fa-id-card"></i>
-                            <h2 class="text-xl font-bold py-4 text-sky-700">
-                                @lang('payment.personaldetails')
-                            </h2>
+                        <div class="flex flex-col items-left justify-start bg-white rounded-lg mb-4">
+                            <div class="flex flex-row items-center gap-4">
+                                <i class="text-3xl text-sky-500 fa-regular fa-id-card"></i>
+                                <h2 class="text-xl font-bold text-sky-700">
+                                    @lang('payment.personaldetails')
+                                </h2>
+                            </div>
+                            <p class="text-xs uppercase mt-1 underline">
+                               * @lang('payment.enter_personal_details')
+                            </p>
                         </div>
                         <div class="md:grid gap-6 mb-6 md:grid-cols-2">
                             <div>
@@ -82,8 +93,158 @@
                             </div>
                         </div>
                     </div>
+                    <div class="border-b border-b-gray-300 h-3 w-full"></div>
+                   <!-- Payment Options -->
+                    <div class="flex flex-col gap-4 my-4">
+                        <div class="flex flex-col items-left justify-start bg-white rounded-lg mb-4">
+                            <div class="flex flex-row items-center gap-4">
+                                <i class="text-3xl text-sky-500 fa-regular fa-id-card"></i>
+                                <h2 class="text-xl font-bold text-sky-700">
+                                    @lang('payment.payment_options')
+                                </h2>
+                            </div>
+                            <p class="text-xs uppercase mt-1 underline">
+                               * @lang('payment.choose_method')
+                            </p>
+                        </div>
+                        <!-- Bank Transfer Radio Button -->
+                        <div class="flex">
+                            <div class="flex items-center h-5">
+                                <input id="bank_transfer_uah_radio" name="payment_method" type="radio" value="bank_transfer" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
+                            </div>
+                            <div class="ms-2 text-sm">
+                                <label for="bank_transfer_uah_radio" class="font-medium text-gray-900 dark:text-gray-300">
+                                    @lang('payment.bank_transfer') (UAH)
+                                </label>
+                                <p id="helper-radio-text" class="text-xs font-normal text-gray-500 dark:text-gray-300">
+                                    @lang('payment.bank_transfer_info')
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Bank Transfer SWIFT Radio Button -->
+                        <div class="flex">
+                            <div class="flex items-center h-5">
+                                <input id="bank_transfer_swift_radio" name="payment_method" type="radio" value="bank_transfer" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
+                            </div>
+                            <div class="ms-2 text-sm">
+                                <label for="bank_transfer_swift_radio" class="font-medium text-gray-900 dark:text-gray-300">
+                                    @lang('payment.bank_transfer') (USD)
+                                </label>
+                                <p id="helper-radio-text" class="text-xs font-normal text-gray-500 dark:text-gray-300">
+                                    SWIFT
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Credit Card Radio Button -->
+                        <div class="flex">
+                            <div class="flex items-center h-5">
+                                <input id="credit_card_radio" name="payment_method" type="radio" value="credit_card" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
+                            </div>
+                            <div class="ms-2 text-sm">
+                                <label for="credit_card_radio" class="font-medium text-gray-900 dark:text-gray-300">
+                                    @lang('payment.pay_by_card')
+                                </label>
+                                <p id="helper-radio-text" class="text-xs font-normal text-gray-500 dark:text-gray-300">
+                                    @lang('payment.pay_by_card_info')
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-b border-b-gray-300 h-3 w-full"></div>
+                    <!-- IBAN Details -->
+                    <div class="hidden" id="bank_transfer_iban">
+                        <div class="flex items-center gap-2 bg-white rounded-lg shadow-inner">
+                            <i class="text-3xl text-sky-500 fa-solid fa-money-bill-transfer"></i>
+                            <h2 class="text-xl font-bold py-6 ml-4 uppercase text-sky-700">
+                               @lang('payment.bank_details') - (Україна - грівна)
+                            </h2>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="hidden sm:table  min-w-full text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                                <thead>
+                                    <tr>
+                                        <th class="p-2 bg-sky-300 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold text-xs text-left uppercase tracking-wider border-b dark:border-gray-600">
+                                            @lang('payment.bank_name')
+                                        </th>
+                                        <th class="p-2 bg-sky-300 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold text-xs text-left uppercase tracking-wider border-b dark:border-gray-600">
+                                            IBAN
+                                        </th>
+                                        <th class="p-2 bg-sky-300 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold text-xs text-left uppercase tracking-wider border-b dark:border-gray-600">
+                                            @lang('payment.swift_code')
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-gray-700 dark:text-gray-200">
+                                    <tr class="hover:bg-gray-200">
+                                        <td class="p-2  border-b border-gray-200 dark:border-gray-600">
+                                            PrivatBank
+                                        </td>
+                                        <td class="p-2  border-b border-gray-200 dark:border-gray-600">
+                                            UA123456789012345678901234567890
+                                        </td>
+                                        <td class="p-2  border-b border-gray-200 dark:border-gray-600">
+                                            PBANUA2X
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="sm:hidden flex flex-col ">
+                                <div class="flex text-xs flex-col">
+                                    <div class=""><strong>@lang('payment.bank_name') :</strong> PrivatBank</div>
+                                    <div class=""><strong>IBAN :</strong> UA123456789012345678901234567890</div>
+                                    <div class=""><strong> @lang('payment.swift_code') :</strong>  PBANUA2X</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- SWIFT Details -->
+                    <div class="hidden" id="bank_transfer_swift">
+                        <div class="flex items-center gap-2 bg-white rounded-lg shadow-inner">
+                            <i class="text-3xl text-sky-500 fa-solid fa-money-bill-transfer"></i>
+                            <h2 class="text-xl font-bold py-6 ml-4 text-sky-700 uppercase">
+                                SWIFT - іноземна валюта (USD)
+                            </h2>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="hidden sm:table  min-w-full text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                                <thead>
+                                    <tr>
+                                        <th class="p-2 bg-sky-300 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold text-xs text-left uppercase tracking-wider border-b dark:border-gray-600">
+                                            @lang('payment.bank_name')
+                                        </th>
+                                        <th class="p-2 bg-sky-300 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold text-xs text-left uppercase tracking-wider border-b dark:border-gray-600">
+                                            IBAN
+                                        </th>
+                                        <th class="p-2 bg-sky-300 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold text-xs text-left uppercase tracking-wider border-b dark:border-gray-600">
+                                            @lang('payment.swift_code')
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-gray-700 dark:text-gray-200">
+                                    <tr class="hover:bg-gray-200">
+                                        <td class="p-2  border-b border-gray-200 dark:border-gray-600">
+                                            PrivatBank
+                                        </td>
+                                        <td class="p-2  border-b border-gray-200 dark:border-gray-600">
+                                            UA123456789012345678901234567890
+                                        </td>
+                                        <td class="p-2  border-b border-gray-200 dark:border-gray-600">
+                                            PBANUA2X
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="sm:hidden flex flex-col ">
+                                <div class="flex text-xs flex-col">
+                                    <div class=""><strong>@lang('payment.bank_name') :</strong> PrivatBank</div>
+                                    <div class=""><strong>IBAN :</strong> UA123456789012345678901234567890</div>
+                                    <div class=""><strong> @lang('payment.swift_code') :</strong>  PBANUA2X</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Card Details -->
-                    <div class="">
+                    <div class="hidden" id="credit_card">
                         <div class="flex items-center gap-2 bg-white rounded-lg shadow-inner">
                             <i class="text-3xl text-sky-500 fa-brands fa-cc-mastercard"></i>
                             <i class="text-3xl text-sky-500 fa-brands fa-cc-visa"></i>
@@ -228,4 +389,41 @@
         location.reload();
 
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+    // Get the radio buttons
+    const bank_transfer_swift_radio = document.getElementById('bank_transfer_swift_radio');
+    const bank_transfer_uah_radio = document.getElementById('bank_transfer_uah_radio');
+    const creditCardRadio = document.getElementById('credit_card_radio');
+
+
+    // Get the divs
+    const UAHbankTransferDiv = document.getElementById('bank_transfer_iban');
+    const SWIFTbankTransferDiv = document.getElementById('bank_transfer_swift');
+    const creditCardDiv = document.getElementById('credit_card');
+
+    // Function to show the corresponding div based on selected radio button
+    function showCorrespondingDiv() {
+        if (bank_transfer_uah_radio.checked) {
+            UAHbankTransferDiv.style.display = 'block';
+            SWIFTbankTransferDiv.style.display = 'none';
+            creditCardDiv.style.display = 'none';
+        } else if (creditCardRadio.checked) {
+            creditCardDiv.style.display = 'block';
+            UAHbankTransferDiv.style.display = 'none';
+            SWIFTbankTransferDiv.style.display = 'none';
+        }
+        else if (bank_transfer_swift_radio.checked) {
+            SWIFTbankTransferDiv.style.display = 'block';
+            UAHbankTransferDiv.style.display = 'none';
+            creditCardDiv.style.display = 'none';
+        }
+    }
+
+    // Add event listeners to radio buttons
+    bank_transfer_uah_radio.addEventListener('change', showCorrespondingDiv);
+    bank_transfer_swift_radio.addEventListener('change', showCorrespondingDiv);
+    creditCardRadio.addEventListener('change', showCorrespondingDiv);
+});
+
 </script>

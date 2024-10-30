@@ -169,7 +169,7 @@ $currentLocale = session('locale', 'uk');
             </div>
         </div>
     </div>
-    <x-payment-pop :course="$course" :courseNameLocale="$course->$courseNameLocale" :price="$course->course_price" />
+    <x-payment-pop :course="$course" :courseNameLocale="$course->$courseNameLocale" :price="$course->course_price" :invoice_number="$invoice_number" />
     <script>
 
         document.addEventListener('DOMContentLoaded', function () {

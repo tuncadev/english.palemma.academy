@@ -152,8 +152,10 @@ class CourseController extends Controller
         return view('courses.sections', compact('allVideos', 'sections','user_id','courseNameEn','hasSubscription','localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
 
     }
+
     public function subscribtions() {
         $user_id = Auth::id();
+
         $subscribtions = Subscribtion::where('user_id', $user_id)->get()->pluck('course_id');
         $courses = Course::whereIn('id', $subscribtions)->get();
         $locale = session('locale', config('app.locale'));
@@ -260,6 +262,15 @@ class CourseController extends Controller
         return $response;
     }
 */
+    private function generateInvoiceNumber() {
+        // Get the current date in YYYYMMDD format
+        $datePart = date('Ymd');
+        // Generate a random 6-digit number
+        $randomPart = mt_rand(100000, 999999);
+        // Combine date and random part
+        return $datePart . '-' . $randomPart;
+    }
+
     public function index($course_id)
     {
 
@@ -316,8 +327,8 @@ class CourseController extends Controller
               break;
       }
 
-
-        return view('courses.course', compact('videos', 'quizes','practices','phrases', 'course', 'localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
+      $invoice_number = $this->generateInvoiceNumber();
+        return view('courses.course', compact('invoice_number', 'videos', 'quizes','practices','phrases', 'course', 'localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
     }
 
 

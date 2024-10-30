@@ -99,6 +99,7 @@ class PaymentController extends Controller
                 'ip_address' => $request->ip(),
                 'session_id' => session()->getId(),
                 'form_data' => [
+                    'invoice_number' => $request->input('invoice_number'),
                     'first_name' => $request->input('personalInfo.first_name'),
                     'last_name' => $request->input('personalInfo.last_name'),
                     'email' => $request->input('personalInfo.email'),
@@ -126,6 +127,7 @@ class PaymentController extends Controller
                 'ip_address' => $request->ip(),
                 'session_id' => session()->getId(),
                 'form_data' => [
+                    'invoice_number' => $request->input('invoice_number'),
                     'first_name' => $request->input('personalInfo.first_name'),
                     'last_name' => $request->input('personalInfo.last_name'),
                     'email' => $request->input('personalInfo.email'),
@@ -155,6 +157,8 @@ class PaymentController extends Controller
        // Pass the callback data to the view for display
        return view('callback', compact('callbackData'));
     }
+
+
 
     public function showPaymentForm($course_id)
     {
