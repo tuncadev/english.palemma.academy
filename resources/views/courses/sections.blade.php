@@ -48,14 +48,14 @@ $currentLocale = session('locale', 'uk');
                 <a href="{{ route('course.introduction', ['course_id' => $course_id]) }}" class="w-full flex flex-col sm:flex-row relative btn btn-primary course-card py-3 px-2 md:px-6 md:py-4  border border-gray-300/80">
                     <div class="relative">
                         <i class="absolute text-4xl fa-regular fa-circle-play top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-white"></i>
-                        <img src="{{asset('video/course1/img/thumb2.png')}}" class=" max-w-40 sm:max-w-48 border border-sky-500 p-1 rounded shadow-lg" alt="">
+                        <img src="{{asset('video/course1/img/thumb2.png')}}" class=" sm:max-w-40 sm:max-w-48 border border-sky-500 p-1 rounded shadow-lg" alt="">
                     </div>
                     <div class="w-full block md:text-left text-gray-900 shadow-secondary-1 opacity-100">
                         <div class="p-6">
-                            <h5 class="mb-2 justify-around md:justify-between text-xs md:text-xl font-semibold leading-tight">
-                                <span class=text-sky-900>Introductory lesson  </span>|  <span>@lang('course.intro')</span>
+                            <h5 class="mb-2 justify-around md:justify-between text-sm md:text-xl font-semibold leading-tight">
+                                <span class=text-sky-900>Introductory lesson</span>|  <span>@lang('course.intro')</span>
                             </h5>
-                            <p class="text-[9px] sm:text-xs flex flex-col ">
+                            <p class="text-[11px] sm:text-sm flex flex-col ">
                                 @lang('course.intro_lesson')
                             </p>
                         </div>
@@ -65,14 +65,14 @@ $currentLocale = session('locale', 'uk');
                     class="w-full flex flex-col sm:flex-row relative btn btn-primary course-card py-3 px-2 md:px-6 md:py-4  border border-gray-300/80">
                     <div class="relative">
                         <i class="absolute text-4xl fa-regular fa-circle-play top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-white"></i>
-                        <img src="{{asset('video/course1/img/thumb2.png')}}" class=" max-w-40 sm:max-w-48 border border-sky-500 p-1 rounded shadow-lg" alt="">
+                        <img src="{{asset('video/course1/img/thumb2.png')}}" class=" sm:max-w-40 sm:max-w-48 border border-sky-500 p-1 rounded shadow-lg" alt="">
                     </div>
                     <div class="w-full block md:text-left text-gray-900 shadow-secondary-1 opacity-100">
                         <div class="p-6">
-                            <h5 class="mb-2 justify-around md:justify-between text-xs md:text-xl font-semibold leading-tight">
+                            <h5 class="mb-2 justify-around md:justify-between text-sm md:text-xl font-semibold leading-tight">
                                 <span class=text-sky-900>Video lessons  </span>|  <span>@lang('course.video_intro')</span>
                             </h5>
-                            <p class="text-[9px] sm:text-xs flex flex-col ">
+                            <p class="text-[11px] sm:text-sm flex flex-col ">
                                 @lang('course.video_lesson')
                             </p>
                         </div>
@@ -102,13 +102,13 @@ $currentLocale = session('locale', 'uk');
                 @if($isUnlocked)
                     <a href="{{ route('course.show', ['course_id' => $course_id, 'section_id' => $section['id']]) }}"
                     class="w-full flex flex-col sm:flex-row relative btn btn-primary course-card py-3 px-2 md:px-6 md:py-4 border border-gray-300/80">
-                        <img src="{{asset('images/courses/c'.$course_id.'/s'.$section['id'].'.jpg')}}" class="max-w-40 sm:max-w-48 rounded shadow-lg" alt="Section {{$section['en']}}">
+                        <img src="{{asset('images/courses/c'.$course_id.'/s'.$section['id'].'.jpg')}}" class="sm:max-w-40 sm:max-w-48 rounded shadow-lg" alt="Section {{$section['en']}}">
                         <div class="w-full block md:text-left text-gray-900 shadow-secondary-1 {{ $isUnlocked ? 'opacity-100' : 'opacity-50' }}">
                             <div class="p-6">
-                                <h5 class="mb-2 justify-around md:justify-between text-xs md:text-xl font-semibold leading-tight">
+                                <h5 class="mb-2 justify-around md:justify-between text-sm md:text-xl font-semibold leading-tight">
                                     <span class=text-sky-900>{{$section['id']}}. {{$section['en']}} </span>|  <span>{{ $section['section_name']}}</span>
                                 </h5>
-                                <p class="text-[9px] sm:text-xs flex flex-col ">
+                                <p class="text-[11px] sm:text-xs flex flex-col ">
                                     <span class="text-amber-600">| {{  $section['totalPhrasesInSection']  }} phrases |</span>
                                     <span class="text-emerald-700">| {{  $section['totalPracticeInSection']  }} practice questions |</span>
                                     <span class="text-indigo-700">| {{  $section['totalQuizInSection']  }}  quiz question |</span>

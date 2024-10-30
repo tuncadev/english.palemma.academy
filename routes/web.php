@@ -69,7 +69,9 @@ Route::get('/contact-us', function () {
 Route::get('/about-me', function () {
     return view('about-me');
 });
-Route::get('/guest/course/{course_id}', [CourseController::class, 'index'])->name('course.index');
+Route::get('/guest/course/{course_id}', [CourseController::class, 'index'])
+    ->name('course.index');
+
 //Route::patch('/video/{filename}', [CourseController::class, 'serveVideo'])->name('video.serve')->middleware('cache.video');
 
 

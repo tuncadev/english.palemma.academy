@@ -59,7 +59,6 @@
                                     <i class="text-4xl text-red-600 fa-solid fa-triangle-exclamation"></i>
                                     <ul class="text-xs list-outside ">
                                         <li><i class="fa-regular fa-thumbs-up mr-2" style="color: #2583cb;"></i>@lang('practice.s1-rule-1')</li>
-                                        <li><i class="fa-regular fa-thumbs-down mr-2" style="color: #2583cb;"></i>@lang('practice.s1-rule-2')</li>
                                         <li><i class="fa-solid fa-check-double mr-1" style="color: #2583cb;"></i>@lang('practice.s1-rule-3')</li>
                                     </ul>
                                 </div>
@@ -184,14 +183,10 @@
                                                         {!!$questionText!!}
                                                     </div>
                                                     <div class="flex items-center pl-2 justify-end">
-                                                        <a data-tooltip-target="tooltip-left-{{ $id }}" data-tooltip-placement="left" href="javascript:void(0);" onclick="toggleTranslation({{ $id }})" class="r-0 text-gray-800 text-xs flex flex-col items-center hover:text-blue-800">
+                                                        <a href="javascript:void(0);" onclick="toggleTranslation({{ $id }})" class="r-0 text-gray-800 text-xs flex flex-col items-center hover:text-blue-800">
                                                             <i class="fa-solid fa-language mr-1"></i>
                                                             @lang('lesson.translate')
                                                         </a>
-                                                        <div id="tooltip-left-{{ $id }}" role="tooltip" class="text-yellow-300 absolute z-10 invisible inline-block px-2 py-1 text-xs font-medium bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip">
-                                                            -1 @lang('lesson.point')
-                                                            <div class="tooltip-arrow" data-popper-arrow></div>
-                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -207,16 +202,17 @@
                                 @endforeach
 
                                 <span class="" id="score"></span>
-                                <div class="flex flex-col text-sm md:flex-row gap-y-4 md:justify-between items-center mt-4">
-                                    <button
-                                        id="checkanswers"
+                                <div class="mt-8 flex flex-row md:flex-row gap-y-4 md:justify-between items-center ">
+                                    <button id="checkanswers"
                                         onclick="checkQuizAnswers()"
                                         data-modal-target="modal_answers"
-                                        class="p-2 m-auto text-sm rounded-md text-white uppercase font-semibold w-btn_purple h-btn_purple bg-btn_purple  shadow-md m-auto"
+                                        class="m-auto px-4 py-2 text-xs rounded-md text-white capitalize  font-semibold bg-btn_purple  shadow-md"
                                         type="button">
                                             @lang('lesson.check')
                                     </button>
-                                    <button id="continue" type="submit" class="text-sm p-2 md:p-4 m-auto rounded-md text-white uppercase font-semibold w-btn_purple h-btn_purple bg-btn_green  shadow-md m-auto">
+                                    <button id="continue"
+                                    type="submit"
+                                    class=" m-auto px-4 py-2 text-xs rounded-md text-white capitalize  font-semibold bg-btn_green  shadow-md">
                                         @lang('lesson.next')
                                     </button>
                                 </div>
@@ -373,12 +369,10 @@ document.addEventListener('DOMContentLoaded', function() {
             element.style.display = 'block';
             if (!translationsOpened.has(id)) {
                 translationsOpened.add(id);
-                quizScore -= 1;
             }
         } else {
             element.style.display = 'none';
         }
-        updateQuizScore();
     };
 
     function updateQuizScore() {

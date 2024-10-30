@@ -35,15 +35,13 @@ class DashboardController extends Controller
 
     public function subscribtions() {
         $user_id = Auth::id();
-        $subscriptions = Subscribtion::where('user_id', $user_id)->get();
-        $courseIds = $subscriptions->pluck('course_id');
-        $courses = Course::whereIn('id', $courseIds)->get();
 
+        $courses = Course::get();
 
         $locale = session('locale', config('app.locale'));
         // Transform the courses collection
-        $courses->transform(function($course) use ($subscriptions, $locale, $user_id) {
-
+        $courses->transform(function($course) use ($locale, $user_id) {
+            $hasSubscription = Subscribtion::where('course_id', 'course_id')->where('user_id', $user_id);
             $totalPhrases = Phrase::where('course_id', $course->id)->count();
             $totalPractice = Practice::where('course_id', $course->id)->count();
             $totalQuiz = Quiz::where('course_id', $course->id)->count();
@@ -78,7 +76,7 @@ class DashboardController extends Controller
                                           ->where('course_id', $course->id)
                                           ->pluck('section_id')
                                           ->toArray();
-            $subscription = $subscriptions->firstWhere('course_id', $course->id);
+            $subscription = $hasSubscription->firstWhere('course_id', $course->id);
             $isExpired = $subscription && $subscription->expiry_date <= today();
             $paymentStatus = $subscription && $subscription->payment_status;
             $hasSubscription = $subscription && $subscription->payment_status === 'completed' && !$isExpired;
@@ -124,11 +122,13 @@ class DashboardController extends Controller
             $course->completedSectionsCount = $completedSectionsCount;
             $course->totalSections = $totalSections;
             $course->completionPercentage = round($completionPercentage, 2); // Round to 2 decimal places
-            $course->hasSubscription = $hasSubscription;
-            $course->isExpired = $isExpired;
-            $course->subscribtionDate = $subscription->subscription_date;
-            $course->expiryDate = $subscription->expiry_date;
-            $course->pending = $pending;
+
+            $course->hasSubscription = $hasSubscription ?? null;
+            $course->isExpired = $isExpired ?? null;
+            $course->subscribtionDate = $subscription->subscription_date ?? null;
+            $course->expiryDate = $subscription->expiry_date ?? null;
+            $course->pending = $pending ?? null;
+
             $course->practiceProgressPercent = $practiceProgressPercent;
             $course->quizProgressPercent = $quizProgressPercent;
             $course->user_progress = $user_progress;

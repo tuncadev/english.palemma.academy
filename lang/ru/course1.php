@@ -24,6 +24,7 @@ return [
   'phrasal_verbs' => 'фразовых глаголов для изучения,',
   'quiz_questions' => 'вопросов для практики',
   'practice_questions' => 'вопросов в разделах тестов',
+  'video_lessons' => 'Видео уроки',
 
 ];
 ?>

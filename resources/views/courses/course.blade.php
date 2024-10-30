@@ -121,15 +121,18 @@ $currentLocale = session('locale', 'uk');
             <li class="list-image-[url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxNCAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBmaWxsPSIjMzhiZGY4Ij48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMy42ODUuMTUzYS43NTIuNzUyIDAgMCAxIC4xNDMgMS4wNTJsLTggMTAuNWEuNzUuNzUgMCAwIDEtMS4xMjcuMDc1bC00LjUtNC41YS43NS43NSAwIDAgMSAxLjA2LTEuMDZsMy44OTQgMy44OTMgNy40OC05LjgxN2EuNzUuNzUgMCAwIDEgMS4wNS0uMTQzWiIgLz48L3N2Zz4=)]">
                 <span class="font-semibold text-amber-700"> {{ $quizes }} </span> -  <span class="font-semibold text-sky-800"> @lang('course1.quiz_questions') </span>
             </li>
+            <li class="list-image-[url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxNCAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBmaWxsPSIjMzhiZGY4Ij48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMy42ODUuMTUzYS43NTIuNzUyIDAgMCAxIC4xNDMgMS4wNTJsLTggMTAuNWEuNzUuNzUgMCAwIDEtMS4xMjcuMDc1bC00LjUtNC41YS43NS43NSAwIDAgMSAxLjA2LTEuMDZsMy44OTQgMy44OTMgNy40OC05LjgxN2EuNzUuNzUgMCAwIDEgMS4wNS0uMTQzWiIgLz48L3N2Zz4=)]">
+                <span class="font-semibold text-amber-700"> {{ $videos }} </span> -  <span class="font-semibold text-sky-800"> @lang('course1.video_lessons') </span>
+            </li>
         </ul>
         <div class="mt-8 flex flex-col flex-col-reverse sm:flex-row items-center justify-between">
             <button data-modal-target="payment-modal" data-modal-toggle="payment-modal"  type="button" class="text-center hover:cursor-pointer uppercase sm:px-2 px-6 py-4 rounded-lg hover:bg-violet-800 hover:shadow-md bg-violet-500 max-w-52 text-xl text-gray-100 font-bold ">
                 @lang('general.buy') @lang('general.course')
             </button>
             <div class="  mb-6 rounded-lg">
-                <span class="font-geometria font-black text-5xl uppercase font-geometria text-gray-600 sm:text-6xl">{{ $course->course_price }}</span><span class="text-orange-600  text-xl font-semibold">₴</span>
+                <span class="font-geometria font-black text-5xl uppercase font-geometria text-gray-600 sm:text-6xl">{{ $course->course_price }}&nbsp;</span><span class="text-orange-600  text-xl font-semibold">₴</span>
                 <div class=" text-center rounded-lg">
-                    <span class="font-geometria line-through font-geometria text-2xl text-gray-600">{{ ($course->course_price)+700 }}</span><span class="text-orange-600  text-xl font-semibold">₴</span>
+                    <span class="font-geometria line-through font-geometria text-2xl text-gray-600">{{ ($course->course_price)+700 }}</span>&nbsp;<span class="text-orange-600  text-xl font-semibold">₴</span>
                 </div>
             </div>
         </div>
@@ -168,6 +171,7 @@ $currentLocale = session('locale', 'uk');
     </div>
     <x-payment-pop :course="$course" :courseNameLocale="$course->$courseNameLocale" :price="$course->course_price" />
     <script>
+
         document.addEventListener('DOMContentLoaded', function () {
             const videoModal = document.getElementById('videoModal');
             const closeModalBtn = document.getElementById('closeModalBtn');
@@ -184,6 +188,8 @@ $currentLocale = session('locale', 'uk');
                     modalVideo.pause();
                 }
             });
+
         });
+
     </script>
 @endsection

@@ -282,7 +282,7 @@ class CourseController extends Controller
         $phrases = Phrase::get()->count();
         $quizes = Quiz::get()->count();
         $practices = Practice::get()->count();
-
+        $videos = Video::get()->count();
         switch ($locale) {
           case 'uk':
               $localizedSections = $sections->map(function($section) {
@@ -317,7 +317,7 @@ class CourseController extends Controller
       }
 
 
-        return view('courses.course', compact('quizes','practices','phrases', 'course', 'localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
+        return view('courses.course', compact('videos', 'quizes','practices','phrases', 'course', 'localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
     }
 
 
