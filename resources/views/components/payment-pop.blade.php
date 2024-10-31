@@ -110,7 +110,7 @@
                         <!-- Bank Transfer Radio Button -->
                         <div class="flex">
                             <div class="flex items-center h-5">
-                                <input id="bank_transfer_uah_radio" name="payment_method" type="radio" value="bank_transfer" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
+                                <input required id="bank_transfer_uah_radio" name="payment_method" type="radio" value="bank_transfer" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
                             </div>
                             <div class="ms-2 text-sm">
                                 <label for="bank_transfer_uah_radio" class="font-medium text-gray-900 dark:text-gray-300">
@@ -124,7 +124,7 @@
                         <!-- Bank Transfer SWIFT Radio Button -->
                         <div class="flex">
                             <div class="flex items-center h-5">
-                                <input id="bank_transfer_swift_radio" name="payment_method" type="radio" value="bank_transfer" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
+                                <input required id="bank_transfer_swift_radio" name="payment_method" type="radio" value="bank_transfer" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
                             </div>
                             <div class="ms-2 text-sm">
                                 <label for="bank_transfer_swift_radio" class="font-medium text-gray-900 dark:text-gray-300">
@@ -138,7 +138,7 @@
                         <!-- Credit Card Radio Button -->
                         <div class="flex">
                             <div class="flex items-center h-5">
-                                <input id="credit_card_radio" name="payment_method" type="radio" value="credit_card" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
+                                <input required id="credit_card_radio" name="payment_method" type="radio" value="credit_card" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
                             </div>
                             <div class="ms-2 text-sm">
                                 <label for="credit_card_radio" class="font-medium text-gray-900 dark:text-gray-300">
@@ -260,7 +260,7 @@
                                     @lang('payment.cardnumber')
                                 </label>
                                 <div class="flex items-center gap-4">
-                                    <input required type="text" name="cardData[pan]" id="cardnumber" placeholder="1234 5678 9012 3456"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                                    <input  type="text" name="cardData[pan]" id="cardnumber" placeholder="1234 5678 9012 3456"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                                     <i class="fa-regular fa-credit-card"></i>
                                 </div>
                             </div>
@@ -271,7 +271,7 @@
                                     @lang('payment.expires')
                                 </label>
                                 <div class="flex items-center gap-4">
-                                    <input required type="text"name="cardData[exp]" id="expires" placeholder="MM/YY" maxlength="5"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                                    <input  type="text"name="cardData[exp]" id="expires" placeholder="MM/YY" maxlength="5"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                                     <i class="fa-regular fa-calendar-days"></i>
                                 </div>
                                 <p id="expires-error-month" class="text-red-500 text-sm hidden">
@@ -285,11 +285,11 @@
 
                             <!-- CVV Input -->
                             <div class="col-span-1">
-                                <label for="ccv" class="block mb-2 text-sm font-medium text-gray-900 ">
+                                <label for="cvv" class="block mb-2 text-sm font-medium text-gray-900 ">
                                     @lang('payment.cvv')
                                 </label>
                                 <div class="flex items-center gap-4">
-                                    <input required type="password" name="cardData[cvv]" id="ccv" maxlength="3" placeholder="123"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                                    <input  type="password" name="cardData[cvv]" id="cvv" maxlength="3" placeholder="123"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                                     <i class="fa-solid fa-hashtag"></i>
                                 </div>
                             </div>
@@ -351,79 +351,205 @@
   </div>
 
 <script>
-    const clearItems = document.getElementById('removeItem');
-    const sumDiv1 =  document.getElementById('sum');
-    const sumDiv2 =  document.getElementById('sum2');
-    const cartItem = document.getElementById('cartItem');
-    const popModal = document.getElementById('payment-modal');
-    const countdownContainer = document.getElementById('countdownContainer');
+// DOM Elements
+const clearItems = document.getElementById('removeItem');
+const sumDiv1 = document.getElementById('sum');
+const sumDiv2 = document.getElementById('sum2');
+const cartItem = document.getElementById('cartItem');
+const popModal = document.getElementById('payment-modal');
+const countdownContainer = document.getElementById('countdownContainer');
 
-    clearItems.addEventListener('click', function () {
-        cartItem.remove();
-        sumDiv1.innerHTML = sumDiv2.innerHTML = 0;
-        countdownContainer.classList.remove('hidden');
+const bankTransferSwiftRadio = document.getElementById('bank_transfer_swift_radio');
+const bankTransferUahRadio = document.getElementById('bank_transfer_uah_radio');
+const creditCardRadio = document.getElementById('credit_card_radio');
 
-        let count = 3; // starting count
-        const countdownElement = document.getElementById('countdown'); // element to display the countdown
+const UAHbankTransferDiv = document.getElementById('bank_transfer_iban');
+const SWIFTbankTransferDiv = document.getElementById('bank_transfer_swift');
+const creditCardDiv = document.getElementById('credit_card');
 
-        // Update the countdown display initially
+const cardNumber = document.getElementById('cardnumber');
+const cvv = document.getElementById('cvv');
+const expires = document.getElementById('expires');
+const checkit = document.getElementById('agree-check');
+const checkitLabel = document.getElementById('agree-label');
+const checkError = document.getElementById('agree-error');
+const phoneInput = document.getElementById("phonenumber");
+const countdownElement = document.getElementById('countdown');
+
+
+// Helper Functions
+// Toggles the 'required' attribute for specified fields
+function toggleRequired(fields, isRequired) {
+    fields.forEach(field => field.required = isRequired);
+}
+
+// Formats phone input
+function formatPhoneInput(input) {
+    input = input.replace(/\D/g, ""); // Remove non-numeric characters
+    let formatted = "+380 (";
+
+    if (input.length > 0) formatted += input.substring(0, 2);
+    if (input.length >= 2) formatted += ") " + input.substring(2, 5);
+    if (input.length >= 5) formatted += "-" + input.substring(5, 7);
+    if (input.length >= 7) formatted += "-" + input.substring(7, 9);
+
+    return formatted;
+}
+
+// Formats card input
+function formatCardInput(input) {
+    input = input.replace(/\D/g, ""); // Remove non-digit characters
+    if (input.length > 16) input = input.substring(0, 16); // Limit to 16 digits
+
+    let formatted = "";
+    for (let i = 0; i < input.length; i += 4) {
+        if (i > 0) formatted += " ";
+        formatted += input.substring(i, i + 4);
+    }
+    return formatted;
+}
+
+// Handles validation styles for form fields
+function setValidationError(element, isError, errorElement) {
+    element.classList.toggle("border-red-500", isError);
+    element.classList.toggle("border-gray-300", !isError);
+    if (errorElement) errorElement.classList.toggle("hidden", !isError);
+}
+
+// Countdown timer
+function startCountdown(duration, onComplete) {
+    let count = duration;
+    countdownElement.innerHTML = count;
+    const intervalId = setInterval(() => {
+        count--;
         countdownElement.innerHTML = count;
-
-        const countdownInterval = setInterval(() => {
-            countdownElement.innerHTML = count; // Update the displayed count
-
-            if (count === 0) {
-
-                clearInterval(countdownInterval); // Stop the countdown
-
-                // Perform the action when countdown reaches 0
-                doSomething();
-            }
-
-                count--; // Decrease the count by 1
-        }, 700); // 1000 milliseconds = 1 second
-    });
-    // Define the action to be performed
-    function doSomething() {
-        popModal.classList.add('hidden');
-        location.reload();
-
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-    // Get the radio buttons
-    const bank_transfer_swift_radio = document.getElementById('bank_transfer_swift_radio');
-    const bank_transfer_uah_radio = document.getElementById('bank_transfer_uah_radio');
-    const creditCardRadio = document.getElementById('credit_card_radio');
-
-
-    // Get the divs
-    const UAHbankTransferDiv = document.getElementById('bank_transfer_iban');
-    const SWIFTbankTransferDiv = document.getElementById('bank_transfer_swift');
-    const creditCardDiv = document.getElementById('credit_card');
-
-    // Function to show the corresponding div based on selected radio button
-    function showCorrespondingDiv() {
-        if (bank_transfer_uah_radio.checked) {
-            UAHbankTransferDiv.style.display = 'block';
-            SWIFTbankTransferDiv.style.display = 'none';
-            creditCardDiv.style.display = 'none';
-        } else if (creditCardRadio.checked) {
-            creditCardDiv.style.display = 'block';
-            UAHbankTransferDiv.style.display = 'none';
-            SWIFTbankTransferDiv.style.display = 'none';
+        if (count === 0) {
+            clearInterval(intervalId);
+            onComplete();
         }
-        else if (bank_transfer_swift_radio.checked) {
-            SWIFTbankTransferDiv.style.display = 'block';
-            UAHbankTransferDiv.style.display = 'none';
-            creditCardDiv.style.display = 'none';
-        }
-    }
+    }, 700);
+}
 
-    // Add event listeners to radio buttons
-    bank_transfer_uah_radio.addEventListener('change', showCorrespondingDiv);
-    bank_transfer_swift_radio.addEventListener('change', showCorrespondingDiv);
+// Reload action after countdown
+function reLoadIt() {
+    popModal.classList.add('hidden');
+    location.reload();
+}
+
+// Show corresponding payment div based on selected radio button
+function showCorrespondingDiv() {
+    if (bankTransferUahRadio.checked) {
+        UAHbankTransferDiv.style.display = 'block';
+        SWIFTbankTransferDiv.style.display = 'none';
+        creditCardDiv.style.display = 'none';
+        toggleRequired([cardNumber, cvv, expires], false);
+    } else if (bankTransferSwiftRadio.checked) {
+        SWIFTbankTransferDiv.style.display = 'block';
+        UAHbankTransferDiv.style.display = 'none';
+        creditCardDiv.style.display = 'none';
+        toggleRequired([cardNumber, cvv, expires], false);
+    } else if (creditCardRadio.checked) {
+        creditCardDiv.style.display = 'block';
+        UAHbankTransferDiv.style.display = 'none';
+        SWIFTbankTransferDiv.style.display = 'none';
+        toggleRequired([cardNumber, cvv, expires], true);
+    }
+}
+
+
+// Event Listeners
+// Prefill phone input with "+380 (" on focus
+phoneInput.addEventListener("focus", function (e) {
+    if (e.target.value === "") e.target.value = "+380 (";
+});
+
+// Format phone input
+phoneInput.addEventListener("input", function (e) {
+    e.target.value = formatPhoneInput(e.target.value);
+});
+
+// Reset phone input if incomplete on blur
+phoneInput.addEventListener("blur", function (e) {
+    if (e.target.value.length < 18) e.target.value = "";
+});
+
+// Format card number input
+cardNumber.addEventListener("input", function (e) {
+    e.target.value = formatCardInput(e.target.value);
+});
+
+// Store raw card value without spaces for submission
+cardNumber.addEventListener("blur", function (e) {
+    e.target.dataset.cleanValue = e.target.value.replace(/\s/g, "");
+});
+
+// Handle clearing items and starting countdown
+clearItems.addEventListener('click', () => {
+    cartItem.remove();
+    sumDiv1.innerHTML = sumDiv2.innerHTML = 0;
+    countdownContainer.classList.remove('hidden');
+    startCountdown(3, reLoadIt);
+});
+
+
+
+// Payment form validation
+document.getElementById("paymentGo").addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (checkit.checked) {
+        this.submit();
+    } else {
+        console.log("Agreement checkbox not checked");
+        setValidationError(checkit, true, checkError);
+        checkError.innerHTML = "{{ __('general.agree_error') }}";
+    }
+});
+
+// Clear error styles when checkbox is checked
+checkit.addEventListener("change", function () {
+    if (checkit.checked) setValidationError(checkit, false, checkError);
+});
+
+// Payment expiration date input validation and formatting
+expires.addEventListener("input", function (e) {
+    let value = e.target.value.replace(/\D/g, "");
+    let errorElementMonth = document.getElementById("expires-error-month");
+    let errorElementYear = document.getElementById("expires-error-year");
+
+    if (value.length >= 2) {
+        let month = value.substring(0, 2);
+        let year = value.substring(2, 4);
+
+        if (parseInt(month, 10) > 12 || parseInt(month, 10) < 1) {
+            setValidationError(e.target, true, errorElementMonth);
+        } else if (parseInt(year, 10) < 1) {
+            setValidationError(e.target, true, errorElementYear);
+        } else {
+            setValidationError(e.target, false);
+        }
+
+        e.target.value = `${month}${year ? '/' + year : ''}`;
+    } else {
+        e.target.value = value;
+        setValidationError(e.target, false);
+    }
+});
+
+// Clear expiration date if format is incomplete on blur
+expires.addEventListener("blur", function (e) {
+    if (e.target.value.length < 5) {
+        e.target.value = "";
+        setValidationError(e.target, false);
+    }
+});
+
+
+// Initialize event listeners on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function () {
+    bankTransferUahRadio.addEventListener('change', showCorrespondingDiv);
+    bankTransferSwiftRadio.addEventListener('change', showCorrespondingDiv);
     creditCardRadio.addEventListener('change', showCorrespondingDiv);
 });
 
 </script>
+
