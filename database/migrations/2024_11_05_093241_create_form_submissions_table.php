@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name'); // For quiz inputs
             $table->string('email');
             $table->string('subject');
-            $table->string('message');
+            $table->string('userMessage');
             $table->timestamps();
         });
     }
