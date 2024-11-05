@@ -32,4 +32,10 @@ return [
     'bank_transfer_info' => 'оплата по IBAN',
     'bank_name' => 'Назва банку',
     'swift_code' => 'swift code',
+    'course_purchase' => 'Оплата курсу',
+    'payment_received' => 'Ми отримали ваш платіж!',
+    'thanks_msg' => 'Дякуємо за оплату. <br /> Ваша платіжна операція за курс "<strong>:course_name</strong>" була успішно завершена.',
+    'check_details' => 'Будь ласка, перевірте свої дані нижче та встановіть пароль',
+    'set_passdword' => 'Будь ласка, встановіть пароль',
+
 ];

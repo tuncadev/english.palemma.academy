@@ -39,9 +39,11 @@ class DashboardController extends Controller
         $courses = Course::get();
 
         $locale = session('locale', config('app.locale'));
+
         // Transform the courses collection
         $courses->transform(function($course) use ($locale, $user_id) {
-            $hasSubscription = Subscribtion::where('course_id', 'course_id')->where('user_id', $user_id);
+
+            $hasSubscription = Subscribtion::where('course_id',  $course->id)->where('user_id', $user_id);
             $totalPhrases = Phrase::where('course_id', $course->id)->count();
             $totalPractice = Practice::where('course_id', $course->id)->count();
             $totalQuiz = Quiz::where('course_id', $course->id)->count();

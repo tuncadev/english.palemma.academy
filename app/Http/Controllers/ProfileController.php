@@ -108,4 +108,11 @@ class ProfileController extends Controller
 
     return back()->with('status', 'Avatar updated successfully.');
 }
+
+    public function create(Request $request) {
+
+
+    }
+
+
 }

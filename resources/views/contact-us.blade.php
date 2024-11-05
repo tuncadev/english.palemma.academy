@@ -34,9 +34,10 @@ $locale = session('locale', 'uk');
                         <span class="text-blue-700 font-semibold">+380 (93) 123 45 67</span>
                     </div>
                 </div>
-
+               <x-success />
                 <!-- Contact Form -->
-                <form action="#" method="POST" class="space-y-6">
+                <form action="{{ route('send.email') }}" method="POST" class="space-y-6" id="sendMessage">
+                    @csrf
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <!-- Name Field -->
                         <div>
@@ -45,6 +46,7 @@ $locale = session('locale', 'uk');
                             </label>
                             <input type="text" name="name" required placeholder="@lang('general.fullname_ph')"
                                 class="w-full border border-blue-300 rounded-md px-3 py-2 text-blue-800 placeholder-blue-300 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+
                         </div>
 
                         <!-- Email Field -->
@@ -64,6 +66,7 @@ $locale = session('locale', 'uk');
                         </label>
                         <input type="text" name="subject" required placeholder="@lang('general.subject_ph')"
                             class="w-full border border-blue-300 rounded-md px-3 py-2 text-blue-800 placeholder-blue-300 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+
                     </div>
 
                     <!-- Message Field -->
@@ -71,8 +74,9 @@ $locale = session('locale', 'uk');
                         <label class="block text-sm font-medium text-blue-800 mb-1">
                             @lang('general.message')
                         </label>
-                        <textarea name="message" rows="4" required placeholder="@lang('general.message_ph')"
+                        <textarea name="userMessage" rows="4"  maxlength="255" oninput="updateCharacterCount(this)" required placeholder="@lang('general.message_ph')"
                             class="w-full border border-blue-300 rounded-md px-3 py-2 text-blue-800 placeholder-blue-300 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"></textarea>
+                            <span id="charCount" class="text-sm text-blue-600">мах 255</span>
                     </div>
 
                     <!-- Submit Button -->
@@ -86,4 +90,49 @@ $locale = session('locale', 'uk');
             </div>
         </div>
     </div>
+<script>
+    function updateCharacterCount(input) {
+        const maxLength = 255;
+        const currentLength = input.value.length;
+        const remaining = maxLength - currentLength;
+        document.getElementById("charCount").textContent = remaining + " @lang('general.chars_left')";
+    }
+    $(document).ready(function() {
+        const myForm = document.getElementById('sendMessage');
+        const successMsg = document.getElementById('successMsg');
+        const successMessage = document.getElementById('successMessage');
+
+        const failureMsg = document.getElementById('failureMsg');
+        const failMessage = document.getElementById('failMessage');
+
+        $('#sendMessage').on('submit', function(event) {
+            event.preventDefault();
+
+
+            $.ajax({
+                url: "{{ route('send.email') }}", // Ensure this matches your route
+                method: "POST",
+                data: {
+                    name: $('input[name="name"]').val(),
+                    email: $('input[name="email"]').val(),
+                    subject: $('input[name="subject"]').val(),
+                    userMessage: $('textarea[name="userMessage"]').val(), // Use 'message' here
+                    _token: "{{ csrf_token() }}" // Add CSRF token
+                },
+                success: function(response) {
+                    myForm.classList.add('hidden');
+                    successMsg.classList.remove('hidden');
+                    successMessage.innerHTML = "{{ __('mail.sent') }}";
+
+                },
+                error: function(response) {
+                    myForm.reset();
+                    failureMsg.classList.remove('hidden');
+                    failMessage.innerHTML = "{{ __('mail.failure') }}";
+            });
+
+        });
+    });
+
+</script>
 @endsection

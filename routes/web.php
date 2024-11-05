@@ -4,15 +4,19 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FormController;
 use App\Http\Controllers\LocaleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckSubscription;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\PaymentController;
-
+use App\Http\Controllers\WebhookController;
+use App\Http\Controllers\PortmoneController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('locale/{lang}', [LocaleController::class, 'setLocale'])->name('setLocale');
+
+
 
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -28,11 +32,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 
-// Route to display the payment form (GET request)
-Route::get('/course/{course_id}/payment', [PaymentController::class, 'showPaymentForm'])->name('payment.form');
-// Route to handle the payment submission (POST request)
-Route::post('/course/{course_id}/payment', [PaymentController::class, 'create'])->name('payment.create');
-Route::match(['get', 'post'], '/payment/callback', [PaymentController::class, 'handleCallback'])->name('payment.callback');
+
 
 
 
@@ -53,6 +53,7 @@ Route::get('/course/{course_id}/instructions', [CourseController::class, 'instru
 Route::get('/course/{course_id}/videotutorials', [CourseController::class, 'tutorials'])->name('course.tutorials');
 
 
+
 //Route::get('/dashboard/paid/courses', [DashboardController::class, 'subscribtions'])->middleware(['auth', 'verified'])->name('dashboard.paid_courses');
 //Route::get('/dashboard/paid/course-{course_id}', [DashboardController::class, 'dashboard'])->name('course.dashboard');
 
@@ -69,10 +70,36 @@ Route::get('/contact-us', function () {
 Route::get('/about-me', function () {
     return view('about-me');
 });
+Route::get('/oferta', function () {
+    return view('oferta');
+});
 Route::get('/guest/course/{course_id}', [CourseController::class, 'index'])
     ->name('course.index');
 
 //Route::patch('/video/{filename}', [CourseController::class, 'serveVideo'])->name('video.serve')->middleware('cache.video');
+
+
+Route::post('/send-email', [FormController::class, 'sendForm'])->name('send.email');
+
+
+
+
+/* Payments */
+
+Route::get('/payment', function () {
+    return view('payment');
+});
+
+// routes/web.php
+
+Route::get('/guest/course/{course_id}/pay', [PaymentController::class, 'createInvoice'])->name('payment.create');
+Route::get('/payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
+Route::post('/payment/webhook', [PaymentController::class, 'webhook'])->name('payment.webhook');
+
+
+Route::get('/payment/success/{invoiceId}', [PaymentController::class, 'success'])->name('payment.success');
+Route::post('payment/saveuser', [PaymentController::class, 'saveUser'])->name('payment.saveuser');
+
 
 
 require __DIR__.'/auth.php';

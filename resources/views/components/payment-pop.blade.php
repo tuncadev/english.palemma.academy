@@ -50,9 +50,9 @@
                 </div>
               <!-- Modal body -->
               <div class="p-4">
-                <form method="POST" class="" id="paymentGo"  action="{{ route('payment.create', ['course_id' => $course->id])  }}">
+                <form method="GET" class="" id="paymentGo"  action="{{ route('payment.create', ['course_id' => $course->id])  }}">
                     @csrf
-                    <input type="hidden" name="invoice_number" id="invoice_number" value="{{$invoice_number}}">
+
                     <!-- Personal Details -->
                     <div class=" rounded-lg mb-6">
                         <div class="flex flex-col items-left justify-start bg-white rounded-lg mb-4">
@@ -295,7 +295,6 @@
                             </div>
                         </div>
                     </div>
-                    <input type="hidden" name="redirectUrl" id="redirectUrl" value="{{route("payment.callback")}}">
                     <div class="w-full p-4">
                         <p class="text-right font-semibold">
                             @lang('payment.sum'): <span  id="sum2">{{ $price }}</span> ₴
@@ -492,12 +491,14 @@ clearItems.addEventListener('click', () => {
 });
 
 
-
-// Payment form validation
+// Payment form submission
 document.getElementById("paymentGo").addEventListener("submit", function (e) {
     e.preventDefault();
+
     if (checkit.checked) {
-        this.submit();
+        const formData = new FormData(this);
+        const queryString = new URLSearchParams(formData).toString();
+        window.location.href = `${this.action}?${queryString}`;
     } else {
         console.log("Agreement checkbox not checked");
         setValidationError(checkit, true, checkError);
@@ -505,7 +506,7 @@ document.getElementById("paymentGo").addEventListener("submit", function (e) {
     }
 });
 
-// Clear error styles when checkbox is checked
+// Clear error styles when the checkbox is checked
 checkit.addEventListener("change", function () {
     if (checkit.checked) setValidationError(checkit, false, checkError);
 });

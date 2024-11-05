@@ -15,7 +15,7 @@ return [
     */
 
     'default' => env('MAIL_MAILER', 'log'),
-
+    'admin_email' => env('ADMIN_EMAIL', 'tunca.development@gmail.com'),
     /*
     |--------------------------------------------------------------------------
     | Mailer Configurations
@@ -60,7 +60,13 @@ return [
             //     'timeout' => 5,
             // ],
         ],
-
+        'stream' => [
+            'ssl' => [
+                'allow_self_signed' => true,
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+            ],
+        ],
         'resend' => [
             'transport' => 'resend',
         ],
@@ -109,7 +115,7 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
+        'address' => env('MAIL_FROM_ADDRESS', 'info@palemma.academy'),
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 

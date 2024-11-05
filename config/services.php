@@ -35,7 +35,7 @@ return [
         ],
     ],
     'monobank' => [
-        'url' => env('MONOBANK_API_URL'),
+        'base_url' => env('MONOBANK_API_BASE_URL'),
         'token' => env('MONOBANK_API_TOKEN'),
     ],
 

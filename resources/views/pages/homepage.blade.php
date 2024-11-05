@@ -1,6 +1,7 @@
 
 @php
 $locale = session('locale', 'uk');
+
 @endphp
 @extends('layouts.layout')
     @section('navigation')
@@ -19,7 +20,11 @@ $locale = session('locale', 'uk');
 
         <x-personal-card />
         @foreach ($courses as $course)
-            <x-course-card :href="route('course.index', ['course_id' => $course->id])" :course="$course" :locale="$locale" />
+            @php
+                $subscribed = $course['subscribed'];
+                $href = $subscribed ? "dashboard.courses" : "course.index";
+            @endphp
+            <x-course-card :href="route($href, ['course_id' => $course->id])" :course="$course" :locale="$locale" />
         @endforeach
 
     @endsection

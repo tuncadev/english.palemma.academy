@@ -12,6 +12,9 @@ use App\Models\Subscribtion;
 use App\Models\Phrase;
 use App\Models\Practice;
 use App\Models\Quiz;
+use App\Models\Subscribtions;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -30,9 +33,18 @@ class HomeController extends Controller
             $course->id = $course->id;
             $totalSections = Section::where('course_id', $course->id)->count();
             $course->totalSections = $totalSections;
+            $course->subscribed = "";
+
+            $user_id = Auth::id() ?? "";
+
+            if ($user_id) {
+                $course->subscribed = Subscribtion::where('course_id', $course->id)->where('user_id', $user_id)->exists() ?? "";
+            }
+
+
             return $course;
         });
 
-      return view('pages.homepage', compact('courses', 'locale'));
+        return view('pages.homepage', compact('courses', 'locale'));
     }
 }

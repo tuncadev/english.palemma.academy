@@ -15,7 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append:[
             App\Http\Middleware\LocalizationMiddleware::class,
           ]);
-      //  $middleware->append(CacheVideo::class);
+          $middleware->validateCsrfTokens(except: [
+            'payment/webhook',  // Add your webhook route here
+        ]);
+
 
     })
     ->withExceptions(function (Exceptions $exceptions) {

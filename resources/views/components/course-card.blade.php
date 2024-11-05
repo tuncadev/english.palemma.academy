@@ -2,14 +2,15 @@
 @php
     $active = $course->active == 1;
     $opacity = $active ? "opacity-100" : "opacity-50";
-    $cursor = $active ? "hover:cursor-pointer" : "hover:cursor-default";
+
     $courseName = $course['course_name_' . $locale];
     $courseDescription = $course['course_description_' . $locale];
     $courseNameEn = $course['course_name_en'];
     $hidden = $active ? "" : "hidden";
+    $subscribed = $course['subscribed'] ? "general.start" : "general.more";
 @endphp
 
-<div class="{{$cursor}} mb-4 hover:opacity-100 {{ $active ? 'opacity-90' : '' }} container relative flex flex-col m-auto overflow-hidden border border-teal-300 rounded-lg max-w-md">
+<div class="cursor-default  mb-4 hover:opacity-100 {{ $active ? 'opacity-90' : '' }} container relative flex flex-col m-auto overflow-hidden border border-teal-300 rounded-lg max-w-md">
   @if (!$active)
     <div class="flex p-2 font-bold text-rose-500 bg-blue-500/50">
       <p class="bg-white px-2 rounded">
@@ -42,7 +43,7 @@
     </div>
     <div class="btn w-2/5 flex items-center justify-center {{$hidden}}">
       <a {{$attributes->merge(['class' => 'font-bold bg-green-400 rounded-lg text-gray-900 py-2 px-4 text-sm hover:text-white hover:bg-blue-500'])}} href="{{ $href }}">
-        @lang('general.more')
+        @lang("$subscribed")
       </a>
     </div>
   </div>

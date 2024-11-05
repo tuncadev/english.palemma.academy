@@ -1,185 +1,248 @@
 <?php
+// app/Http/Controllers/PaymentController.php
 
 namespace App\Http\Controllers;
 
-use App\Services\PaymentService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
-
-use Exception;
-
-use App\Models\Practice;
-use App\Models\Section;
-use App\Models\Score;
+use App\Services\MonopayService;
+use App\Models\Transactions;
 use App\Models\Course;
-use App\Models\UserProgress;
-use App\Models\Subscribtion;
-use App\Models\Phrase;
-use App\Models\Quiz;
-use App\Models\CompletedSection;
-use App\Models\Video;
-use App\Models\Submission;
+use App\Models\WebHook;
+use App\Models\User;
 
-use App\Helpers\MonobankHelper;
+use Carbon\Carbon;
 
+
+use Illuminate\Validation\Rules;
+
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
+
 
 
 class PaymentController extends Controller
 {
-    protected $paymentService;
+    protected $monopayService;
 
-    public function __construct(PaymentService $paymentService)
+    public function __construct(MonopayService $monopayService)
     {
-        $this->paymentService = $paymentService;
+        $this->monopayService = $monopayService;
     }
 
-    /**
-     * Handle the payment request form submission.
-     */
-    public function create(Request $request)
+    public function createInvoice(Request $request, $course_id)
     {
-        $monobankUrl = config('services.monobank.url');
-        $token = config('services.monobank.token');
-        $reference = Str::uuid()->toString();
-        $expiryDate = str_replace('/', '', $request->input('cardData.exp'));
-
+        $course = Course::findOrFail($course_id);
+        $formData = $request->input('personalInfo'); // Access personal details as an array
+        $amount = $course->course_price * 100; // Convert to minimal units
+        $transactionID = Str::uuid()->toString();
+        // Payload for Monobank API
         $payload = [
-            "amount" => 500,
+            "amount" => $amount,
             "ccy" => 980,
-            "cardData" => [
-                "pan" => str_replace(" ", "", $request->input('cardData.pan')),
-                "exp" => $expiryDate,
-                "cvv" => $request->input('cardData.cvv')
-            ],
             "merchantPaymInfo" => [
-                "reference" => $reference,
+                "reference" => uniqid(),
+                "destination" => $course->name,
+                "comment" => "Course purchase",
+                "customerEmails" => [$formData['email']],
                 "basketOrder" => [
                     [
-                        "name" => "Phrasal Verbs",
+                        "name" => $course->name,
                         "qty" => 1,
-                        "sum" => 500,
-                        "total" => 500,
-                        "unit" => "шт.",
-                        "code" => "d21da1c47f3c45fca10a10c32518bdeb"
+                        "sum" => $amount,
+                        "total" => $amount,
+                        "unit" => "pcs",
                     ]
                 ]
             ],
-            "redirectUrl" => $request->input('redirectUrl'),
-            "initiationKind" => "merchant",
+            "redirectUrl" => route('payment.callback', ['transaction_id' => $transactionID]),
+            "webHookUrl" => route('payment.webhook'), // Webhook URL for status updates
+            "validity" => 3600,
         ];
 
-        $headers = [
-            "X-Token" => $token,
-            "X-Cms" => "Laravel",
-            "X-Cms-Version" => "1.0"
-        ];
+        // Create invoice via Monopay API
+        $response = $this->monopayService->createInvoice($payload);
 
-        try {
-            $response = Http::withHeaders($headers)->post($monobankUrl, $payload);
+        if ($response->successful()) {
+            $data = $response->json();
+            $invoiceUrl = $data['pageUrl'];
 
-            // Determine status and message based on the response
-            $responseBody = $response->json(); // Get the full response as an associative array
-            $status = $response->successful();
-            $responseJson = json_encode($responseBody);
-
-            if ($response->successful() && $responseBody['status'] === 'success' && empty($responseBody['failureReason'])) {
-                $response_msg = $status ?  $responseJson : MonobankHelper::getErrorMessage($response->json()['errCode'] ?? null);
-                $message = 'Payment created successfully.';
-            } else {
-                // Handle the failure using the failureReason
-                $error  = MonobankHelper::getErrorMessage($response->json()['errCode'] ?? 'Unknown error');
-                $message = "En error  occured: " . $error;
-            }
-            // Store the submission in the database
-            Submission::create([
+            // Record payment operation in database
+            Transactions::create([
+                'invoice_id' => $data['invoiceId'],
+                'transaction_id' => $transactionID,
                 'ip_address' => $request->ip(),
-                'session_id' => session()->getId(),
-                'form_data' => [
-                    'invoice_number' => $request->input('invoice_number'),
-                    'first_name' => $request->input('personalInfo.first_name'),
-                    'last_name' => $request->input('personalInfo.last_name'),
-                    'email' => $request->input('personalInfo.email'),
-                    'phonenumber' => $request->input('personalInfo.phonenumber'),
-                    'amount' => $payload['amount'],
-                    'reference' => $reference,
-                    'last_four' => substr($request->input('cardData.pan'), -4),  // Last 4 digits only
-                    'method' => 'Monobank',  // Example metadata
-                ],
-                'response_status' => $status,
-                'response_message' => $message,
-                'response_body' => $responseJson,
+                'first_name' => $formData['first_name'],
+                'last_name' => $formData['last_name'],
+                'email' => $formData['email'],
+                'phone' => $formData['phonenumber'],
+                'amount' => $course->course_price,
+                'course_id' => $course_id,
+                'status' => 'pending',
             ]);
 
-            // Redirect based on the response success or failure
-            return $status
-                ? redirect()->route('payment.callback')->with('success', $message)
-                : redirect()->route('payment.callback')->with('error', 'Error: ' . $message);
-
-        } catch (Exception $e) {
-            // Handle general exceptions and save in the database
-            $message = 'An error occurred: ' . $e->getMessage();
-
-            Submission::create([
-                'ip_address' => $request->ip(),
-                'session_id' => session()->getId(),
-                'form_data' => [
-                    'invoice_number' => $request->input('invoice_number'),
-                    'first_name' => $request->input('personalInfo.first_name'),
-                    'last_name' => $request->input('personalInfo.last_name'),
-                    'email' => $request->input('personalInfo.email'),
-                    'phonenumber' => $request->input('personalInfo.phonenumber'),
-                    'amount' => $payload['amount'],
-                    'reference' => $reference,
-                    'last_four' => substr($request->input('cardData.pan'), -4),  // Last 4 digits only
-                    'method' => 'Monobank',  // Example metadata
-                ],
-                'response_status' => false,
-                'response_message' => "NO",
-            ]);
-
-            return redirect()->route('payment.callback')->with('error', $response_msg);
+            // Redirect to the Monobank payment URL
+            return redirect($invoiceUrl);
+        } else {
+            return back()->withErrors(['error' => 'Failed to create invoice.']);
         }
     }
 
-    /**
-     * Handle the Monobank callback (webhook).
-     */
-    public function handleCallback(Request $request)
+    public function callback(Request $request)
     {
+       return $this->getInvoiceStatus($request);
 
-       // Get the data from the request
-       $callbackData = $request->all();
-
-       // Pass the callback data to the view for display
-       return view('callback', compact('callbackData'));
     }
 
-
-
-    public function showPaymentForm($course_id)
+    public function success($invoiceId)
     {
-        $locale = session('locale', config('app.locale'));
-        $user_id = Auth::id();
-        $allSections = Section::where('course_id', $course_id)->get();
-        $completedSections = CompletedSection::where('user_id', $user_id)
-                                          ->where('course_id', $course_id)
-                                          ->pluck('section_id')
-                                          ->toArray();
-        $course = Course::where('id', $course_id)->firstOrFail();
-        $course_price = Course::where('id', $course_id)->pluck('course_price')->first();
-        $courseNameEn = $course->course_name_en;
-        $subscription = Subscribtion::where('user_id', $user_id)
-        ->where('course_id', $course_id)
-        ->first();
-        $course->localized_name = $course->{"course_name_" . $locale};
+        if($invoiceId) {
+            $locale = session('locale', config('app.locale'));
+            $transactionDetails = Transactions::where('invoice_id',$invoiceId)->firstOrFail();
+            $first_name = $transactionDetails['first_name'];
+            $last_name = $transactionDetails['last_name'];
+            $phone = $transactionDetails['phone'];
+            $email = $transactionDetails['email'];
 
-
-        $hasSubscription = $subscription && $subscription->payment_status === 'completed';
-        return view('payment', compact('course', 'course_price', 'user_id', 'courseNameEn', 'course_id', 'completedSections', 'allSections', 'hasSubscription'));  // This corresponds to the payment.blade.php template
+            $course_id = $transactionDetails['course_id'];
+            $course_name_locale = "course_name_" . $locale;
+            $course_name = Course::where('id', $course_id)->value($course_name_locale);
+            return view('payment.success', compact('course_name', 'invoiceId', 'email', 'first_name', 'last_name', 'phone', 'course_id'));
+        }
     }
+
+    public function addInvoiceCache($payment)
+    {
+        // Get the current timestamp
+        $currentTimestamp = now()->timestamp;
+
+        // Find and delete any expired cache entries with the "invoice_" prefix
+        $expiredEntries = DB::table('cache')
+            ->where('key', 'like', 'invoice_%')
+            ->where('expiration', '<', $currentTimestamp)
+            ->pluck('key');
+
+        foreach ($expiredEntries as $key) {
+            Cache::forget($key); // Delete each expired cache entry
+        }
+
+        // Add the new cache entry with a 15-minute expiration
+        Cache::put('invoice_' . $payment->invoice_id, $payment->invoice_id, now()->addHours(24));
+    }
+
+    public function getInvoiceStatus(Request $request){
+
+        $transactionID = $request->query('transaction_id');
+        $transaction = Transactions::where('transaction_id', $transactionID)->firstOrFail();
+
+        $payment = Transactions::where('transaction_id', $transactionID)->firstOrFail();
+
+        $response = $this->monopayService->getInvoiceStatus($payment->invoice_id);
+        $data = $response->json();
+        $status = $data['status'];
+
+        $failure_reason = $data['failureReason'] ?? null;
+
+        if($status) {
+
+            $transaction->update([
+                'status' => $status,
+                'response' => $response->body(),
+                'failure_reason' => $failure_reason,
+                'update_date' => now(),
+            ]);
+
+            if($status === "success") {
+
+                $this->addInvoiceCache($payment);
+                $invoiceId =  $data['invoiceId'];
+
+                return redirect()->route('payment.success', ['invoiceId' => $invoiceId]);
+            }
+            if($status === "failure") {
+                echo "Failure: " . $failure_reason;
+            }
+        }
+    }
+
+    public function webhook(Request $request)
+{
+    $data = $request->json();
+    if ($data) {
+        $invoice_id = $data->get('invoiceId');
+        $failure_reason = $data->get('failureReason', null);
+
+        WebHook::updateOrCreate(
+            ['invoice_id' => $invoice_id],
+            [
+                'status' => $data->get('status', 'pending'),
+                'response' => $request->getContent(),
+                'failure_reason' => $failure_reason,
+                'update_date' => now(),
+                'transaction_id' => $data->get('transactionId', ''),
+                'ip_address' => $request->ip(),
+                'first_name' => $data->get('firstName', 'Unknown'),
+                'last_name' => $data->get('lastName', 'Unknown'),
+                'email' => $data->get('email', ''),
+                'phone' => $data->get('phone', ''),
+                'amount' => $data->get('amount', 0),
+                'course_id' => $data->get('courseId'),
+            ]
+        );
+    }
+
+    // Return a JSON response to confirm receipt
+    return response()->json(['status' => 'success', 'message' => 'Webhook processed successfully.']);
+}
+
+
+public function saveUser(Request $request) {
+    $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+        'password' => ['required', 'confirmed', Rules\Password::defaults()],
+    ]);
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'phone' => $request->phone,
+        'password' => Hash::make($request->password),
+        'role' => 'subscriber'
+    ]);
+
+
+    event(new Registered($user));
+
+    Auth::login($user);
+
+    $user_id = Auth::id();
+
+    $currentDate = Carbon::now();
+    $plusOneYear = (clone $currentDate)->addYear();
+    $minusOneYear = (clone $currentDate)->subYear();
+    $minusOneMonth = (clone $currentDate)->subMonth();
+
+    DB::table('subscribtions')->insert([
+        [
+            'user_id' => $user_id,
+            'course_id' => $request->course_id,
+            'payment_status' => 'completed',
+            'subscription_date' =>  now(),
+            'expiry_date' => $plusOneYear,
+            'created_at' => now(),
+        ],
+    ]);
+
+
+
+
+
+}
+
+
 
 }
