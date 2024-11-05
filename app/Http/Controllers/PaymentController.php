@@ -176,7 +176,7 @@ class PaymentController extends Controller
     if ($data) {
         $invoice_id = $data->get('invoiceId');
         $failure_reason = $data->get('failureReason', null);
-        $transaction = Transactions::where('invoice_id', $invoice_id)->get();
+        $transaction = Transactions::where('invoice_id', $invoice_id)->first();
         WebHook::updateOrCreate(
             [
                 'invoice_id' => $invoice_id,
