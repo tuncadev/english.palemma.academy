@@ -179,7 +179,9 @@ class PaymentController extends Controller
         $transaction = Transactions::where('invoice_id', $invoice_id)->first();
         WebHook::updateOrCreate(
             [
-                'invoice_id' => $invoice_id,
+                'invoice_id' => $invoice_id,  // Match by invoice_id only
+            ],
+            [
                 'status' => $data->get('status', 'pending'),
                 'response' => $request->getContent(),
                 'failure_reason' => $failure_reason,
@@ -187,11 +189,11 @@ class PaymentController extends Controller
                 'transaction_id' => $transaction->transaction_id,
                 'ip_address' => $request->ip(),
                 'first_name' => $transaction->first_name,
-                'last_name' =>  $transaction->first_name,
+                'last_name' => $transaction->last_name,
                 'email' => $transaction->email,
-                'phone' =>  $transaction->phone,
+                'phone' => $transaction->phone,
                 'amount' => $data->get('amount', 0),
-                'course_id' =>  $transaction->course_id,
+                'course_id' => $transaction->course_id,
             ]
         );
     }
