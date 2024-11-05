@@ -176,7 +176,7 @@ class PaymentController extends Controller
     if ($data) {
         $invoice_id = $data->get('invoiceId');
         $failure_reason = $data->get('failureReason', null);
-        $course_id = Transactions::where('invoice_id', $invoice_id)->value('course_id');
+        $transaction = Transactions::where('invoice_id', $invoice_id)->get();
         WebHook::updateOrCreate(
             [
                 'invoice_id' => $invoice_id,
@@ -184,14 +184,14 @@ class PaymentController extends Controller
                 'response' => $request->getContent(),
                 'failure_reason' => $failure_reason,
                 'update_date' => now(),
-                'transaction_id' => $data->get('transactionId', ''),
+                'transaction_id' => $transaction->transaction_id,
                 'ip_address' => $request->ip(),
-                'first_name' => $data->get('firstName', 'Unknown'),
-                'last_name' => $data->get('lastName', 'Unknown'),
-                'email' => $data->get('email', ''),
-                'phone' => $data->get('phone', ''),
+                'first_name' => $transaction->first_name,
+                'last_name' =>  $transaction->first_name,
+                'email' => $transaction->email,
+                'phone' =>  $transaction->phone,
                 'amount' => $data->get('amount', 0),
-                'course_id' => $course_id,
+                'course_id' =>  $transaction->course_id,
             ]
         );
     }
