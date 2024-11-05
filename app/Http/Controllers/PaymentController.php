@@ -237,9 +237,7 @@ public function saveUser(Request $request) {
         ],
     ]);
 
-
-
-
+    return redirect()->route('course.index');
 
 }
 
