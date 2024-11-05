@@ -129,6 +129,7 @@ $locale = session('locale', 'uk');
                     myForm.reset();
                     failureMsg.classList.remove('hidden');
                     failMessage.innerHTML = "{{ __('mail.failure') }}";
+                }
             });
 
         });

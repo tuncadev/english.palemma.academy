@@ -9,6 +9,6 @@
     </h3>
   </div>
   <div class="mt-2 mb-4 text-sm">
-    More info about this info success goes here. This example text is going to run a bit longer so that you can see how spacing within an alert works with this kind of content.
+
   </div>
 </div>
