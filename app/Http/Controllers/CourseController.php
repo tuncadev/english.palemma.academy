@@ -275,60 +275,65 @@ class CourseController extends Controller
     {
 
         $user_id = Auth::id();
-        $sections = Section::where('course_id', $course_id)->get();
-        $completedSections = CompletedSection::where('user_id', $user_id)
-                                          ->where('course_id', $course_id)
-                                          ->pluck('section_id')
-                                          ->toArray();
-        $subscription = Subscribtion::where('user_id', $user_id )
-        ->where('course_id', $course_id)
-        ->first();
+        if(!$user_id) {
+            $sections = Section::where('course_id', $course_id)->get();
+            $completedSections = CompletedSection::where('user_id', $user_id)
+                                            ->where('course_id', $course_id)
+                                            ->pluck('section_id')
+                                            ->toArray();
+            $subscription = Subscribtion::where('user_id', $user_id )
+            ->where('course_id', $course_id)
+            ->first();
 
-        $hasSubscription = $subscription && $subscription->payment_status === 'completed' && $subscription->expiry_date > today();
-     //   $completedSections = session()->get('completed_sections', []);
-        $locale = session('locale', config('app.locale'));
+            $hasSubscription = $subscription && $subscription->payment_status === 'completed' && $subscription->expiry_date > today();
+            //   $completedSections = session()->get('completed_sections', []);
+            $locale = session('locale', config('app.locale'));
 
-        $course = Course::where('id', $course_id)->firstOrFail();
+            $course = Course::where('id', $course_id)->firstOrFail();
 
-        $phrases = Phrase::get()->count();
-        $quizes = Quiz::get()->count();
-        $practices = Practice::get()->count();
-        $videos = Video::get()->count();
-        switch ($locale) {
-          case 'uk':
-              $localizedSections = $sections->map(function($section) {
-                return [
-                    'section_name' => $section->section_name_uk,
-                    'en' => $section->section_name_en,
-                    'id' => $section->id,
-                ];
-               });
-              $courseName = $course->course_name_uk;
-              break;
-          case 'ru':
-              $localizedSections = $sections->map(function($section) {
-                return [
-                    'section_name' => $section->section_name_ru,
-                    'en' => $section->section_name_en,
-                    'id' => $section->id,
-                ];
-              });
-              $courseName = $course->course_name_ru;
-              break;
-          default:
-          $localizedSections = $sections->map(function($section) {
-            return [
-                'section_name' => $section->section_name_uk,
-                'en' => $section->section_name_en,
-                'id' => $section->id,
-            ];
-           });
-              $courseName = $course->course_name_uk;
-              break;
-      }
+            $phrases = Phrase::get()->count();
+            $quizes = Quiz::get()->count();
+            $practices = Practice::get()->count();
+            $videos = Video::get()->count();
+            switch ($locale) {
+                case 'uk':
+                    $localizedSections = $sections->map(function($section) {
+                        return [
+                            'section_name' => $section->section_name_uk,
+                            'en' => $section->section_name_en,
+                            'id' => $section->id,
+                        ];
+                    });
+                    $courseName = $course->course_name_uk;
+                    break;
+                case 'ru':
+                    $localizedSections = $sections->map(function($section) {
+                        return [
+                            'section_name' => $section->section_name_ru,
+                            'en' => $section->section_name_en,
+                            'id' => $section->id,
+                        ];
+                    });
+                    $courseName = $course->course_name_ru;
+                    break;
+                default:
+                $localizedSections = $sections->map(function($section) {
+                    return [
+                        'section_name' => $section->section_name_uk,
+                        'en' => $section->section_name_en,
+                        'id' => $section->id,
+                    ];
+                });
+                    $courseName = $course->course_name_uk;
+                    break;
+            }
 
-      $invoice_number = $this->generateInvoiceNumber();
-        return view('courses.course', compact('invoice_number', 'videos', 'quizes','practices','phrases', 'course', 'localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
+            $invoice_number = $this->generateInvoiceNumber();
+            return view('courses.course', compact('invoice_number', 'videos', 'quizes','practices','phrases', 'course', 'localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
+
+        } else {
+            return redirect()->route('dashboard.courses');
+        }
     }
 
 

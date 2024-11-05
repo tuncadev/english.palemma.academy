@@ -171,6 +171,7 @@ class PaymentController extends Controller
 
     public function webhook(Request $request)
 {
+    Log::info("Webhook connection established");
     $data = $request->json();
     if ($data) {
         $invoice_id = $data->get('invoiceId');
@@ -237,7 +238,7 @@ public function saveUser(Request $request) {
         ],
     ]);
 
-    return redirect()->route('course.index');
+    return redirect()->route('dashboard.courses');
 
 }
 
