@@ -1,5 +1,4 @@
-  @props(['course', 'courseNameLocale', 'price','invoice_number'])
-
+@props(['course', 'courseNameLocale', 'price','transactionID', 'invoiceNumber', 'discount', 'token'])
   <div id="payment-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
       <div class="relative p-4 w-full max-w-2xl max-h-full">
           <!-- Modal content -->
@@ -11,7 +10,7 @@
                     @lang('payment.checkout')
                   </h3>
                   <h4 class="text-sm">
-                    @lang('payment.invoice_number'): {{ $invoice_number }}
+                    @lang('payment.invoice_number'): {{ $invoiceNumber }}
                   </h4>
                 </div>
                   <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="payment-modal">
@@ -30,7 +29,7 @@
                             {{ $courseNameLocale }}
                         </h3>
                         <p class="text-sm font-semibold text-sky-600">
-                            {{ $price }} ₴
+                            {{ $discount }} ₴
                         </p>
                     </div>
                     <button id="removeItem" type="button" class="group text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-lg w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
@@ -45,12 +44,12 @@
                 </div>
                 <div class="w-full p-4">
                     <p class="text-right font-semibold">
-                        @lang('payment.sum'): <span  id="sum"> {{ $price }}</span> ₴
+                        @lang('payment.sum'): <span  id="sum"> {{ $discount }}</span> ₴
                     </p>
                 </div>
               <!-- Modal body -->
               <div class="p-4">
-                <form method="GET" class="" id="paymentGo"  action="{{ route('payment.create', ['course_id' => $course->id])  }}">
+                <form method="POST" class="" id="paymentGo" >
                     @csrf
 
                     <!-- Personal Details -->
@@ -121,20 +120,6 @@
                                 </p>
                             </div>
                         </div>
-                        <!-- Bank Transfer SWIFT Radio Button -->
-                        <div class="flex">
-                            <div class="flex items-center h-5">
-                                <input required id="bank_transfer_swift_radio" name="payment_method" type="radio" value="bank_transfer" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
-                            </div>
-                            <div class="ms-2 text-sm">
-                                <label for="bank_transfer_swift_radio" class="font-medium text-gray-900 dark:text-gray-300">
-                                    @lang('payment.bank_transfer') (USD)
-                                </label>
-                                <p id="helper-radio-text" class="text-xs font-normal text-gray-500 dark:text-gray-300">
-                                    SWIFT
-                                </p>
-                            </div>
-                        </div>
                         <!-- Credit Card Radio Button -->
                         <div class="flex">
                             <div class="flex items-center h-5">
@@ -152,152 +137,12 @@
                     </div>
                     <div class="border-b border-b-gray-300 h-3 w-full"></div>
                     <!-- IBAN Details -->
-                    <div class="hidden" id="bank_transfer_iban">
-                        <div class="flex items-center gap-2 bg-white rounded-lg shadow-inner">
-                            <i class="text-3xl text-sky-500 fa-solid fa-money-bill-transfer"></i>
-                            <h2 class="text-xl font-bold py-6 ml-4 uppercase text-sky-700">
-                               @lang('payment.bank_details') - (Україна - грівна)
-                            </h2>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="hidden sm:table  min-w-full text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-                                <thead>
-                                    <tr>
-                                        <th class="p-2 bg-sky-300 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold text-xs text-left uppercase tracking-wider border-b dark:border-gray-600">
-                                            @lang('payment.bank_name')
-                                        </th>
-                                        <th class="p-2 bg-sky-300 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold text-xs text-left uppercase tracking-wider border-b dark:border-gray-600">
-                                            IBAN
-                                        </th>
-                                        <th class="p-2 bg-sky-300 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold text-xs text-left uppercase tracking-wider border-b dark:border-gray-600">
-                                            @lang('payment.swift_code')
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="text-gray-700 dark:text-gray-200">
-                                    <tr class="hover:bg-gray-200">
-                                        <td class="p-2  border-b border-gray-200 dark:border-gray-600">
-                                            PrivatBank
-                                        </td>
-                                        <td class="p-2  border-b border-gray-200 dark:border-gray-600">
-                                            UA123456789012345678901234567890
-                                        </td>
-                                        <td class="p-2  border-b border-gray-200 dark:border-gray-600">
-                                            PBANUA2X
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div class="sm:hidden flex flex-col ">
-                                <div class="flex text-xs flex-col">
-                                    <div class=""><strong>@lang('payment.bank_name') :</strong> PrivatBank</div>
-                                    <div class=""><strong>IBAN :</strong> UA123456789012345678901234567890</div>
-                                    <div class=""><strong> @lang('payment.swift_code') :</strong>  PBANUA2X</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- SWIFT Details -->
-                    <div class="hidden" id="bank_transfer_swift">
-                        <div class="flex items-center gap-2 bg-white rounded-lg shadow-inner">
-                            <i class="text-3xl text-sky-500 fa-solid fa-money-bill-transfer"></i>
-                            <h2 class="text-xl font-bold py-6 ml-4 text-sky-700 uppercase">
-                                SWIFT - іноземна валюта (USD)
-                            </h2>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="hidden sm:table  min-w-full text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-                                <thead>
-                                    <tr>
-                                        <th class="p-2 bg-sky-300 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold text-xs text-left uppercase tracking-wider border-b dark:border-gray-600">
-                                            @lang('payment.bank_name')
-                                        </th>
-                                        <th class="p-2 bg-sky-300 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold text-xs text-left uppercase tracking-wider border-b dark:border-gray-600">
-                                            IBAN
-                                        </th>
-                                        <th class="p-2 bg-sky-300 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold text-xs text-left uppercase tracking-wider border-b dark:border-gray-600">
-                                            @lang('payment.swift_code')
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="text-gray-700 dark:text-gray-200">
-                                    <tr class="hover:bg-gray-200">
-                                        <td class="p-2  border-b border-gray-200 dark:border-gray-600">
-                                            PrivatBank
-                                        </td>
-                                        <td class="p-2  border-b border-gray-200 dark:border-gray-600">
-                                            UA123456789012345678901234567890
-                                        </td>
-                                        <td class="p-2  border-b border-gray-200 dark:border-gray-600">
-                                            PBANUA2X
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div class="sm:hidden flex flex-col ">
-                                <div class="flex text-xs flex-col">
-                                    <div class=""><strong>@lang('payment.bank_name') :</strong> PrivatBank</div>
-                                    <div class=""><strong>IBAN :</strong> UA123456789012345678901234567890</div>
-                                    <div class=""><strong> @lang('payment.swift_code') :</strong>  PBANUA2X</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Card Details -->
-                    <div class="hidden" id="credit_card">
-                        <div class="flex items-center gap-2 bg-white rounded-lg shadow-inner">
-                            <i class="text-3xl text-sky-500 fa-brands fa-cc-mastercard"></i>
-                            <i class="text-3xl text-sky-500 fa-brands fa-cc-visa"></i>
-                            <h2 class="text-xl font-bold py-6 ml-4 text-sky-700">
-                                @lang('payment.carddetails')
-                            </h2>
-                        </div>
-                        <div class="grid gap-6 mb-6 md:grid-cols-5 pt-4">
+                    <x-mono-account class="hidden" :transactionID="$transactionID" :invoiceNumber="$invoiceNumber" />
 
-                            <!-- Card Number Input -->
-                            <div class="col-span-3 ">
-                                <label for="cardnumber" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    @lang('payment.cardnumber')
-                                </label>
-                                <div class="flex items-center gap-4">
-                                    <input  type="text" name="cardData[pan]" id="cardnumber" placeholder="1234 5678 9012 3456"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
-                                    <i class="fa-regular fa-credit-card"></i>
-                                </div>
-                            </div>
 
-                            <!-- Expiration Date Input -->
-                            <div class="col-span-1 ">
-                                <label for="expires" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    @lang('payment.expires')
-                                </label>
-                                <div class="flex items-center gap-4">
-                                    <input  type="text"name="cardData[exp]" id="expires" placeholder="MM/YY" maxlength="5"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
-                                    <i class="fa-regular fa-calendar-days"></i>
-                                </div>
-                                <p id="expires-error-month" class="text-red-500 text-sm hidden">
-                                    @lang('payment.error_expire_month')
-                                </p>
-                                <p id="expires-error-year" class="text-red-500 text-sm hidden">
-                                    @lang('payment.error_expire_year')
-                                </p>
-
-                            </div>
-
-                            <!-- CVV Input -->
-                            <div class="col-span-1">
-                                <label for="cvv" class="block mb-2 text-sm font-medium text-gray-900 ">
-                                    @lang('payment.cvv')
-                                </label>
-                                <div class="flex items-center gap-4">
-                                    <input  type="password" name="cardData[cvv]" id="cvv" maxlength="3" placeholder="123"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
-                                    <i class="fa-solid fa-hashtag"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="w-full p-4">
+                    <div class="w-full">
                         <p class="text-right font-semibold">
-                            @lang('payment.sum'): <span  id="sum2">{{ $price }}</span> ₴
+                            @lang('payment.sum'): <span  id="sum2">{{ $discount }}</span> ₴
                         </p>
                     </div>
                     <div class="flex items-start py-6 flex-col">
@@ -310,12 +155,20 @@
                         <p id="agree-error" class="hidden text-xs text-red-600">
                         </p>
                     </div>
-                    <div class="w-full mb-4 flex justify-center m-auto" id="gpay-button">
-
+                    <div id="monopayDiv" class="hidden mb-4 ">
+                        <button id="monopayBtn" type="submit" class=" text-white bg-black hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            <img class="max-w-32 m-auto" src="{{ asset('images/payment_systems/footer_plata_dark_bg.svg') }}" alt="Monobank Pay">
+                        </button>
+                        <p class="text-xs text-center text-red-700 mt-1 font-semibold">
+                            @lang('payment.redirecttobank')
+                        </p>
                     </div>
-                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                        @lang('payment.pay')
-                    </button>
+                    <div id="continueDiv" class="hidden mb-4">
+                        <button id="continueBtn" type="submit" class=" text-white bg-sky-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            @lang('general.continue')
+                        </button>
+                    </div>
+
                 </form>
             </div>
               <!-- Display success or error messages -->
@@ -358,24 +211,25 @@ const cartItem = document.getElementById('cartItem');
 const popModal = document.getElementById('payment-modal');
 const countdownContainer = document.getElementById('countdownContainer');
 
-const bankTransferSwiftRadio = document.getElementById('bank_transfer_swift_radio');
 const bankTransferUahRadio = document.getElementById('bank_transfer_uah_radio');
 const creditCardRadio = document.getElementById('credit_card_radio');
 
 const UAHbankTransferDiv = document.getElementById('bank_transfer_iban');
-const SWIFTbankTransferDiv = document.getElementById('bank_transfer_swift');
-const creditCardDiv = document.getElementById('credit_card');
 
-const cardNumber = document.getElementById('cardnumber');
-const cvv = document.getElementById('cvv');
-const expires = document.getElementById('expires');
-const checkit = document.getElementById('agree-check');
-const checkitLabel = document.getElementById('agree-label');
+const monopayDiv = document.getElementById('monopayDiv');
+const continueDiv = document.getElementById('continueDiv')
+const monopayBtn = document.getElementById('monopayBtn');
+const continueBtn = document.getElementById('continueBtn')
+
+
 const checkError = document.getElementById('agree-error');
 const phoneInput = document.getElementById("phonenumber");
 const countdownElement = document.getElementById('countdown');
 
-
+// Define routes for each action
+const monopayAction = "{{ route('payment.create', ['course_id' => $course->id]) }}";
+const finalizeAction = "{{ route('payment.finalize', ['course_id' => $course->id, 'token' => $token] ) }}";
+const form = document.getElementById("paymentGo");
 // Helper Functions
 // Toggles the 'required' attribute for specified fields
 function toggleRequired(fields, isRequired) {
@@ -383,28 +237,26 @@ function toggleRequired(fields, isRequired) {
 }
 
 // Formats phone input
-function formatPhoneInput(input) {
-    input = input.replace(/\D/g, ""); // Remove non-numeric characters
-    let formatted = "+380 (";
-
-    if (input.length > 0) formatted += input.substring(0, 2);
-    if (input.length >= 2) formatted += ") " + input.substring(2, 5);
-    if (input.length >= 5) formatted += "-" + input.substring(5, 7);
-    if (input.length >= 7) formatted += "-" + input.substring(7, 9);
-
-    return formatted;
-}
-
-// Formats card input
-function formatCardInput(input) {
-    input = input.replace(/\D/g, ""); // Remove non-digit characters
-    if (input.length > 16) input = input.substring(0, 16); // Limit to 16 digits
-
-    let formatted = "";
-    for (let i = 0; i < input.length; i += 4) {
-        if (i > 0) formatted += " ";
-        formatted += input.substring(i, i + 4);
+phoneInput.addEventListener("input", function (e) {
+    if (!e.target.value.startsWith("+380")) {
+        e.target.value = "+380";
+    } else {
+        e.target.value = formatPhoneInput(e.target.value);
     }
+});
+
+function formatPhoneInput(input) {
+    // Remove any non-numeric characters except the "+380" prefix and strip "+380" for formatting
+    input = input.replace(/[^0-9]/g, "").substring(3);
+
+    let formatted = "+380";
+
+    // Build the formatted string based on the input length
+    if (input.length > 0) formatted += " (" + input.substring(0, 2);
+    if (input.length >= 3) formatted += ") " + input.substring(2, 5);
+    if (input.length >= 6) formatted += "-" + input.substring(5, 7);
+    if (input.length >= 8) formatted += "-" + input.substring(7, 9);
+
     return formatted;
 }
 
@@ -439,19 +291,15 @@ function reLoadIt() {
 function showCorrespondingDiv() {
     if (bankTransferUahRadio.checked) {
         UAHbankTransferDiv.style.display = 'block';
-        SWIFTbankTransferDiv.style.display = 'none';
-        creditCardDiv.style.display = 'none';
-        toggleRequired([cardNumber, cvv, expires], false);
-    } else if (bankTransferSwiftRadio.checked) {
-        SWIFTbankTransferDiv.style.display = 'block';
-        UAHbankTransferDiv.style.display = 'none';
-        creditCardDiv.style.display = 'none';
-        toggleRequired([cardNumber, cvv, expires], false);
+        continueDiv.style.display = 'block';
+        monopayDiv.style.display = 'none';
+
+
     } else if (creditCardRadio.checked) {
-        creditCardDiv.style.display = 'block';
+        monopayDiv.style.display = 'block';
         UAHbankTransferDiv.style.display = 'none';
-        SWIFTbankTransferDiv.style.display = 'none';
-        toggleRequired([cardNumber, cvv, expires], true);
+        continueDiv.style.display = 'none';
+
     }
 }
 
@@ -462,24 +310,9 @@ phoneInput.addEventListener("focus", function (e) {
     if (e.target.value === "") e.target.value = "+380 (";
 });
 
-// Format phone input
-phoneInput.addEventListener("input", function (e) {
-    e.target.value = formatPhoneInput(e.target.value);
-});
-
 // Reset phone input if incomplete on blur
 phoneInput.addEventListener("blur", function (e) {
     if (e.target.value.length < 18) e.target.value = "";
-});
-
-// Format card number input
-cardNumber.addEventListener("input", function (e) {
-    e.target.value = formatCardInput(e.target.value);
-});
-
-// Store raw card value without spaces for submission
-cardNumber.addEventListener("blur", function (e) {
-    e.target.dataset.cleanValue = e.target.value.replace(/\s/g, "");
 });
 
 // Handle clearing items and starting countdown
@@ -491,18 +324,46 @@ clearItems.addEventListener('click', () => {
 });
 
 
-// Payment form submission
-document.getElementById("paymentGo").addEventListener("submit", function (e) {
-    e.preventDefault();
+const checkit = document.getElementById('agree-check');
+const checkitLabel = document.getElementById('agree-label');
 
-    if (checkit.checked) {
-        const formData = new FormData(this);
-        const queryString = new URLSearchParams(formData).toString();
-        window.location.href = `${this.action}?${queryString}`;
+// Event listener for Monopay button
+monopayBtn.addEventListener("click", function (e) {
+    e.preventDefault(); // Prevents default form submission
+
+    // Check if the form is valid
+    if (form.checkValidity()) {
+        // Check if the checkbox is checked
+        if (checkit.checked) {
+            form.action = monopayAction;
+            form.submit();
+        } else {
+            setValidationError(checkit, true, checkError);
+            checkError.innerHTML = "{{ __('general.agree_error') }}";
+        }
     } else {
-        console.log("Agreement checkbox not checked");
-        setValidationError(checkit, true, checkError);
-        checkError.innerHTML = "{{ __('general.agree_error') }}";
+        // Show validation errors for required fields
+        form.reportValidity();
+    }
+});
+
+// Event listener for Continue button
+continueBtn.addEventListener("click", function (e) {
+    e.preventDefault(); // Prevents default form submission
+
+    // Check if the form is valid
+    if (form.checkValidity()) {
+        // Check if the checkbox is checked
+        if (checkit.checked) {
+            form.action = finalizeAction;
+            form.submit();
+        } else {
+            setValidationError(checkit, true, checkError);
+            checkError.innerHTML = "{{ __('general.agree_error') }}";
+        }
+    } else {
+        // Show validation errors for required fields
+        form.reportValidity();
     }
 });
 
@@ -511,44 +372,9 @@ checkit.addEventListener("change", function () {
     if (checkit.checked) setValidationError(checkit, false, checkError);
 });
 
-// Payment expiration date input validation and formatting
-expires.addEventListener("input", function (e) {
-    let value = e.target.value.replace(/\D/g, "");
-    let errorElementMonth = document.getElementById("expires-error-month");
-    let errorElementYear = document.getElementById("expires-error-year");
-
-    if (value.length >= 2) {
-        let month = value.substring(0, 2);
-        let year = value.substring(2, 4);
-
-        if (parseInt(month, 10) > 12 || parseInt(month, 10) < 1) {
-            setValidationError(e.target, true, errorElementMonth);
-        } else if (parseInt(year, 10) < 1) {
-            setValidationError(e.target, true, errorElementYear);
-        } else {
-            setValidationError(e.target, false);
-        }
-
-        e.target.value = `${month}${year ? '/' + year : ''}`;
-    } else {
-        e.target.value = value;
-        setValidationError(e.target, false);
-    }
-});
-
-// Clear expiration date if format is incomplete on blur
-expires.addEventListener("blur", function (e) {
-    if (e.target.value.length < 5) {
-        e.target.value = "";
-        setValidationError(e.target, false);
-    }
-});
-
-
 // Initialize event listeners on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function () {
     bankTransferUahRadio.addEventListener('change', showCorrespondingDiv);
-    bankTransferSwiftRadio.addEventListener('change', showCorrespondingDiv);
     creditCardRadio.addEventListener('change', showCorrespondingDiv);
 });
 

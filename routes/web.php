@@ -29,11 +29,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/generatetext', function () {
         return view('textgenerate');
     });
-});
-
-
-
-
 
 
 Route::post('/course/{course_id}/section/{section_id}/save-phrase-progress', [CourseController::class, 'savePhraseProgress'])->name('course.savePhraseProgress');
@@ -52,7 +47,7 @@ Route::get('/course/{course_id}/instructions', [CourseController::class, 'instru
 
 Route::get('/course/{course_id}/videotutorials', [CourseController::class, 'tutorials'])->name('course.tutorials');
 
-
+});
 
 //Route::get('/dashboard/paid/courses', [DashboardController::class, 'subscribtions'])->middleware(['auth', 'verified'])->name('dashboard.paid_courses');
 //Route::get('/dashboard/paid/course-{course_id}', [DashboardController::class, 'dashboard'])->name('course.dashboard');
@@ -92,12 +87,17 @@ Route::get('/payment', function () {
 
 // routes/web.php
 
-Route::get('/guest/course/{course_id}/pay', [PaymentController::class, 'createInvoice'])->name('payment.create');
-Route::get('/payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
+Route::post('/guest/course/{course_id}/pay', [PaymentController::class, 'createInvoice'])->name('payment.create');
+Route::post('/payment/finalize/{course_id}/{token}', [PaymentController::class, 'finalize'])->name('payment.finalize');
+Route::get('/payment/direct/{course_id}/{token}', [PaymentController::class, 'directPay'])->name('payment.direct');
+
+Route::get('/payment/callback/{token}', [PaymentController::class, 'callback'])->name('payment.callback');
 Route::post('/payment/webhook', [PaymentController::class, 'webhook'])->name('payment.webhook');
 
 
 Route::get('/payment/success/{invoiceId}', [PaymentController::class, 'success'])->name('payment.success');
+Route::get('/payment/failure/{invoiceId}', [PaymentController::class, 'failure'])->name('payment.failure');
+
 Route::post('payment/saveuser', [PaymentController::class, 'saveUser'])->name('payment.saveuser');
 
 

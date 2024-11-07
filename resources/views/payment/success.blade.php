@@ -25,7 +25,21 @@ $locale = session('locale', 'uk');
                 </div>
             </div>
             <div class="m-auto max-w-4xl text-center pb-8">
-                <form method="POST" action="{{ route('payment.saveuser') }}" class="px-3">
+                <div id="alert-additional-content-2" class="p-4 mb-4 text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
+                    <div class="flex items-center">
+                      <svg class="flex-shrink-0 w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                      </svg>
+                      <span class="sr-only">Info</span>
+                      <h3 class="text-lg font-medium uppercase">
+                        @lang('payment.set_password')
+                    </h3>
+                    </div>
+                    <div class="mt-2 mb-4 text-sm text-left">
+                        @lang('payment.set_password_instructions')
+                    </div>
+                </div>
+                  <form method="POST" action="{{ route('payment.saveuser') }}" id="formSaveUser" class="px-3">
                     @csrf
                     <input type="hidden" name="course_id" id="course_{{$course_id}}" value="{{$course_id}}">
                      <!-- Personal Details -->
@@ -46,19 +60,19 @@ $locale = session('locale', 'uk');
                                 <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     @lang('payment.firstname')
                                 </label>
-                                <input required name="name" value="{{$first_name}} {{$last_name}}" type="text" id="name" placeholder="{{__('form.first_name_ph')}}"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                                <input required name="name" value="{{$first_name}} {{$last_name}}" type="text" disabled id="name" placeholder="{{__('form.first_name_ph')}}"  class="disabled:bg-gray-200 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                             </div>
                             <div>
                                 <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     @lang('payment.email')
                                 </label>
-                                <input required name="email" value="{{$email}}"  type="email" id="payment_email"  placeholder="{{__('form.email_ph')}}"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                                <input required name="email" value="{{$email}}"  type="email" id="payment_email" disabled placeholder="{{__('form.email_ph')}}"  class="disabled:bg-gray-200 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                             </div>
                             <div>
                                 <label for="phone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     @lang('payment.phonenumber')
                                 </label>
-                                <input required name="phone" value="{{$phone}}"  type="text" id="phonenumber"  placeholder="+380 (00) 000-00-00" maxlength="19"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                                <input required name="phone" value="{{$phone}}"  type="text" id="phonenumber" disabled placeholder="+380 (00) 000-00-00" maxlength="19"  class="disabled:bg-gray-200 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                             </div>
                         </div>
                     </div>
@@ -85,7 +99,12 @@ $locale = session('locale', 'uk');
                                     <span class="absolute inset-y-0 right-2 flex items-center hover:cursor-pointer text-gray-400">
                                         <i class="fas fa-eye z-50" id="togglePassword" title="Show password"></i>
                                     </span>
-                                    <input required name="password" type="password" id="password" placeholder="*********" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                                    <input
+                                    required name="password"
+                                    id="user_password"
+                                    type="password"
+                                    placeholder="*********"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                                 </div>
                             </div>
 
@@ -100,11 +119,12 @@ $locale = session('locale', 'uk');
                                     </span>
                                     <input required name="password_confirmation" type="password" id="password_confirmation" placeholder="*********" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                                 </div>
+                                <div id="passwordMatchMessage"></div>
                             </div>
                         </div>
                     </div>
                     <x-empty-space :height="10" />
-                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-1/2 px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    <button type="submit" id="submitFormButton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-1/2 px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                         @lang('form.save')
                     </button>
                 </form>
@@ -126,7 +146,7 @@ $locale = session('locale', 'uk');
 
         <script>
             // Toggle password visibility for the main password field using mousedown and mouseup
-            const passwordInput = document.getElementById('password');
+            const passwordInput = document.getElementById('user_password');
             const togglePassword = document.getElementById('togglePassword');
 
             togglePassword.addEventListener('mousedown', function () {
@@ -163,6 +183,36 @@ $locale = session('locale', 'uk');
             togglePasswordConfirm.addEventListener('mouseleave', function () {
                 passwordConfirmInput.setAttribute('type', 'password');
                 this.classList.remove('fa-eye-slash');
+            });
+
+            const formSaveUser = document.getElementById('formSaveUser');
+            const passwordsMatchText = "{{ __('form.passwords_match') }}";
+            const passwordsDoNotMatchText = "{{ __('form.passwords_do_not_match') }}";
+            const passwordsDoNotMatchOrEmptyText = "{{ __('form.passwords_do_not_match_or_empty') }}";
+
+            // Password match validation
+            passwordConfirmInput.addEventListener('input', function () {
+                if (passwordInput.value === passwordConfirmInput.value) {
+                    passwordMatchMessage.textContent = passwordsMatchText;
+                    passwordMatchMessage.style.color = 'green';
+                } else {
+                    passwordMatchMessage.textContent =  passwordsDoNotMatchText;
+                    passwordMatchMessage.style.color = 'red';
+                }
+            });
+
+            // Form submit event to check password match before submission
+            formSaveUser.addEventListener('submit', function (event) {
+                // Prevent default form submission
+                event.preventDefault();
+
+                // Check if passwords match
+                if (passwordInput.value === passwordConfirmInput.value && passwordInput.value !== '') {
+                    formSaveUser.submit(); // Submit the form if passwords match
+                } else {
+                    passwordMatchMessage.textContent = passwordsDoNotMatchOrEmptyText;
+                    passwordMatchMessage.style.color = 'red';
+                }
             });
         </script>
     @endsection

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->text('course_description_uk')->nullable();
             $table->text('course_description_ru')->nullable();
             $table->integer('course_price')->default(0);
-
+            $table->integer('course_discount')->default(0);
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
     }

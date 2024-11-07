@@ -13,6 +13,9 @@ return [
     'choose_password' => 'Пожалуйста, выберите пароль',
     'confirm_password' => 'Пожалуйста, подтвердите свой пароль',
     'save' => 'Сохранять',
+    'passwords_match' => 'Пароли совпадают',
+    'passwords_do_not_match' => 'Пароли не совпадают',
+    'passwords_do_not_match_or_empty' => 'Пароли не совпадают или пустые',
 ];
 
 

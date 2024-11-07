@@ -19,9 +19,10 @@ class CoursesSeeder extends Seeder
                 'course_name_en' => 'Phrasal Verbs',
                 'course_name_ru' => 'Фразовые глаголы',
                 'course_name_uk' => 'Фразові дієслова',
-                'course_description_uk' => 'Для тих, хто ніколи вивчав англійську і все забув і хоче освіжити знання',
-                'course_description_ru' => 'Для тех, кто никогда изучал английский и все позабыл и хочет освежить знания',
-                'course_price' => 1000,
+                'course_description_uk' => 'Фразові дієслова - це одна з найцікавіших і найважливіших частин англійської мови.',
+                'course_description_ru' => 'Фразовые глаголы – это одна из самых интересных и важнейших частей английского языка.',
+                'course_price' => 2600,
+                'course_discount' => 40,
                 'created_at' => now(),
             ],
         ]);
@@ -29,11 +30,11 @@ class CoursesSeeder extends Seeder
         DB::table('courses')->insert([
             [
                 'active' => 0,
-                'course_name_en' => 'Irregular verbs',
-                'course_name_ru' => 'Неправильные глаголы',
-                'course_name_uk' => 'Неправильні дієслова',
-                'course_description_uk' => 'Для тих, хто ніколи вивчав англійську і все забув і хоче освіжити знання',
-                'course_description_ru' => 'Для тех, кто никогда изучал английский и все позабыл и хочет освежить знания',
+                'course_name_en' => 'Phrasebook: Listen and Talk',
+                'course_name_ru' => 'Разговорник: Listen and Talk',
+                'course_name_uk' => 'Розмовник: Listen and Talk',
+                'course_description_uk' => 'вскоре',
+                'course_description_ru' => 'скоро',
                 'created_at' => now(),
             ],
         ]);

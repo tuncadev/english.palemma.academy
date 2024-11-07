@@ -13,6 +13,10 @@ return [
     'choose_password' => 'Будь ласка, виберіть пароль',
     'confirm_password' => 'Будь ласка, підтвердіть свій пароль',
     'save' => 'Зберігати',
+    'passwords_match' => 'Паролі збігаються',
+    'passwords_do_not_match' => 'Паролі не збігаються',
+    'passwords_do_not_match_or_empty' => 'Паролі не збігаються або порожні',
+
 
 ];
 

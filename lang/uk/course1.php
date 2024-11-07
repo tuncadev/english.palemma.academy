@@ -25,5 +25,6 @@ return [
   'quiz_questions' => 'питань для практики',
   'practice_questions' => 'питань у розділах тестів',
   'video_lessons' => 'Відео уроки',
+  'courses_waiting_you' => 'Теми, які на вас чекають на курсі:',
 ];
 ?>

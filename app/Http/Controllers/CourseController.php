@@ -14,12 +14,14 @@ use App\Models\CompletedSection;
 use App\Models\Video;
 
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -262,20 +264,39 @@ class CourseController extends Controller
         return $response;
     }
 */
-    private function generateInvoiceNumber() {
-        // Get the current date in YYYYMMDD format
-        $datePart = date('Ymd');
-        // Generate a random 6-digit number
-        $randomPart = mt_rand(100000, 999999);
-        // Combine date and random part
-        return $datePart . '-' . $randomPart;
+    function generateInvoiceNumber()
+    {
+        // Define a unique cache key based on today's date
+        $today = date('Ymd');
+        $cacheKey = 'invoice_counter_' . $today;
+
+        // Check if the counter exists; if not, initialize it to 1 with a 24-hour expiration
+        $counter = Cache::remember($cacheKey,        now()->addDay(), function () {
+            return 1;
+        });
+
+        // Increment the counter in the cache for each new invoice
+        $newCounter = Cache::increment($cacheKey);
+
+        // Format the invoice number
+        $invoiceNumber = 'INV-' . $today . '-' . str_pad($newCounter, 5, '0', STR_PAD_LEFT);
+
+        return $invoiceNumber;
     }
 
     public function index($course_id)
     {
+        $transactionID = Str::uuid()->toString();
 
+        $invoiceNumber = $this->generateInvoiceNumber();
+        $token = [
+            'transactionID' => $transactionID,
+            'invoiceNumber' => $invoiceNumber
+        ];
+        $token = Crypt::encrypt($token);
         $user_id = Auth::id();
-        if(!$user_id) {
+        $subscribed = Subscribtion::where('course_id', $course_id)->where('user_id', $user_id)->exists();
+        if(!$subscribed) {
             $sections = Section::where('course_id', $course_id)->get();
             $completedSections = CompletedSection::where('user_id', $user_id)
                                             ->where('course_id', $course_id)
@@ -328,8 +349,8 @@ class CourseController extends Controller
                     break;
             }
 
-            $invoice_number = $this->generateInvoiceNumber();
-            return view('courses.course', compact('invoice_number', 'videos', 'quizes','practices','phrases', 'course', 'localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
+
+            return view('courses.course', compact('token', 'invoiceNumber', 'transactionID', 'videos', 'quizes','practices','phrases', 'course', 'localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
 
         } else {
             return redirect()->route('dashboard.courses');

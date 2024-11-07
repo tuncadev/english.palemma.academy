@@ -15,19 +15,10 @@
             @yield('content')
         </main>
         <footer class="flex flex-col w-full justify-center text-center pt-2 bg-sky-100 border-t border-t-gray-300">
-            <div class="flex flex-row w-full justify-center gap-6 text-gray-400 items-center pb-2">
-                <a href="/terms" class="text-xs text-sky-700 hover:text-red-800"> Terms </a>
-                <span class="text-sm">•</span>
-                <a href="/privacy" class="text-xs text-sky-700 hover:text-red-800">Privacy</a>
-            </div>
-            <div class="w-full text-center py-1 items-center bg-sky-900 border-t border-t-sky-500">
-                <span class="text-xs text-gray-200">
-                    <i class="text-gray-200 fa-solid fa-copyright"></i> 2024 - english.palemma.academy
-                </span>
-            </div>
+            <x-footer />
         </footer>
         @unless (auth()->check())
-        <x-authorize-pop />
+            <x-authorize-pop />
         @endunless
   </body>
 </html>

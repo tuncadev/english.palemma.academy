@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->string('email');
             $table->string('phone')->nullable();
             $table->decimal('amount', 10, 2);
+            $table->integer('discount')->default(0);
             $table->foreignId('course_id')->constrained('courses')->onDelete('cascade');
             $table->string('status')->default('pending'); // 'pending', 'success', 'failure'
             $table->json('response')->nullable(); // to store raw response data if needed
