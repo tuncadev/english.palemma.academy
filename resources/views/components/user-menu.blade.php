@@ -34,12 +34,14 @@
                 @lang('usermenu.profilesettings')
             </a>
         </li>
+        {{--
         <li>
             <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-fuchsia-100 dark:hover:bg-fuchsia-600 dark:text-gray-200 dark:hover:text-white">
                 <i class="fa-regular fa-credit-card text-fuchsia-800 mr-1"></i>
                 @lang('usermenu.mypayments')
             </a>
         </li>
+        --}}
         <li>
             <form method="POST" action="{{ route('logout') }}">
             @csrf
