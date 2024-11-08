@@ -3,24 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Status</title>
+    <title>Статус платежу</title>
 </head>
 <body>
-    <h1>Payment Status Update</h1>
-    <p>Dear User,</p>
+    <h1>Оновлення статусу платежу</h1>
+    <p>Шановний, {{$emailData['name']}}!</p>
 
     @if($emailData['status'] === 'success')
-        <p>Your payment was successful! Click the link below to complete your registration:</p>
-        <a href="{{ $emailData['callbackUrl'] }}">Set Up Your Account</a>
+        <p>Ваш платіж пройшов успішно!
+
+        <p>Натисніть посилання нижче, щоб завершити реєстрацію:</p>
+
+        <a href="{{ $emailData['callbackUrl'] }}">Налаштуйте свій обліковий запис</a>
+
     @else
-        <p>Unfortunately, your payment failed.</p>
+        <p>На жаль, ваш платіж не було здійснено.</p>
         @if($emailData['failureReason'])
-            <p>Reason: {{ $emailData['failureReason'] }}</p>
+            <p>Причина: {{ $emailData['failureReason'] }}</p>
         @endif
     @endif
 
-    <p>Transaction ID: {{ $emailData['transactionId'] }}</p>
+    <p>Ідентифікатор транзакції: {{ $emailData['transactionId'] }}</p>
+    <p>Номер рахунку-фактури: {{ $emailData['invoice_id'] }}</p>
 
-    <p>Thank you for choosing us!</p>
+    <p>Дякуємо, що обирали нас!!</p>
 </body>
 </html>

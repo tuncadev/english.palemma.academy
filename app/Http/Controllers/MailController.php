@@ -117,8 +117,10 @@ class MailController extends Controller
 
         $emailData = [
             'status' => $status,
+            'name' => $transaction->name,
             'failureReason' => $failureReason,
             'transactionId' => $transaction->transaction_id,
+            'invoice_id' => $transaction->invoice_id,
             'callbackUrl' => $callback,
         ];
 

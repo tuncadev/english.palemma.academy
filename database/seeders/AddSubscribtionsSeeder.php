@@ -23,7 +23,7 @@ class AddSubscribtionsSeeder extends Seeder
             [
                 'user_id' => 1,
                 'course_id' => 1,
-                'payment_status' => 'completed',
+                'payment_status' => 'complete',
                 'subscription_date' =>  now(),
                 'expiry_date' => $plusOneYear,
                 'created_at' => now(),
@@ -31,7 +31,7 @@ class AddSubscribtionsSeeder extends Seeder
             [
                 'user_id' => 2,
                 'course_id' => 1,
-                'payment_status' => 'completed',
+                'payment_status' => 'complete',
                 'subscription_date' =>  now(),
                 'expiry_date' => $plusOneYear,
                 'created_at' => now(),
