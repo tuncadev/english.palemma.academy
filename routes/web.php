@@ -92,6 +92,7 @@ Route::get('/test-email', function () {
         return 'Failed to send test email. Check logs for details.';
     }
 });
+Route::get('/test-payment-email', [MailController::class, 'testSendPaymentStatusEmail']);
 
 /* Payments */
 
