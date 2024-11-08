@@ -39,7 +39,7 @@ $locale = session('locale', 'uk');
                         @lang('payment.set_password_instructions')
                     </div>
                 </div>
-                  <form method="POST" action="{{ route('payment.saveuser') }}" id="formSaveUser" class="px-3">
+                  <form method="POST" action="{{ route('payment.saveuser', ['token' => $token]) }}" id="formSaveUser" class="px-3">
                     @csrf
                     <input type="hidden" name="course_id" id="course_{{$course_id}}" value="{{$course_id}}">
                      <!-- Personal Details -->
@@ -60,19 +60,19 @@ $locale = session('locale', 'uk');
                                 <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     @lang('payment.firstname')
                                 </label>
-                                <input required name="name" value="{{$first_name}} {{$last_name}}" type="text" disabled id="name" placeholder="{{__('form.first_name_ph')}}"  class="disabled:bg-gray-200 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                                <input required name="name" value="{{$first_name}} {{$last_name}}" type="text" readonly id="name" placeholder="{{__('form.first_name_ph')}}"  class="readonly:bg-gray-200 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                             </div>
                             <div>
                                 <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     @lang('payment.email')
                                 </label>
-                                <input required name="email" value="{{$email}}"  type="email" id="payment_email" disabled placeholder="{{__('form.email_ph')}}"  class="disabled:bg-gray-200 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                                <input required name="email" value="{{$email}}"  type="email" id="payment_email" readonly placeholder="{{__('form.email_ph')}}"  class="disabled:bg-gray-200 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                             </div>
                             <div>
                                 <label for="phone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     @lang('payment.phonenumber')
                                 </label>
-                                <input required name="phone" value="{{$phone}}"  type="text" id="phonenumber" disabled placeholder="+380 (00) 000-00-00" maxlength="19"  class="disabled:bg-gray-200 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                                <input required name="phone" value="{{$phone}}"  type="text" id="phonenumber" readonly placeholder="+380 (00) 000-00-00" maxlength="19"  class="disabled:bg-gray-200 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                             </div>
                         </div>
                     </div>

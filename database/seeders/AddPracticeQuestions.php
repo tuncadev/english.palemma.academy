@@ -1265,7 +1265,7 @@ class AddPracticeQuestions extends Seeder
             'course_id' => 1,
             'section_id' => 13,
             'question' => 'What time did you _ last night?',
-            'question_uk' => 'В який час ти прийшов минулої ночі?',
+            'question_uk' => 'О котрій годині ви прийшли минулої ночі?',
             'question_ru' => 'В котором часу вы пришли прошлой ночью?',
             'answers' => '["get in", "tear down", "put in"]',
             'correct_answer' => 'get in',

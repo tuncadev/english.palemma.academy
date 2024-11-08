@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('course_id')->constrained('courses')->onDelete('cascade');
-            $table->enum('payment_status', ['pending', 'completed', 'failed'])->default('pending');
+            $table->enum('payment_status', ['pending', 'complete', 'failure'])->default('pending');
             $table->timestamp('subscription_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('expiry_date')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));

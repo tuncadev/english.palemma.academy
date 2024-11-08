@@ -40,7 +40,7 @@ class CourseController extends Controller
         $subscription = Subscribtion::where('user_id', $user_id)
         ->where('course_id', $course_id)
         ->first();
-        $hasSubscription = $subscription && $subscription->payment_status === 'completed';
+        $hasSubscription = $subscription && $subscription->payment_status === 'complete';
         return view('courses.video.introduction', compact('user_id', 'courseNameEn', 'course_id', 'completedSections', 'allSections', 'hasSubscription'));
     }
 
@@ -58,7 +58,7 @@ class CourseController extends Controller
         $subscription = Subscribtion::where('user_id', $user_id)
         ->where('course_id', $course_id)
         ->first();
-        $hasSubscription = $subscription && $subscription->payment_status === 'completed';
+        $hasSubscription = $subscription && $subscription->payment_status === 'complete';
         return view('courses.video.instructions', compact('user_id', 'courseNameEn', 'course_id', 'completedSections', 'allSections', 'hasSubscription'));
     }
 
@@ -72,7 +72,7 @@ class CourseController extends Controller
         $subscription = Subscribtion::where('user_id', $user_id)
         ->where('course_id', $course_id)
         ->first();
-        $hasSubscription = $subscription && $subscription->payment_status === 'completed';
+        $hasSubscription = $subscription && $subscription->payment_status === 'complete';
         $allVideos = Video::where('course_id', $course_id)->get();
         $completedSections = CompletedSection::where('user_id', $user_id)
                                           ->where('course_id', $course_id)
@@ -90,8 +90,8 @@ class CourseController extends Controller
         $subscription = Subscribtion::where('user_id', $user_id )
         ->where('course_id', $course_id)
         ->first();
-        $hasSubscription = $subscription && $subscription->payment_status === 'completed' && $subscription->expiry_date > today();
-        //$hasSubscription = $subscription && $subscription->payment_status === 'completed';
+        $hasSubscription = $subscription && $subscription->payment_status === 'complete' && $subscription->expiry_date > today();
+        //$hasSubscription = $subscription && $subscription->payment_status === 'complete';
         $user_id = Auth::id();
         $sections = Section::where('course_id', $course_id)->get();
         $completedSections = CompletedSection::where('user_id', $user_id)
@@ -169,7 +169,7 @@ class CourseController extends Controller
             $subscription = Subscribtion::where('user_id', $user_id)
                 ->where('course_id', $course->id)
                 ->first();
-            $hasSubscription = $subscription && $subscription->payment_status === 'completed' && $subscription->expiry_date > today();
+            $hasSubscription = $subscription && $subscription->payment_status === 'complete' && $subscription->expiry_date > today();
 
             $courseDetails = [
                 'id' => $course->id,
@@ -306,7 +306,7 @@ class CourseController extends Controller
             ->where('course_id', $course_id)
             ->first();
 
-            $hasSubscription = $subscription && $subscription->payment_status === 'completed' && $subscription->expiry_date > today();
+            $hasSubscription = $subscription && $subscription->payment_status === 'complete' && $subscription->expiry_date > today();
             //   $completedSections = session()->get('completed_sections', []);
             $locale = session('locale', config('app.locale'));
 
@@ -366,7 +366,7 @@ class CourseController extends Controller
                                 ->where('course_id', $course_id)
                                 ->first();
 
-    $hasSubscription = $subscription && $subscription->payment_status === 'completed' && $subscription->expiry_date > today();
+    $hasSubscription = $subscription && $subscription->payment_status === 'complete' && $subscription->expiry_date > today();
     $locale = session('locale', config('app.locale'));
     $completedSections = CompletedSection::where('user_id', $user_id)
                                           ->where('course_id', $course_id)
@@ -463,7 +463,7 @@ class CourseController extends Controller
         $subscription = Subscribtion::where('user_id', $user_id )
         ->where('course_id', $course_id)
         ->first();
-        $hasSubscription = $subscription && $subscription->payment_status === 'completed';
+        $hasSubscription = $subscription && $subscription->payment_status === 'complete';
         $section = Section::where('id', $section_id)->where('course_id', $course_id)->firstOrFail();
         $questions = Practice::where('section_id', $section_id)->get();
         $course = Course::where('id', $course_id)->firstOrFail();
@@ -681,7 +681,7 @@ class CourseController extends Controller
     $subscription = Subscribtion::where('user_id', $user_id)
         ->where('course_id', $course_id)
         ->first();
-    $hasSubscription = $subscription && $subscription->payment_status === 'completed';
+    $hasSubscription = $subscription && $subscription->payment_status === 'complete';
     $section = Section::where('id', $section_id)->where('course_id', $course_id)->firstOrFail();
     $phrases = Phrase::where('section_id', $section_id)->get();
     $questions = Quiz::where('section_id', $section_id)->get();

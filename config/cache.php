@@ -51,6 +51,8 @@ return [
             'lock_path' => storage_path('framework/cache/data'),
         ],
 
+        'invoice_cache_duration' => 24,
+
         'memcached' => [
             'driver' => 'memcached',
             'persistent_id' => env('MEMCACHED_PERSISTENT_ID'),

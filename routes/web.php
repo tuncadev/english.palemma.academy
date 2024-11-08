@@ -95,10 +95,10 @@ Route::get('/payment/callback/{token}', [PaymentController::class, 'callback'])-
 Route::post('/payment/webhook', [PaymentController::class, 'webhook'])->name('payment.webhook');
 
 
-Route::get('/payment/success/{invoiceId}', [PaymentController::class, 'success'])->name('payment.success');
+Route::get('/payment/success/{invoiceId}/{token}', [PaymentController::class, 'success'])->name('payment.success');
 Route::get('/payment/failure/{invoiceId}', [PaymentController::class, 'failure'])->name('payment.failure');
 
-Route::post('payment/saveuser', [PaymentController::class, 'saveUser'])->name('payment.saveuser');
+Route::post('payment/saveuser/{token}', [PaymentController::class, 'saveUser'])->name('payment.saveuser');
 
 
 

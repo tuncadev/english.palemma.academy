@@ -43,7 +43,7 @@ class CheckSubscription
             Log::info('Subscription found with payment status: ' . $subscription->payment_status);
         }
 
-        if (!$subscription || $subscription->payment_status !== 'completed') {
+        if (!$subscription || $subscription->payment_status !== 'complete') {
             Log::info('User does not have a valid subscription.');
             return redirect()->route('home')->with('error', 'You need to subscribe to this course to access the content.');
         }
