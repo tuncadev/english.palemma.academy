@@ -6,10 +6,12 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\LocaleController;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckSubscription;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\PortmoneController;
 
@@ -74,8 +76,7 @@ Route::get('/guest/course/{course_id}', [CourseController::class, 'index'])
 //Route::patch('/video/{filename}', [CourseController::class, 'serveVideo'])->name('video.serve')->middleware('cache.video');
 
 
-Route::post('/send-email', [FormController::class, 'sendForm'])->name('send.email');
-
+Route::post('/submit-form', [MailController::class, 'sendForm'])->name('form.submit');
 
 
 

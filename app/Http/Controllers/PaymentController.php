@@ -4,8 +4,13 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Status;
+
 use App\Constants\AppConstants;
+
 use App\Services\MonopayService;
+
+use App\Http\Controllers\MailController;
+
 use App\Models\Transactions;
 use App\Models\Course;
 use App\Models\WebHook;
@@ -23,7 +28,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Mail;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
@@ -442,12 +447,8 @@ class PaymentController extends Controller
                 }
 
                 // Send email based on payment status
-                if ($data->get('status') === Status::SUCCESS->value || $data->get('status') === Status::FAILED->value) {
-                    Log::info("For email the status is: " . $data->get('status'));
-                    $this->sendPaymentStatusEmail($transaction);
-
-
-
+                if ($status === Status::SUCCESS->value || $status === Status::FAILED->value) {
+                    (new MailController)->sendPaymentStatusEmail($transaction, $status, $failure_reason);
                 }
                 return response()->json(['status' => 'received'], 200);
             }
@@ -544,57 +545,6 @@ class PaymentController extends Controller
 
     }
 
-    public function sendPaymentStatusEmail($transaction)
-    {
-        // Set up variables for the email
-        $invoice_id = $transaction->invoice_id;
-        $transaction_id = $transaction->transaction_id;
-        $email = $transaction->email;
 
-        // Define success or failure based on transaction status
-        $status = $transaction->status;
-        Log::info("Entering sendPaymentStatusEmail with status: " . $status);
-
-        if ($status === Status::SUCCESS->value) {
-            // Create callback URL for password setup
-            $cryptData = [
-                'email' => $email,
-                'transaction_id' => $transaction_id,
-                'status' => Status::SUCCESS->value,
-                'email_verified_at' => now(),
-            ];
-            $token = $this->setupToken($cryptData);
-            $callback = route('payment.callback', ['token' => $token]);
-
-            // Set up email data for success
-            $emailData = [
-                'subject' => 'Payment Successful',
-                'message' => 'Your payment was successful! Click the link below to set up your password and complete email verification.',
-                'callbackUrl' => $callback,
-            ];
-
-            // Send success email
-            $this->sendEmail($email, 'emails.payment_success', $emailData);
-
-        } elseif ($status === Status::FAILED->value) {
-            // Set up email data for failure
-            $failure_reason = $transaction->failure_reason;
-            $emailData = [
-                'subject' => 'Payment Failed',
-                'message' => 'Unfortunately, your payment was not successful. Reason: ' . $failure_reason,
-            ];
-
-            // Send failure email
-            $this->sendEmail($email, 'emails.payment_failure', $emailData);
-        }
-    }
-
-    protected function sendEmail($recipientEmail, $view, $data)
-    {
-        Mail::send($view, $data, function ($message) use ($recipientEmail, $data) {
-            $message->to($recipientEmail)
-                    ->subject($data['subject']);
-        });
-    }
 
 }

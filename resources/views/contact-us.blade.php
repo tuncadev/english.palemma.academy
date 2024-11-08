@@ -36,7 +36,7 @@ $locale = session('locale', 'uk');
                 </div>
                <x-success />
                 <!-- Contact Form -->
-                <form action="{{ route('send.email') }}" method="POST" class="space-y-6" id="sendMessage">
+                <form action="{{ route('form.submit') }}" method="POST" class="space-y-6" id="sendMessage">
                     @csrf
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <!-- Name Field -->
@@ -110,7 +110,7 @@ $locale = session('locale', 'uk');
 
 
             $.ajax({
-                url: "{{ route('send.email') }}", // Ensure this matches your route
+                url: "{{ route('form.submit') }}", // Ensure this matches your route
                 method: "POST",
                 data: {
                     name: $('input[name="name"]').val(),
