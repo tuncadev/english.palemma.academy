@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Status;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
@@ -11,9 +13,15 @@ use App\Models\Transactions;
 use App\Models\User;
 use App\Mail\PaymentStatusMail;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Crypt;
 
 class MailController extends Controller
 {
+    public function setupToken($data) {
+        $setupToken = Crypt::encrypt($data);
+        return $setupToken;
+    }
+
     /**
      * Handle and send form submission to admin email.
      *
@@ -87,17 +95,27 @@ class MailController extends Controller
      * @param string|null $failureReason
      * @return void
      */
+
+
+
     public function sendPaymentStatusEmail(Transactions $transaction, string $status, ?string $failureReason = null)
     {
         Log::info("sendPaymentStatusEmail initiated", ['transaction_id' => $transaction->transaction_id, 'status' => $status]);
 
-
+        $cryptData = [
+            'email' => $transaction->email,
+            'transaction_id' => $transaction->transaction_id,
+            'status' => Status::SUCCESS->value,
+            'email_verified' => true,
+        ];
+        $token = $this->setupToken($cryptData);
+        $callback = route('payment.callback', ['token' => $token]);
 
         $emailData = [
             'status' => $status,
             'failureReason' => $failureReason,
             'transactionId' => $transaction->transaction_id,
-            'callbackUrl' => route('payment.callback', ['token' => $transaction->invoice_id])
+            'callbackUrl' => $callback,
         ];
 
         try {

@@ -153,7 +153,9 @@ class PaymentController extends Controller
     public function callback(Request $request)
     {
         $locale = session('locale', config('app.locale'));
+
         $token = Crypt::decrypt($request['token']);
+
         $transactionID = $token['transaction_id'];
         $data = Transactions::where('transaction_id', $transactionID)->first();
         $payment = Transactions::where('transaction_id', $transactionID)->firstOrFail();
@@ -167,7 +169,7 @@ class PaymentController extends Controller
             'status' => 1,
         ];
 
-        $createPendingUser = $this->createPendingUser($userData);
+        $this->createPendingUser($userData);
 
         $checkInvoice =  $this->getInvoiceStatus($request);
 
@@ -176,7 +178,16 @@ class PaymentController extends Controller
         $failure_reason = $data['failure_reason'];
         $course_name = $data['course_name'];
         $course_id = $data['course_id'];
-        $token = Crypt::encrypt($token);
+
+        $cryptData = [
+            'email' => $email,
+            'transaction_id' => $transactionID,
+            'status' => $token['status'] ?? Status::PENDING->value,
+            'email_verified' => $token['email_verified'] ?? null,
+        ];
+
+        $token = $this->setupToken($cryptData);
+
         if($isSuccess === Status::SUCCESS->value) {
             return redirect()->route('payment.success', ['invoiceId' => $invoiceId, 'token' => $token]);
         } else {
