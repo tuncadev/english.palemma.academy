@@ -15,7 +15,7 @@ $currentLocale = session('locale', 'uk');
         <div class="py-6 ">
             <div class=" m-auto mx-auto">
                 <div class="container mx-auto p-6 bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <h2 class="pb-4 p-y-4 text-xl text-red-700 uppercase font-bold">@lang('dashboard.courses')</h2>
+                    <h2 class="pb-4 p-y-4 text-xl text-red-700 uppercase font-bold">@lang('dashboard.mycourses')</h2>
                     <div class="flex flex-col gap-4 text-gray-900 dark:text-gray-100">
                         @php
                             $hasSubscribedCourses = $courses->contains(fn($course) => $course->hasSubscription);
