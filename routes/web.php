@@ -15,6 +15,8 @@ use App\Http\Controllers\MailController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\PortmoneController;
 
+use App\Models\Course;
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('locale/{lang}', [LocaleController::class, 'setLocale'])->name('setLocale');
 
@@ -65,7 +67,8 @@ Route::get('/contact-us', function () {
     return view('contact-us');
 });
 Route::get('/about-me', function () {
-    return view('about-me');
+    $courses = Course::get();
+    return view('about-me', compact('courses'));
 });
 Route::get('/oferta', function () {
     return view('oferta');

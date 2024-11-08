@@ -103,21 +103,25 @@ class CourseController extends Controller
 
         $course = Course::where('id', $course_id)->firstOrFail();
         $courseNameEn = $course->course_name_en;
-
+        $description = "course_description_" . $locale;
+        $courseDescription = $course->$description;
         $localizedSections = $sections->map(function($section) use ($course_id, $locale, &$courseName, $course) {
             // Determine section name and course name based on locale
             switch ($locale) {
                 case 'uk':
                     $sectionName = $section->section_name_uk;
                     $courseName = $course->course_name_uk;
+
                     break;
                 case 'ru':
                     $sectionName = $section->section_name_ru;
                     $courseName = $course->course_name_ru;
+                    $courseDescription = $course->course_description_ru;
                     break;
                 default:
                     $sectionName = $section->section_name_en; // Fallback to English
                     $courseName = $course->course_name_en;
+                    $courseDescription = $course->course_description_en;
             }
 
             // Fetch related counts
@@ -142,6 +146,7 @@ class CourseController extends Controller
                 'en' => $section->section_name_en,
                 'id' => $section->id,
                 'courseName' => $courseName,
+                'courseDescription' => $courseDescription,
                 'totalPhrasesInSection' => $totalPhrases,
                 'totalPracticeInSection' => $totalPractice,
                 'totalQuizInSection' => $totalQuiz,
@@ -151,7 +156,7 @@ class CourseController extends Controller
 
       //dd($localizedSections);
 
-        return view('courses.sections', compact('allVideos', 'sections','user_id','courseNameEn','hasSubscription','localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
+        return view('courses.sections', compact('courseDescription', 'allVideos', 'sections','user_id','courseNameEn','hasSubscription','localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
 
     }
 

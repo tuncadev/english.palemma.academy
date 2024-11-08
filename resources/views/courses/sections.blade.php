@@ -17,8 +17,8 @@ $currentLocale = session('locale', 'uk');
                 {{$courseNameEn}} | <span class="text-amber-500">{{ $courseName }}</span>
                 </h1>
                 <p class="flex">
-            Description about the course. What it aims, who it is for, what will the user gain after complating....
-            </p>
+                    {{ $courseDescription }}
+                </p>
             </div>
 
             <div id="alert-border-1" class="mt-4 flex items-center p-4 mb-4 text-blue-800 border-t-4 border-blue-300 bg-blue-50 dark:text-blue-400 dark:bg-gray-800 dark:border-blue-800" role="alert">
