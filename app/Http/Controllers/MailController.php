@@ -91,12 +91,7 @@ class MailController extends Controller
     {
         Log::info("sendPaymentStatusEmail initiated", ['transaction_id' => $transaction->transaction_id, 'status' => $status]);
 
-        $user = User::where('email', $transaction->email)->first();
 
-        if (!$user) {
-            Log::error("User not found for email", ['email' => $transaction->email]);
-            return;
-        }
 
         $emailData = [
             'status' => $status,
@@ -106,8 +101,8 @@ class MailController extends Controller
         ];
 
         try {
-            Mail::to($user->email)->send(new PaymentStatusMail($emailData));
-            Log::info("Payment status email sent", ['email' => $user->email, 'status' => $status]);
+            Mail::to($transaction->email)->send(new PaymentStatusMail($emailData));
+            Log::info("Payment status email sent", ['email' => $transaction->email, 'status' => $status]);
         } catch (\Exception $e) {
             Log::error("Failed to send payment status email", ['error' => $e->getMessage(), 'transaction_id' => $transaction->transaction_id]);
         }
