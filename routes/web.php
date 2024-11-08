@@ -82,20 +82,6 @@ Route::get('/guest/course/{course_id}', [CourseController::class, 'index'])
 Route::post('/submit-form', [MailController::class, 'sendForm'])->name('form.submit');
 
 
-
-Route::get('/test-email', function () {
-    try {
-        Mail::raw('This is a test email from localhost!', function ($message) {
-            $message->to('info@example.com')
-                    ->subject('Test Email');
-        });
-        return 'Test email sent successfully.';
-    } catch (\Exception $e) {
-        Log::error("Failed to send test email: " . $e->getMessage());
-        return 'Failed to send test email. Check logs for details.';
-    }
-});
-
 /* Payments */
 
 Route::get('/payment', function () {

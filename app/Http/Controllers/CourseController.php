@@ -103,8 +103,8 @@ class CourseController extends Controller
 
         $course = Course::where('id', $course_id)->firstOrFail();
         $courseNameEn = $course->course_name_en;
-        $description = "course_description_" . $locale;
-        $courseDescription = $course->$description;
+
+
         $localizedSections = $sections->map(function($section) use ($course_id, $locale, &$courseName, $course) {
             // Determine section name and course name based on locale
             switch ($locale) {
@@ -116,14 +116,15 @@ class CourseController extends Controller
                 case 'ru':
                     $sectionName = $section->section_name_ru;
                     $courseName = $course->course_name_ru;
-                    $courseDescription = $course->course_description_ru;
+
                     break;
                 default:
                     $sectionName = $section->section_name_en; // Fallback to English
                     $courseName = $course->course_name_en;
-                    $courseDescription = $course->course_description_en;
-            }
 
+            }
+            $description = "course_description_" . $locale;
+            $courseDescription = $course->$description;
             // Fetch related counts
             $totalPhrases = DB::table('phrases')
                 ->where('course_id', $course_id)
