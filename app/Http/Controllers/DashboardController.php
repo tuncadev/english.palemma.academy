@@ -81,7 +81,7 @@ class DashboardController extends Controller
             $subscription = $hasSubscription->firstWhere('course_id', $course->id);
             $isExpired = $subscription && $subscription->expiry_date <= today();
             $paymentStatus = $subscription && $subscription->payment_status;
-            $hasSubscription = $subscription && $subscription->payment_status === 'completed' && !$isExpired;
+            $hasSubscription = $subscription && $subscription->payment_status === 'complete' && !$isExpired;
             $pending = $subscription && $subscription->payment_status === 'pending' && !$isExpired;
             // Add subscription status to the course object
 

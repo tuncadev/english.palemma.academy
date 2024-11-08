@@ -19,15 +19,14 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
-
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
@@ -116,36 +115,34 @@ class PaymentController extends Controller
             // Redirect to the Monobank payment URL
             return redirect($invoiceUrl);
         } else {
-            Log::error('Monopay invoice creation failed', [
-                'payload' => $payload,
-                'response' => $response->body()
-            ]);
             return back()->withErrors(['error' => 'Failed to create invoice.']);
         }
     }
 
     public function createPendingUser($data) {
-        if ($data) {
+        if($data) {
             $transaction_id = $data['transaction_id'];
             $email = $data['email'];
             $invoice_id = $data['invoice_id'];
             $status = true;
-
-            return DB::transaction(function () use ($transaction_id, $email, $invoice_id, $status) {
-                if (!PendingUser::where('email', $email)->exists()) {
-                    PendingUser::create([
-                        'email' => $email,
-                        'invoice_id' => $invoice_id,
-                        'transaction_id' => $transaction_id,
-                        'status' => $status,
-                    ]);
-                    return true; // Indicates success
-                }
-                return false; // User already exists
-            });
+            $exists = PendingUser::where('email', $email)->exists();
+            if (!$exists) {
+                PendingUser::create([
+                    'email' => $email,
+                    'invoice_id' => $invoice_id,
+                    'transaction_id' => $transaction_id,
+                    'status' => $status,
+                ]);
+                Log::info("Created Pending User");
+                return true; // Created
+            } else {
+                Log::warning("Not created exists");
+                return false; // Not created exists
+            }
+        } else {
+            Log::error("No data: " . $data);
+            return false;
         }
-
-        return false; // $data is null
     }
 
     public function callback(Request $request)
@@ -166,9 +163,6 @@ class PaymentController extends Controller
         ];
 
         $createPendingUser = $this->createPendingUser($userData);
-        Log::{$createPendingUser ? 'info' : 'error'}(
-            $createPendingUser ? "Pending user created successfully." : "Pending user could not be created."
-        );
 
         $checkInvoice =  $this->getInvoiceStatus($request);
 
@@ -178,7 +172,7 @@ class PaymentController extends Controller
         $course_name = $data['course_name'];
         $course_id = $data['course_id'];
         $token = Crypt::encrypt($token);
-        if($isSuccess) {
+        if($isSuccess === Status::SUCCESS->value) {
             return redirect()->route('payment.success', ['invoiceId' => $invoiceId, 'token' => $token]);
         } else {
             return view('payment.failure', ['invoiceId' => $invoiceId, 'failure_reason' => $failure_reason, 'course_name' => $course_name, 'course_id' => $course_id]);
@@ -193,13 +187,16 @@ class PaymentController extends Controller
         $transactionID = $token['transaction_id'];
         $email = $token['email'];
         $transaction = Transactions::where('transaction_id', $transactionID)->firstOrFail();
-        $response = $this->monopayService->getInvoiceStatus($transaction->invoice_id);
+
+        $payment = Transactions::where('transaction_id', $transactionID)->firstOrFail();
+
+        $response = $this->monopayService->getInvoiceStatus($payment->invoice_id);
         $data = $response->json();
         $status = $data['status'];
 
         $failure_reason = $data['failureReason'] ?? null;
         $course_name_locale = "course_name_" . $locale;
-        $course_id = $transaction->course_id;
+        $course_id = $payment->course_id;
         $course_name = Course::where('id', $course_id)->value($course_name_locale);
         if($status) {
             $invoiceId =  $data['invoiceId'];
@@ -219,7 +216,7 @@ class PaymentController extends Controller
                     'invoiceId' =>  $invoiceId,
                     'course_id' => $course_id
                 ];
-                $this->addInvoiceCache($transaction);
+                $this->addInvoiceCache($payment);
 
                 return [
                     'success' => true,
@@ -274,7 +271,7 @@ class PaymentController extends Controller
                 $course_id = $transactionDetails['course_id'];
                 $course_name_locale = "course_name_" . $locale;
                 $course_name = Course::where('id', $course_id)->value($course_name_locale);
-
+                $token = Crypt::encrypt($token);
                 return view('payment.success', compact('token','course_name', 'invoiceId', 'email', 'first_name', 'last_name', 'phone', 'course_id'));
 
             }
@@ -384,64 +381,78 @@ class PaymentController extends Controller
         }
 
         // Add the new cache entry with a 15-minute expiration
-        Cache::put('invoice_' . $payment->invoice_id, $payment->invoice_id, now()->addHours(config('cache.invoice_cache_duration')));
+        Cache::put('invoice_' . $payment->invoice_id, $payment->invoice_id, now()->addHours(24));
     }
 
 
 
-    public function webhook(Request $request)
-    {
-        Log::info("Webhook connection established");
+        public function webhook(Request $request)
+        {
+            Log::info("Webhook connection established");
 
-        $data = $request->json();
-        if ($data) {
-            $invoice_id = $data->get('invoiceId');
-            $failure_reason = $data->get('failureReason', null);
-            $status = $data->get('status') ?? Status::PENDING->value;
+            $data = $request->json();
 
-            // Retrieve the transaction
-            $transaction = Transactions::where('invoice_id', $invoice_id)->firstOrFail();
-            $transaction_id = $transaction->transaction_id;
-            $email = $transaction->email;
+            if ($data) {
+                Log::info("Invoice ID: " . $data->get('invoiceId'));
+                Log::info("Status: " . $data->get('status'));
+                $invoice_id = $data->get('invoiceId');
+                $failure_reason = $data->get('failureReason', null);
+                $status = $data->get('status') ?? Status::PENDING->value;
 
-            // Update transaction status and related fields
-            $transaction->update([
-                'status' => $status,
-                'response' => $request->getContent(),
-                'failure_reason' => $failure_reason,
-                'updated_at' => now(),
-            ]);
-
-            // Log webhook data
-            WebHook::updateOrCreate(
-                ['invoice_id' => $invoice_id],
-                [
+                // Retrieve the transaction
+                $transaction = Transactions::where('invoice_id', $invoice_id)->firstOrFail();
+                $transaction_id = $transaction->transaction_id;
+                $email = $transaction->email;
+                Log::info("Webhook Status Retrieved: " . $status);
+                // Update transaction status and related fields
+                $transaction->update([
                     'status' => $status,
                     'response' => $request->getContent(),
                     'failure_reason' => $failure_reason,
-                    'update_date' => now(),
-                    'transaction_id' => $transaction_id,
-                    'ip_address' => $request->ip(),
-                    'first_name' => $transaction->first_name,
-                    'last_name' => $transaction->last_name,
-                    'email' => $email,
-                    'phone' => $transaction->phone,
-                    'amount' => $data->get('amount', 0),
-                    'course_id' => $transaction->course_id,
-                ]
-            );
+                    'updated_at' => now(),
+                ]);
 
-            // Check and update pending user status
-            if (!$this->checkPendingUserStatus($transaction_id)) {
-                $this->updatePendingUserStatus($transaction_id, true);
+                try {
+                    WebHook::updateOrCreate(
+                        ['invoice_id' => $invoice_id],
+                        [
+                            'status' => $status,
+                            'response' => $request->getContent(),
+                            'failure_reason' => $failure_reason,
+                            'update_date' => now(),
+                            'transaction_id' => $transaction_id,
+                            'ip_address' => $request->ip(),
+                            'first_name' => $transaction->first_name,
+                            'last_name' => $transaction->last_name,
+                            'email' => $email,
+                            'phone' => $transaction->phone,
+                            'amount' => $data->get('amount', 0),
+                            'course_id' => $transaction->course_id,
+                        ]
+                    );
+                    Log::info("Webhook entry successfully updated or created for Invoice ID: " . $invoice_id);
+                } catch (\Exception $e) {
+                    Log::error("Error in WebHook updateOrCreate: " . $e->getMessage());
+                    return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+                }
+                // Check and update pending user status
+
+                if (!$this->checkPendingUserStatus($transaction_id)) {
+                    $this->updatePendingUserStatus($transaction_id, true);
+                }
+
+                // Send email based on payment status
+                if ($data->get('status') === Status::SUCCESS->value || $data->get('status') === Status::FAILED->value) {
+                    Log::info("For email the status is: " . $data->get('status'));
+                    $this->sendPaymentStatusEmail($transaction);
+
+
+
+                }
+                return response()->json(['status' => 'received'], 200);
             }
 
-            // Send email based on payment status
-            if ($status === Status::SUCCESS->value || $status === Status::FAILED->value) {
-                $this->sendPaymentStatusEmail($transaction, $status, $failure_reason);
-            }
         }
-    }
 
 
 
@@ -507,6 +518,11 @@ class PaymentController extends Controller
                 // Commit the transaction
                 DB::commit();
 
+                $pendingUserStatus = $this->checkPendingUserStatus($transaction_id);
+                if($pendingUserStatus) {
+                    $this->updatePendingUserStatus($transaction_id, false);
+                }
+
                 // Redirect to the dashboard
                 return redirect()->route('dashboard.courses')->with('success', 'Registration and subscription successful!');
 
@@ -516,11 +532,7 @@ class PaymentController extends Controller
                 // Rollback the transaction in case of an error
                 DB::rollBack();
                 // Log the error message for debugging
-                Log::error('User registration failed', [
-                    'error' => $e->getMessage(),
-                    'request' => $request->all(),
-                    'user' => $email,
-                ]);
+                Log::error('User registration failed: '.$e->getMessage());
                 $failure_reason = "An error occurred during registration. Please try again.";
                 // Redirect back with an error message
                 return view('payment.failure', ['invoiceId' => $invoiceId, 'failure_reason' => $failure_reason, 'course_name' => $course_name, 'course_id' => $request->course_id]);
@@ -529,15 +541,6 @@ class PaymentController extends Controller
         } else {
             return redirect()->route('dashboard.courses')->with('success', 'Registration and subscription successful!');
         }
-
-    }
-
-    public function sendSuccessEmail(Request $request, $token) {
-        $token = Crypt::decrypt($token);
-        $email = $token['email'];
-
-        $userExists = $this->checkUserExists($email);
-
 
     }
 
@@ -550,6 +553,7 @@ class PaymentController extends Controller
 
         // Define success or failure based on transaction status
         $status = $transaction->status;
+        Log::info("Entering sendPaymentStatusEmail with status: " . $status);
 
         if ($status === Status::SUCCESS->value) {
             // Create callback URL for password setup

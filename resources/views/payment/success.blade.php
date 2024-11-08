@@ -12,7 +12,7 @@ $locale = session('locale', 'uk');
     @endsection
 
     @section('content')
-        @if (Cache::has('invoice_' . $invoiceId))
+        @if ($invoiceId)
             <div class="  py-10 mt-10 max-w-4xl m-auto  flex items-center justify-center px-4">
                 <div class="bg-white rounded-lg shadow-lg p-10 text-center">
                     <i class="fas fa-check-circle text-green-500 text-6xl mb-4"></i>

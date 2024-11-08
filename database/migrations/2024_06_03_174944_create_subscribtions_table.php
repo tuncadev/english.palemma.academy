@@ -19,6 +19,7 @@ return new class extends Migration
             $table->enum('payment_status', ['pending', 'complete', 'failure'])->default('pending');
             $table->timestamp('subscription_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('expiry_date')->nullable();
+            $table->timestamp('updated_at')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
     }
