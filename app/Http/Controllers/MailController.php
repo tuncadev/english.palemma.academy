@@ -129,37 +129,6 @@ class MailController extends Controller
             Log::error("Failed to send payment status email", ['error' => $e->getMessage(), 'transaction_id' => $transaction->transaction_id]);
         }
     }
-
-    public function testSendPaymentStatusEmail() {
-
-        $transaction = Transactions::where('invoice_id', '241108D5RLD8nKULoCH5')->firstOrFail();
-        $status = $transaction->status;
-        $failureReason = $transaction->failure_reason;
-        Log::info("sendPaymentStatusEmail initiated", ['transaction_id' => $transaction->transaction_id, 'status' => $status]);
-
-        $cryptData = [
-            'email' => $transaction->email,
-            'transaction_id' => $transaction->transaction_id,
-            'status' => Status::SUCCESS->value,
-            'email_verified' => true,
-        ];
-        $token = $this->setupToken($cryptData);
-        $callback = route('payment.callback', ['token' => $token]);
-
-        $emailData = [
-            'status' => $status,
-            'failureReason' => $failureReason,
-            'transactionId' => $transaction->transaction_id,
-            'callbackUrl' => $callback,
-        ];
-
-        try {
-            Mail::to($transaction->email)->send(new PaymentStatusMail($emailData));
-            Log::info("Payment status email sent", ['email' => $transaction->email, 'status' => $status]);
-        } catch (\Exception $e) {
-            Log::error("Failed to send payment status email", ['error' => $e->getMessage(), 'transaction_id' => $transaction->transaction_id]);
-        }
-    }
 }
 
 
