@@ -1,3 +1,4 @@
+@import 'plyr/dist/plyr.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -102,13 +103,13 @@ body {
     background-color: #000;
 }
 
-.video-container video {
-    width: 100%;  /* Ensures the video takes the full width */
-    height: auto; /* Allows the height to adjust based on the width to keep the aspect ratio */
-    max-height: 100%; /* Prevents the video from exceeding the container height */
-    object-fit: cover; /* Keeps the video centered and covers the container */
-}
 
+
+.guest_video-container video {
+    width: 100%;
+    height: auto;
+    max-width: 600px; /* Optional: Set a max width if needed */
+}
 
 /* styles */
 
