@@ -1,4 +1,4 @@
-<div class="flex flex-row w-full justify-center gap-6 text-gray-400 items-center pb-2">
+<div class="flex flex-row w-full justify-center gap-2 text-gray-400 items-center pb-2">
     <a href="/terms" class="text-xs text-sky-700 hover:text-red-800">
         @lang('general.terms')
     </a>
