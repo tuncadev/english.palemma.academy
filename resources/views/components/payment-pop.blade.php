@@ -106,8 +106,23 @@
                                * @lang('payment.choose_method')
                             </p>
                         </div>
-                        <!-- Bank Transfer Radio Button -->
+
+                        <!-- Credit Card Radio Button -->
                         <div class="flex">
+                            <div class="flex items-center h-5">
+                                <input required checked id="credit_card_radio" name="payment_method" type="radio" value="credit_card" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
+                            </div>
+                            <div class="ms-2 text-sm">
+                                <label for="credit_card_radio" class="font-medium text-gray-900 dark:text-gray-300">
+                                    @lang('payment.pay_by_card')
+                                </label>
+                                <p id="helper-radio-text" class="text-xs font-normal text-gray-500 dark:text-gray-300">
+                                    @lang('payment.pay_by_card_info')
+                                </p>
+                            </div>
+                        </div>
+                         <!-- Bank Transfer Radio Button -->
+                         <div class="flex">
                             <div class="flex items-center h-5">
                                 <input required id="bank_transfer_uah_radio" name="payment_method" type="radio" value="bank_transfer" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
                             </div>
@@ -117,20 +132,6 @@
                                 </label>
                                 <p id="helper-radio-text" class="text-xs font-normal text-gray-500 dark:text-gray-300">
                                     @lang('payment.bank_transfer_info')
-                                </p>
-                            </div>
-                        </div>
-                        <!-- Credit Card Radio Button -->
-                        <div class="flex">
-                            <div class="flex items-center h-5">
-                                <input required id="credit_card_radio" name="payment_method" type="radio" value="credit_card" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
-                            </div>
-                            <div class="ms-2 text-sm">
-                                <label for="credit_card_radio" class="font-medium text-gray-900 dark:text-gray-300">
-                                    @lang('payment.pay_by_card')
-                                </label>
-                                <p id="helper-radio-text" class="text-xs font-normal text-gray-500 dark:text-gray-300">
-                                    @lang('payment.pay_by_card_info')
                                 </p>
                             </div>
                         </div>
@@ -155,7 +156,7 @@
                         <p id="agree-error" class="hidden text-xs text-red-600">
                         </p>
                     </div>
-                    <div id="monopayDiv" class="hidden mb-4 ">
+                    <div id="monopayDiv" class=" mb-4 ">
                         <button id="monopayBtn" type="submit" class=" text-white bg-black hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                             <img class="max-w-32 m-auto" src="{{ asset('images/payment_systems/footer_plata_dark_bg.svg') }}" alt="Monobank Pay">
                         </button>
