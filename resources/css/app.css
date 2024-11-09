@@ -48,6 +48,12 @@ body {
 
 }
 
+/* Ensure video expands to fill fullscreen */
+.plyr__video-wrapper video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+}
 
 .dsection {
   background-image: url("../../public/images/bg/lessons/section-1.jpg");

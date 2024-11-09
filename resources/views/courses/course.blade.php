@@ -168,7 +168,7 @@ $currentLocale = session('locale', 'uk');
         <!-- Footer -->
     </div>
     <!-- Modal -->
-    <div id="videoModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
+    <div id="videoModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700 w-full max-w-lg mx-auto">
             <!-- Modal header -->
             <div class="flex justify-between items-start p-4 border-b dark:border-gray-600">
@@ -184,8 +184,8 @@ $currentLocale = session('locale', 'uk');
             </div>
             <!-- Modal body -->
             <div class="p-4 flex justify-center">
-                <div class="w-full max-w-md">
-                    <video id="modalVideo" class="plyr" controls>
+                <div class="w-full"> <!-- Remove max-w-md -->
+                    <video id="modalVideo" class="plyr w-full h-auto" controls>
                         <source src="{{ url('video/welcome_' . $locale . '.webm') }}" type="video/webm">
                         Your browser does not support the video tag.
                     </video>
