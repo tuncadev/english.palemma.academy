@@ -32,5 +32,5 @@ $currentLocale = session('locale', 'uk');
 
         <x-empty-space :height="10" class="border-b border-b-sky-600" />
         <x-mono-account class="p-2" tableTextSize="text-xs" :transactionID="$transactionID" :invoiceNumber="$invoiceNumber" />
-        <x-qr-code  class="p-2" :qrCode="$qrCode" />
+      {{-- <x-qr-code  class="p-2" :qrCode="$qrCode" /> --}}
     @endsection

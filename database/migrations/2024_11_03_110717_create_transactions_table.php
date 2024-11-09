@@ -10,6 +10,7 @@ return new class extends Migration {
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+            $table->string('type')->nullable();
             $table->string('invoice_id')->unique();
             $table->string('transaction_id');
             $table->string('ip_address')->nullable();

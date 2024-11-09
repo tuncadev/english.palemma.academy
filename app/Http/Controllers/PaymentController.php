@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Status;
+use App\Enums\Type;
 
 use App\Constants\AppConstants;
 
@@ -48,7 +49,7 @@ class PaymentController extends Controller
         return $setupToken;
     }
 
-    public function createInvoice(Request $request, $course_id)
+    public function createInvoice(Request $request, $course_id, $type = null)
     {
 
         $course = Course::findOrFail($course_id);
@@ -105,6 +106,7 @@ class PaymentController extends Controller
 
             // Record payment operation in database
             Transactions::create([
+                'type' => $type,
                 'invoice_id' => $data['invoiceId'],
                 'transaction_id' => $transactionID,
                 'ip_address' => $request->ip(),
@@ -120,7 +122,7 @@ class PaymentController extends Controller
             // Redirect to the Monobank payment URL
             return redirect($invoiceUrl);
         } else {
-            return back()->withErrors(['error' => 'Failed to create invoice.']);
+            return back()->withErrors(['error' => 'Failed to create invoice. $response no success']);
         }
     }
 
@@ -158,10 +160,14 @@ class PaymentController extends Controller
 
         $transactionID = $token['transaction_id'];
         $data = Transactions::where('transaction_id', $transactionID)->first();
-        $payment = Transactions::where('transaction_id', $transactionID)->firstOrFail();
-        $email = $token['email'];
-        $invoiceId = $payment->invoice_id;
 
+        $email = $token['email'];
+        $invoiceId = $data['invoice_id'];
+        if ($data) {
+            Transactions::where('invoice_id', $invoiceId)->update([
+                'type' => TYPE::CREDIT_CARD->value,
+            ]);
+        }
         $userData = [
             'transaction_id' => $transactionID,
             'email' => $email,
@@ -341,6 +347,7 @@ class PaymentController extends Controller
 
             if (!$existingTransaction) {
                 Transactions::create([
+                    'type' => Type::CREDIT_CARD->value,
                     'invoice_id' => $invoiceNumber,
                     'transaction_id' => $transactionID,
                     'ip_address' => $request->ip(),
@@ -371,14 +378,29 @@ class PaymentController extends Controller
 
     public function directPay(Request $request, $course_id, $token)
     {
-        $qrCode = QrCode::size(300)->generate('https://english.palemma.academy');
         $token = Crypt::decrypt($token);
+
         $transactionID = $token['transactionID'];
         $invoiceNumber = $token['invoiceNumber'];
-        $formData = $request->input('personalInfo'); // Access personal details as an array
-        $course = Course::find($course_id);
 
-        return view('payment.direct', compact('qrCode', 'token', 'invoiceNumber', 'transactionID', 'formData', 'course'));
+        $transaction = Transactions::where('invoice_id',$invoiceNumber)->firstOrFail() ?? null;
+
+        $course = Course::find($course_id);
+        $formData = $request->input('personalInfo'); // Access personal details as an array
+
+            if ($transaction) {
+                $this->createPendingUser($transaction);
+                Log::info("Here");
+                Transactions::where('invoice_id', $invoiceNumber)->update([
+                    'type' => TYPE::DIRECT_PAYMENT->value,
+                ]);
+            }
+
+       //$qrCode = QrCode::size(300)->generate('https://english.palemma.academy') ?? "";
+
+
+
+        return view('payment.direct', compact('token', 'invoiceNumber', 'transactionID', 'formData', 'course'));
     }
 
     public function addInvoiceCache($payment)
@@ -416,51 +438,57 @@ class PaymentController extends Controller
                 $status = $data->get('status') ?? Status::PENDING->value;
 
                 // Retrieve the transaction
-                $transaction = Transactions::where('invoice_id', $invoice_id)->firstOrFail();
-                $transaction_id = $transaction->transaction_id;
-                $email = $transaction->email;
-                Log::info("Webhook Status Retrieved: " . $status);
-                // Update transaction status and related fields
-                $transaction->update([
-                    'status' => $status,
-                    'response' => $request->getContent(),
-                    'failure_reason' => $failure_reason,
-                    'updated_at' => now(),
-                ]);
+                $transaction = Transactions::where('invoice_id', $invoice_id)->first() ?? null;
+                if($transaction) {
 
-                try {
-                    WebHook::updateOrCreate(
-                        ['invoice_id' => $invoice_id],
-                        [
-                            'status' => $status,
-                            'response' => $request->getContent(),
-                            'failure_reason' => $failure_reason,
-                            'update_date' => now(),
-                            'transaction_id' => $transaction_id,
-                            'ip_address' => $request->ip(),
-                            'first_name' => $transaction->first_name,
-                            'last_name' => $transaction->last_name,
-                            'email' => $email,
-                            'phone' => $transaction->phone,
-                            'amount' => $data->get('amount', 0),
-                            'course_id' => $transaction->course_id,
-                        ]
-                    );
-                    Log::info("Webhook entry successfully updated or created for Invoice ID: " . $invoice_id);
-                } catch (\Exception $e) {
-                    Log::error("Error in WebHook updateOrCreate: " . $e->getMessage());
-                    return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
-                }
-                // Check and update pending user status
+                    $transaction_id = $transaction->transaction_id;
+                    $email = $transaction->email;
+                    Log::info("Webhook Status Retrieved: " . $status);
+                    // Update transaction status and related fields
+                    $transaction->update([
+                        'type' => Type::CREDIT_CARD->value,
+                        'status' => $status,
+                        'response' => $request->getContent(),
+                        'failure_reason' => $failure_reason,
+                        'updated_at' => now(),
+                    ]);
 
-                if (!$this->checkPendingUserStatus($transaction_id)) {
-                    $this->updatePendingUserStatus($transaction_id, true);
+                    try {
+                        WebHook::updateOrCreate(
+                            ['invoice_id' => $invoice_id],
+                            [
+                                'status' => $status,
+                                'response' => $request->getContent(),
+                                'failure_reason' => $failure_reason,
+                                'update_date' => now(),
+                                'transaction_id' => $transaction_id,
+                                'ip_address' => $request->ip(),
+                                'first_name' => $transaction->first_name,
+                                'last_name' => $transaction->last_name,
+                                'email' => $email,
+                                'phone' => $transaction->phone,
+                                'amount' => $data->get('amount', 0),
+                                'course_id' => $transaction->course_id,
+                            ]
+                        );
+                        Log::info("Webhook entry successfully updated or created for Invoice ID: " . $invoice_id);
+                    } catch (\Exception $e) {
+                        Log::error("Error in WebHook updateOrCreate: " . $e->getMessage());
+                        return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+                    }
+                    // Check and update pending user status
+
+                    if (!$this->checkPendingUserStatus($transaction_id)) {
+                        $this->updatePendingUserStatus($transaction_id, true);
+                    }
+
+                    // Send email based on payment status
+                    if ($status === Status::SUCCESS->value || $status === Status::FAILED->value) {
+                        (new MailController)->sendPaymentStatusEmail($transaction, $status, $failure_reason);
+                    }
+
                 }
 
-                // Send email based on payment status
-                if ($status === Status::SUCCESS->value || $status === Status::FAILED->value) {
-                    (new MailController)->sendPaymentStatusEmail($transaction, $status, $failure_reason);
-                }
                 return response()->json(['status' => 'received'], 200);
             }
 
