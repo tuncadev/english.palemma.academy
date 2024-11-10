@@ -483,15 +483,15 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 });
 </script>
-@else
-<x-error-msg :message="'You haven\'t purchased the ' . $courseName .' course yet.'" />
-@endif
+    @else
+        <x-error-msg :message="'You haven\'t purchased the ' . $courseName .' course yet.'" />
+    @endif
 @endsection
 @else
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-  const modal = new Modal(document.getElementById('authentication-modal'));
-  modal.show();
-  });
-</script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const modal = new Modal(document.getElementById('authentication-modal'));
+    modal.show();
+    });
+    </script>
 @endauth

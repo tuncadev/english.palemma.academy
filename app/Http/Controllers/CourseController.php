@@ -45,6 +45,7 @@ class CourseController extends Controller
     }
 
 
+
     public function instructions($course_id) {
         $locale = session('locale', config('app.locale'));
         $user_id = Auth::id();
@@ -363,102 +364,142 @@ class CourseController extends Controller
     }
 
 
+    public function getTotalScore($course_id) {
+        $user_id = Auth::id();
+        $allSections = Section::where('course_id', $course_id)->get();
+        $totalSections = count($allSections);
+        $totalQuizScore = Score::where('course_id', $course_id)
+            ->where('user_id', $user_id)
+            ->sum('quiz_score');
+        $totalPracticeScore = Score::where('course_id', $course_id)
+            ->where('user_id', $user_id)
+            ->sum('practice_score');
+
+        $scores = [
+            'quiz' => $totalQuizScore,
+            'practice' => $totalPracticeScore,
+        ];
+        return $scores;
+    }
+
+
+    public function finished($course_id) {
+        $allSections = Section::where('course_id', $course_id)->get();
+        $user_id = Auth::id();
+        $subscription = Subscribtion::where('user_id', $user_id )
+                                    ->where('course_id', $course_id)
+                                    ->first();
+        $hasSubscription = $subscription && $subscription->payment_status === 'complete' && $subscription->expiry_date > today();
+        $scores = $this->getTotalScore($course_id);
+        return view('courses.finished', compact('scores', 'course_id', 'hasSubscription'));
+    }
     public function show($course_id, $section_id)
 {
-
+    $allSections = Section::where('course_id', $course_id)->get();
     $user_id = Auth::id();
     $subscription = Subscribtion::where('user_id', $user_id )
                                 ->where('course_id', $course_id)
                                 ->first();
-
     $hasSubscription = $subscription && $subscription->payment_status === 'complete' && $subscription->expiry_date > today();
-    $locale = session('locale', config('app.locale'));
-    $completedSections = CompletedSection::where('user_id', $user_id)
-                                          ->where('course_id', $course_id)
-                                          ->pluck('section_id')
-                                          ->toArray();
-    $completedSectionNames = Section::whereIn('id', $completedSections)
-                             ->where('id', '!=', $section_id)
-                             ->pluck('section_name_' . $locale)
-                             ->toArray();
-    // Step 2: Find the maximum completed section ID
-    $maxCompletedSection = !empty($completedSections) ? max($completedSections) : 0;
 
-    // Step 3: Unlock the next section (max + 1)
-    $unlockedSectionIds = array_merge($completedSections, [$maxCompletedSection + 1]);
+    if (count($allSections) < $section_id) {
+        return redirect()->route('course.finished', ['course_id' => $course_id]);
 
-    // Step 4: Retrieve sections with IDs in the unlockedSectionIds array
-    $unlockedSections = Section::whereIn('id', $unlockedSectionIds)->get();
-    // Add the localized section name to each section
-    $unlockedSections = $unlockedSections->map(function($section) use ($locale) {
-        $section->localized_name = $section["section_name_" . $locale];
-        return $section;
-    });
-    $locked = false;
+    } else {
 
-    if (!in_array($section_id - 1, $completedSections) && $section_id != 1) {
-        $locked = true;
+        $section = Section::where('id', $section_id)->where('course_id', $course_id)->firstOrFail();
+        $course = Course::where('id', $course_id)->firstOrFail();
+        $phrases = Phrase::where('section_id', $section_id)->get();
+
+        $sectionNames =  Section::where('course_id', $course_id)->get();
+
+
+
+        $locale = session('locale', config('app.locale'));
+        $completedSections = CompletedSection::where('user_id', $user_id)
+                                            ->where('course_id', $course_id)
+                                            ->pluck('section_id')
+                                            ->toArray();
+        $completedSectionNames = Section::whereIn('id', $completedSections)
+                                ->where('id', '!=', $section_id)
+                                ->pluck('section_name_' . $locale)
+                                ->toArray();
+        // Step 2: Find the maximum completed section ID
+        $maxCompletedSection = !empty($completedSections) ? max($completedSections) : 0;
+
+        // Step 3: Unlock the next section (max + 1)
+        $unlockedSectionIds = array_merge($completedSections, [$maxCompletedSection + 1]);
+
+        // Step 4: Retrieve sections with IDs in the unlockedSectionIds array
+        $unlockedSections = Section::whereIn('id', $unlockedSectionIds)->get();
+        // Add the localized section name to each section
+        $unlockedSections = $unlockedSections->map(function($section) use ($locale) {
+            $section->localized_name = $section["section_name_" . $locale];
+            return $section;
+        });
+        $locked = false;
+
+        if (!in_array($section_id - 1, $completedSections) && $section_id != 1) {
+            $locked = true;
+        }
+
+
+        // Retrieve the checkbox states from the user_progress table
+        $phraseStates = DB::table('user_progress')
+            ->where('user_id', $user_id)
+            ->where('course_id', $course_id)
+            ->where('section_id', $section_id)
+            ->pluck('checkbox_state', 'phrase_id')
+            ->toArray();
+        $courseNameEn = $course->course_name_en;
+        $sectionNameEn = $section->section_name_en;
+        // Determine the course name and section name based on the current locale
+        switch ($locale) {
+            case 'uk':
+                $courseName = $course->course_name_uk;
+                $sectionName = $section->section_name_uk;
+
+                $pageTitle = $courseName . " - " . $sectionName;
+                $localizedPhrases = $phrases->map(function($phrase) use ($phraseStates) {
+                    return [
+                        'localized' => $phrase->phrase_uk,
+                        'en' => $phrase->phrase_en,
+                        'id' => $phrase->id,
+                        'checked' => isset($phraseStates[$phrase->id]) ? (bool) $phraseStates[$phrase->id] : false, // Add checkbox state
+                    ];
+                });
+                break;
+            case 'ru':
+                $courseName = $course->course_name_ru;
+                $sectionName = $section->section_name_ru;
+                $pageTitle = $courseName . " - " . $sectionName;
+                $localizedPhrases = $phrases->map(function($phrase) use ($phraseStates) {
+                    return [
+                        'localized' => $phrase->phrase_ru,
+                        'en' => $phrase->phrase_en,
+                        'id' => $phrase->id,
+                        'checked' => isset($phraseStates[$phrase->id]) ? (bool) $phraseStates[$phrase->id] : false, // Add checkbox state
+                    ];
+                });
+                break;
+            default:
+                $courseName = $course->course_name_uk; // Default to English if locale is not specified
+                $sectionName = $section->section_name_uk;
+                $pageTitle = $courseName . " - " . $sectionName;
+                $localizedPhrases = $phrases->map(function($phrase) use ($phraseStates) {
+                    return [
+                        'localized' => $phrase->phrase_uk, // Default to English if locale is not specified
+                        'en' => $phrase->phrase_en,
+                        'id' => $phrase->id,
+                        'checked' => isset($phraseStates[$phrase->id]) ? (bool) $phraseStates[$phrase->id] : false, // Add checkbox state
+                    ];
+                });
+                break;
+        }
+
+        return view('courses.section.show', compact('unlockedSections', 'user_id', 'sectionNameEn', 'courseNameEn', 'pageTitle','hasSubscription', 'locale', 'allSections', 'completedSections', 'completedSectionNames', 'locked', 'section_id', 'phrases', 'sectionName', 'localizedPhrases', 'courseName', 'course_id'));
     }
 
-    $section = Section::where('id', $section_id)->where('course_id', $course_id)->firstOrFail();
-    $course = Course::where('id', $course_id)->firstOrFail();
-    $phrases = Phrase::where('section_id', $section_id)->get();
-    $allSections = Section::where('course_id', $course_id)->get();
-    $sectionNames =  Section::where('course_id', $course_id)->get();
-    // Retrieve the checkbox states from the user_progress table
-    $phraseStates = DB::table('user_progress')
-        ->where('user_id', $user_id)
-        ->where('course_id', $course_id)
-        ->where('section_id', $section_id)
-        ->pluck('checkbox_state', 'phrase_id')
-        ->toArray();
-    $courseNameEn = $course->course_name_en;
-    $sectionNameEn = $section->section_name_en;
-    // Determine the course name and section name based on the current locale
-    switch ($locale) {
-        case 'uk':
-            $courseName = $course->course_name_uk;
-            $sectionName = $section->section_name_uk;
-
-            $pageTitle = $courseName . " - " . $sectionName;
-            $localizedPhrases = $phrases->map(function($phrase) use ($phraseStates) {
-                return [
-                    'localized' => $phrase->phrase_uk,
-                    'en' => $phrase->phrase_en,
-                    'id' => $phrase->id,
-                    'checked' => isset($phraseStates[$phrase->id]) ? (bool) $phraseStates[$phrase->id] : false, // Add checkbox state
-                ];
-            });
-            break;
-        case 'ru':
-            $courseName = $course->course_name_ru;
-            $sectionName = $section->section_name_ru;
-            $pageTitle = $courseName . " - " . $sectionName;
-            $localizedPhrases = $phrases->map(function($phrase) use ($phraseStates) {
-                return [
-                    'localized' => $phrase->phrase_ru,
-                    'en' => $phrase->phrase_en,
-                    'id' => $phrase->id,
-                    'checked' => isset($phraseStates[$phrase->id]) ? (bool) $phraseStates[$phrase->id] : false, // Add checkbox state
-                ];
-            });
-            break;
-        default:
-            $courseName = $course->course_name_uk; // Default to English if locale is not specified
-            $sectionName = $section->section_name_uk;
-            $pageTitle = $courseName . " - " . $sectionName;
-            $localizedPhrases = $phrases->map(function($phrase) use ($phraseStates) {
-                return [
-                    'localized' => $phrase->phrase_uk, // Default to English if locale is not specified
-                    'en' => $phrase->phrase_en,
-                    'id' => $phrase->id,
-                    'checked' => isset($phraseStates[$phrase->id]) ? (bool) $phraseStates[$phrase->id] : false, // Add checkbox state
-                ];
-            });
-            break;
-    }
-
-    return view('courses.section.show', compact('unlockedSections', 'user_id', 'sectionNameEn', 'courseNameEn', 'pageTitle','hasSubscription', 'locale', 'allSections', 'completedSections', 'completedSectionNames', 'locked', 'section_id', 'phrases', 'sectionName', 'localizedPhrases', 'courseName', 'course_id'));
 }
 
 

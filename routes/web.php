@@ -50,7 +50,7 @@ Route::get('/course/{course_id}/introduction', [CourseController::class, 'introd
 Route::get('/course/{course_id}/instructions', [CourseController::class, 'instructions'])->name('course.instructions');
 
 Route::get('/course/{course_id}/videotutorials', [CourseController::class, 'tutorials'])->name('course.tutorials');
-
+Route::get('/course/{course_id}/finished', [CourseController::class, 'finished'])->name('course.finished');
 });
 
 //Route::get('/dashboard/paid/courses', [DashboardController::class, 'subscribtions'])->middleware(['auth', 'verified'])->name('dashboard.paid_courses');

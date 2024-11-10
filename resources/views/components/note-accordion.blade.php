@@ -18,26 +18,26 @@
             </div>
             <div class="mt-6 mb-4 text-sm">
                 <div class="practice-instructions mx-auto">
-                    <div class="grid grid-cols-6 gap-4">
-                        <div class="col-span-1 font-bold text-sky-700 ">Past Simple</div>
-                        <div class="col-span-5">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div class="col-span-1 font-bold text-sky-700 border-b border-b-gray-300 ">Past Simple</div>
+                        <div class="col-span-1 sm:col-span-3 border-b border-b-gray-300">
                             <p>was – {{__('course.was')}}; were – {{__('course.were')}}</p>
                             <p>V2(ed)</p>
                             <p>Did + V, didn’t + V</p>
                         </div>
 
-                        <div class="col-span-1 font-bold text-sky-700">Present Continuous</div>
-                        <div class="col-span-5">
+                        <div class="col-span-1 font-bold text-sky-700 border-b border-b-gray-300">Present Continuous</div>
+                        <div class="col-span-1 sm:col-span-3  border-b border-b-gray-300">
                             <p>is, are, am + V(ing)</p>
                         </div>
 
-                        <div class="col-span-1 font-bold text-sky-700">Past Continuous</div>
-                        <div class="col-span-5">
+                        <div class="col-span-1 font-bold text-sky-700 border-b border-b-gray-300">Past Continuous</div>
+                        <div class="col-span-1 sm:col-span-3  border-b border-b-gray-300">
                             <p>was, were + V(ing)</p>
                         </div>
 
-                        <div class="col-span-1 font-bold text-sky-700       ">Present Perfect</div>
-                        <div class="col-span-5">
+                        <div class="col-span-1 font-bold text-sky-700 border-b border-b-gray-300">Present Perfect</div>
+                        <div class="col-span-1 sm:col-span-3  border-b border-b-gray-300">
                             <p>have / has + V3(ed)</p>
                         </div>
                     </div>
