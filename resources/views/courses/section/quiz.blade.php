@@ -221,11 +221,14 @@
                         <div class="text-lg font-semibold flex flex-col  gap-8">
                             <div class="flex flex-col items-center justify-center gap-8 p-4">
                                 <i class="text-8xl text-pink-600 fa-regular fa-face-frown-open"></i>
-                                <span>@lang('course.section_locked')</span>
+                                <span>@lang('course.section_locked_head')</span>
+                                <p class="text-sm text-center text-gray-600">
+                                    @lang('course.available_message')
+                                </p>
                             </div>
                             <div class="p-4">
-                                <span class="py-3 px-2 bg-green-100 text-green-800 text-xs font-medium rounded dark:bg-gray-700 dark:text-green-400 border border-green-400">
-                                    @lang('course.unlocked')
+                                <span class="py-3 ml-4 px-2 bg-green-100 text-green-800 text-xs font-medium rounded dark:bg-gray-700 dark:text-green-400 border border-green-400">
+                                    @lang('course.available_sections')
                                 </span>
                                 @foreach ($unlockedSections as $section)
                                     <x-sections-card :isUnlocked="1" :course_id="$course_id" :section_id="$section->id" :section_name_en="$section->section_name_en" :section_name="$section->localized_name" />
@@ -353,7 +356,7 @@ function closeModal() {
 
 document.addEventListener('DOMContentLoaded', function() {
     let quizScore = 0;
-    let translationsOpened = new Set();
+
     var questionInputs = document.querySelectorAll('#quiz-form input');
 
     questionInputs.forEach(function(input) {
@@ -367,9 +370,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var element = document.getElementById('translation-' + id);
         if (element.style.display === 'none') {
             element.style.display = 'block';
-            if (!translationsOpened.has(id)) {
-                translationsOpened.add(id);
-            }
+
         } else {
             element.style.display = 'none';
         }
@@ -386,7 +387,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 totalScore += point;
             }
         });
-        totalScore -= translationsOpened.size;
+
         quizScore = totalScore;
         document.getElementById('score').innerText = 'Score: ' + quizScore;
         document.getElementById('quiz_score').value = quizScore;
