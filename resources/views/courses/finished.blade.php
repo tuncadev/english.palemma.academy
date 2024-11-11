@@ -29,7 +29,7 @@
                         </p>
                     </div>
 
-                    <a href="#"
+                    <a href="{{ route('dashboard.courses') }}"
                        class="mt-6 inline-flex items-center px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-lg rounded-lg shadow transition duration-150">
                         <i class="fas fa-redo mr-2"></i>
                         @lang('general.start_over')
