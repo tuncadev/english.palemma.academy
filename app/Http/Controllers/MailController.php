@@ -37,7 +37,7 @@ class MailController extends Controller
 
         $messageData = [
             'name' => $request->name,
-            'user_id' => $user_id,
+            'user_id' => is_numeric($user_id) ? $user_id : null,
             'ip' => $ipAddress,
             'email' => $request->email,
             'subject' => $request->subject,
@@ -69,7 +69,7 @@ class MailController extends Controller
      */
     public function sendAdminNotificationEmail(array $messageData)
     {
-        $adminEmail = config('mail.admin_email', 'admin@example.com'); // Ensure this is configured in .env
+        $adminEmail = config('mail.admin_email', 'info@palemma.academy'); // Ensure this is configured in .env
         $fromEmail = config('mail.from.address'); // Use the authenticated email
         $userEmail = $messageData['email'] ?? config('mail.from.address');
 

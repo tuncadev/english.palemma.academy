@@ -81,6 +81,12 @@ $locale = session('locale', 'uk');
 
                     <!-- Submit Button -->
                     <div class="text-center">
+                        <div id="successMsg" class="hidden">
+                            <div id="successMessage"></div>
+                        </div>
+                        <div id="failureMsg" class="hidden">
+                            <div id="failMessage"></div>
+                        </div>
                         <button type="submit"
                             class="w-full lg:w-1/3 bg-blue-700 hover:bg-blue-800 text-white font-semibold py-2 rounded-md shadow-md transition-colors duration-200">
                             @lang('general.send')
