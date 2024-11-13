@@ -15,7 +15,7 @@
                   @csrf
 
                   <!-- Display Errors -->
-                  @if (isset($errors))
+                  @if (isset($errors) && $errors->any())
                       <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
                           <strong class="font-bold">@lang('auth.error')</strong>
                           <span class="block sm:inline">{{ $errors->first() }}</span>
