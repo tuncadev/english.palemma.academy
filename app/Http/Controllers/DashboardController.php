@@ -39,7 +39,11 @@ class DashboardController extends Controller
         $courses = Course::get();
 
         $locale = session('locale', config('app.locale'));
-
+        $pageTitle = match ($locale) {
+            'ru' => 'Мои курсы',      // Russian title
+            'uk' => 'Мої курси',     // Ukrainian title
+            default => 'Мої курси',  // Fallback title in English or other language
+        };
         // Transform the courses collection
         $courses->transform(function($course) use ($locale, $user_id) {
 
@@ -151,8 +155,9 @@ class DashboardController extends Controller
                 return 3;
             }
         });
+        $courses = $sortedCourses;
 
-        return view('courses.dashboard.subscribtions', ['courses' => $sortedCourses]);
+        return view('courses.dashboard.subscribtions', compact('courses', 'pageTitle'));
     }
 
 

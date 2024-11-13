@@ -317,7 +317,7 @@ class CourseController extends Controller
             $locale = session('locale', config('app.locale'));
 
             $course = Course::where('id', $course_id)->firstOrFail();
-
+            $courseNameLocale = "course_name_" . $locale;
             $phrases = Phrase::get()->count();
             $quizes = Quiz::get()->count();
             $practices = Practice::get()->count();
@@ -355,8 +355,9 @@ class CourseController extends Controller
                     break;
             }
 
+            $pageTitle = Course::where('id', $course_id)->value($courseNameLocale);
 
-            return view('courses.course', compact('token', 'invoiceNumber', 'transactionID', 'videos', 'quizes','practices','phrases', 'course', 'localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
+            return view('courses.course', compact('pageTitle', 'token', 'invoiceNumber', 'transactionID', 'videos', 'quizes','practices','phrases', 'course', 'localizedSections', 'courseName', 'completedSections', 'locale', 'course_id'));
 
         } else {
             return redirect()->route('dashboard.courses');

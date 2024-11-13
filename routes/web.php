@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\App;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CourseController;
@@ -30,49 +31,86 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/profile/avatar', [ProfileController::class, 'uploadAvatar'])->name('profile.avatar');
     Route::get('/course/{course_id}/sections', [CourseController::class, 'sections'])->name('course.sections');
     Route::get('/dashboard', [DashboardController::class, 'subscribtions'])->name('dashboard.courses');
-    Route::get('/generatetext', function () {
-        return view('textgenerate');
-    });
 
 
-Route::post('/course/{course_id}/section/{section_id}/save-phrase-progress', [CourseController::class, 'savePhraseProgress'])->name('course.savePhraseProgress');
-Route::post('/course/{course_id}/section/{section_id}/save-practice-progress', [CourseController::class, 'savePracticeProgress'])->name('course.savePracticeProgress');
-Route::post('/course/{course_id}/section/{section_id}/save-quiz-progress', [CourseController::class, 'saveQuizProgress'])->name('course.saveQuizProgress');
+    Route::post('/course/{course_id}/section/{section_id}/save-phrase-progress', [CourseController::class, 'savePhraseProgress'])->name('course.savePhraseProgress');
+    Route::post('/course/{course_id}/section/{section_id}/save-practice-progress', [CourseController::class, 'savePracticeProgress'])->name('course.savePracticeProgress');
+    Route::post('/course/{course_id}/section/{section_id}/save-quiz-progress', [CourseController::class, 'saveQuizProgress'])->name('course.saveQuizProgress');
 
-Route::get('/course/{course_id}/section/{section_id}', [CourseController::class, 'show'])->name('course.show');
-Route::get('/course/{course_id}/section/{section_id}/practice', [CourseController::class, 'practice'])->name('course.practice');
-Route::get('/course/{course_id}/section/{section_id}/update-practice', [CourseController::class, 'updatePracticeScore'])->name('course.updatePracticeScore');
-Route::get('/course/{course_id}/section/{section_id}/quiz', [CourseController::class, 'quiz'])->name('course.quiz');
-Route::get('/course/{course_id}/section/{section_id}/update-quiz', [CourseController::class, 'updateQuizScore'])->name('course.updateQuizScore');
-Route::post('/course/{course_id}/section/{section_id}/complete', [CourseController::class, 'completeSection'])->name('course.complete');
+    Route::get('/course/{course_id}/section/{section_id}', [CourseController::class, 'show'])->name('course.show');
+    Route::get('/course/{course_id}/section/{section_id}/practice', [CourseController::class, 'practice'])->name('course.practice');
+    Route::get('/course/{course_id}/section/{section_id}/update-practice', [CourseController::class, 'updatePracticeScore'])->name('course.updatePracticeScore');
+    Route::get('/course/{course_id}/section/{section_id}/quiz', [CourseController::class, 'quiz'])->name('course.quiz');
+    Route::get('/course/{course_id}/section/{section_id}/update-quiz', [CourseController::class, 'updateQuizScore'])->name('course.updateQuizScore');
+    Route::post('/course/{course_id}/section/{section_id}/complete', [CourseController::class, 'completeSection'])->name('course.complete');
 
-Route::get('/course/{course_id}/introduction', [CourseController::class, 'introduction'])->name('course.introduction');
-Route::get('/course/{course_id}/instructions', [CourseController::class, 'instructions'])->name('course.instructions');
+    Route::get('/course/{course_id}/introduction', [CourseController::class, 'introduction'])->name('course.introduction');
+    Route::get('/course/{course_id}/instructions', [CourseController::class, 'instructions'])->name('course.instructions');
 
-Route::get('/course/{course_id}/videotutorials', [CourseController::class, 'tutorials'])->name('course.tutorials');
-Route::get('/course/{course_id}/finished', [CourseController::class, 'finished'])->name('course.finished');
+    Route::get('/course/{course_id}/videotutorials', [CourseController::class, 'tutorials'])->name('course.tutorials');
+    Route::get('/course/{course_id}/finished', [CourseController::class, 'finished'])->name('course.finished');
 });
 
 //Route::get('/dashboard/paid/courses', [DashboardController::class, 'subscribtions'])->middleware(['auth', 'verified'])->name('dashboard.paid_courses');
 //Route::get('/dashboard/paid/course-{course_id}', [DashboardController::class, 'dashboard'])->name('course.dashboard');
 
 Route::get('/terms', function () {
-    return view('terms');
+    $locale = App::getLocale(); // Get the current locale
+    $pageTitle = match ($locale) {
+        'ru' => 'Условия и положения',      // Russian title
+        'uk' => 'Умови та положення',     // Ukrainian title
+        default => 'Умови та положення',  // Fallback title in English or other language
+    };
+    return view('terms', compact('pageTitle'));
 });
 Route::get('/privacy', function () {
-    return view('privacy');
+
+    $locale = App::getLocale(); // Get the current locale
+    // Set pageTitle based on the locale
+    $pageTitle = match ($locale) {
+        'ru' => 'Политика конфиденциальности',      // Russian title
+        'uk' => 'Політика конфіденційності',     // Ukrainian title
+        default => 'Політика конфіденційності',  // Fallback title in English or other language
+    };
+
+    return view('privacy', compact('pageTitle'));
 });
 
 Route::get('/contact-us', function () {
-    return view('contact-us');
+    $locale = App::getLocale(); // Get the current locale
+
+    $pageTitle = match ($locale) {
+        'ru' => 'Контакты',      // Russian title
+        'uk' => 'Контакти',     // Ukrainian title
+        default => 'Контакти',  // Fallback title in English or other language
+    };
+
+    return view('contact-us', compact('pageTitle'));
 });
 Route::get('/about-me', function () {
+    $locale = App::getLocale(); // Get the current locale
+
+    // Set pageTitle based on the locale
+    $pageTitle = match ($locale) {
+        'ru' => 'Обо мне',      // Russian title
+        'uk' => 'Про мене',     // Ukrainian title
+        default => 'Про мене',  // Fallback title in English or other language
+    };
+
     $courses = Course::get();
-    return view('about-me', compact('courses'));
+    return view('about-me', compact('courses', 'pageTitle'));
 });
+
 Route::get('/oferta', function () {
-    return view('oferta');
+    $locale = App::getLocale(); // Get the current locale
+
+    // Set pageTitle based on the locale
+    $pageTitle = "Оферта";
+
+    $courses = Course::get();
+    return view('oferta', compact('pageTitle'));
 });
+
 Route::get('/guest/course/{course_id}', [CourseController::class, 'index'])
     ->name('course.index');
 
@@ -81,12 +119,6 @@ Route::get('/guest/course/{course_id}', [CourseController::class, 'index'])
 
 Route::post('/submit-form', [MailController::class, 'sendForm'])->name('form.submit');
 
-
-/* Payments */
-
-Route::get('/payment', function () {
-    return view('payment');
-});
 
 // routes/web.php
 

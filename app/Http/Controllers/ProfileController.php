@@ -15,14 +15,20 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
+
     /**
      * Display the user's profile form.
      */
     public function edit(Request $request): View
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+        $locale = session('locale', config('app.locale'));
+        $pageTitle = match ($locale) {
+            'ru' => 'Настройка профиля',      // Russian title
+            'uk' => 'Налаштування профілю',     // Ukrainian title
+            default => 'Налаштування профілю',  // Fallback title in English or other language
+        };
+        $user = $request->user();
+        return view('profile.edit', compact('pageTitle','user'));
     }
 
     /**

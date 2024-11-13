@@ -20,6 +20,7 @@ class HomeController extends Controller
 {
     public function index()
     {
+        $pageTitle = "English with Emma";
         $courses = Course::all();
         Log::info($courses);
         $locale = App::getLocale(); // Get the current locale
@@ -45,6 +46,6 @@ class HomeController extends Controller
             return $course;
         });
 
-        return view('pages.homepage', compact('courses', 'locale'));
+        return view('pages.homepage', compact('courses', 'locale', 'pageTitle'));
     }
 }

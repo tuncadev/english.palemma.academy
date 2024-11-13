@@ -15,7 +15,7 @@
                   @csrf
 
                   <!-- Display Errors -->
-                  @if ($errors->any())
+                  @if (isset($errors))
                       <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
                           <strong class="font-bold">@lang('auth.error')</strong>
                           <span class="block sm:inline">{{ $errors->first() }}</span>
@@ -56,19 +56,19 @@
   </div>
 </div>
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-      if (@json($errors->any())) {
+    document.addEventListener('DOMContentLoaded', function () {
+      @if(isset($errors) && $errors->any())
         var modal = document.getElementById('authentication-modal');
         modal.setAttribute('aria-modal', 'true');
         modal.setAttribute('role', 'dialog');
         modal.classList.remove('hidden');
         modal.classList.add('flex');
-      }
 
-      document.querySelectorAll('[data-modal-hide="authentication-modal"]').forEach((el) => {
-          el.addEventListener('click', () => {
-              document.getElementById('authentication-modal').classList.add('hidden');
-          });
-      });
-  });
+        document.querySelectorAll('[data-modal-hide="authentication-modal"]').forEach((el) => {
+            el.addEventListener('click', () => {
+                document.getElementById('authentication-modal').classList.add('hidden');
+            });
+        });
+      @endif
+    });
   </script>
