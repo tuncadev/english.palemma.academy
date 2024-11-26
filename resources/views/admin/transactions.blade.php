@@ -4,11 +4,9 @@
 @endphp
 @extends('layouts.admin.layout')
     @section('content')
-        <header class=" bg-gray-100 border-b ">
-            <h1 class="text-3xl font-bold text-sky-700">
-                Transactions
-            </h1>
-        </header>
+        <x-admin.header>
+            Transactions
+        </x-admin.header>
         <div class="flex mt-6">
             <div class="container py-6">
                 @if ($transactions->isNotEmpty())

@@ -3,11 +3,9 @@ $locale = session('locale', 'uk');
 @endphp
 @extends('layouts.admin.layout')
     @section('content')
-        <header class=" bg-gray-100 border-b ">
-            <h1 class="text-3xl font-bold text-sky-700">
-                Users
-            </h1>
-        </header>
+        <x-admin.header>
+            Users
+        </x-admin.header>
         <div class="flex mt-6">
             <div class="container py-6">
                 <div class="overflow-x-auto shadow-lg rounded-lg">

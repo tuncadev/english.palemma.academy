@@ -4,11 +4,10 @@ $locale = session('locale', 'uk');
 @endphp
 @extends('layouts.admin.layout')
     @section('content')
-        <header class=" bg-gray-100 border-b ">
+        <x-admin.header>
+            Visitors
+        </x-admin.header>
             <div class="flex items-center gap-4 text-xs mb-6">
-                <h1 class="text-3xl font-bold text-sky-700">
-                    Visitors
-                </h1>
                 <button id="addip" class="hover:bg-green-300 hover:border-2 hover:text-red-800 p-2 bg-green-100 border-2 border-gray-200 rounded-lg">
                     Add IP to Exclude
                 </button>
@@ -28,7 +27,6 @@ $locale = session('locale', 'uk');
                 {{ session('error') }}
             </x-admin.flash-failure>
             @endif
-        </header>
         <div class="flex mt-6">
             <div class="container py-6">
                 @if ($visitors->isNotEmpty())

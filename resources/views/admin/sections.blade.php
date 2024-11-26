@@ -3,6 +3,9 @@ $locale = session('locale', 'uk');
 @endphp
 @extends('layouts.admin.layout')
     @section('content')
+    <x-admin.header>
+        Sections
+    </x-admin.header>
     <div class=" mx-auto p-4">
        <div class="flex  items-center mb-4 gap-2 ">
             <h1 class="text-xl font-semibold">Edit Section</h1>

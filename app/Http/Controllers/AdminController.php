@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Artisan;
 
 use App\Models\FormSubmission;
 use App\Models\Course;
@@ -35,6 +36,132 @@ class AdminController extends Controller
     public function dashboard() {
 
         return view('admin.dashboard');
+    }
+
+
+     ###   SETTINGS   ###
+
+
+     public function settings()
+     {
+         // Fetch the environment variables
+         $envVars = [
+            'APP_NAME' => env('APP_NAME'),
+            'UPDATE_MODE' => env('UPDATE_MODE'),
+            'MONOBANK_API_TOKEN' => env('MONOBANK_API_TOKEN'),
+            'MONOBANK_API_BASE_URL' => env('MONOBANK_API_BASE_URL'),
+            'ADMIN_EMAIL' => env('ADMIN_EMAIL'),
+            'DB_CONNECTION' => env('DB_CONNECTION'),
+            'DB_HOST' => env('DB_HOST'),
+            'DB_PORT' => env('DB_PORT'),
+            'DB_DATABASE' => env('DB_DATABASE'),
+            'DB_USERNAME' => env('DB_USERNAME'),
+            'DB_PASSWORD' => env('DB_PASSWORD'),
+            'APP_URL' => env('APP_URL'),
+            'MAIL_MAILER' => env('MAIL_MAILER'),
+            'MAIL_HOST' => env('MAIL_HOST'),
+            'MAIL_PORT' => env('MAIL_PORT'),
+            'MAIL_ENCRYPTION' => env('MAIL_ENCRYPTION'),
+            'MAIL_USERNAME' => env('MAIL_USERNAME'),
+            'MAIL_PASSWORD' => env('MAIL_PASSWORD'),
+            'MAIL_FROM_ADDRESS' => env('MAIL_FROM_ADDRESS'),
+            'MAIL_FROM_NAME' => env('MAIL_FROM_NAME', env('APP_NAME')),
+         ];
+
+         return view('admin.settings', ['envVars' => $envVars]);
+     }
+
+     public function updateSettings(Request $request)
+{
+
+
+
+
+    $request->validate([
+        'key' => 'required|string',
+        'value' => 'nullable|string',
+    ]);
+
+    $key = $request->input('key');
+    $value = $request->input('value');
+
+    $path = base_path('.env');
+
+    if (!file_exists($path)) {
+        return response()->json(['error' => 'The .env file does not exist.'], 404);
+    }
+    $lockPath = base_path('.env.backup');
+
+
+    // Create .env-lock if it doesn't exist (backup the current .env)
+    if (!file_exists($lockPath)) {
+        copy($path, $lockPath);
+    }
+    // Read the current .env file into an array of lines
+    $lines = file($path, FILE_IGNORE_NEW_LINES);
+
+    $updated = false;
+
+    // Process each line and update the specific key
+    foreach ($lines as &$line) {
+        if (strpos(trim($line), "{$key}=") === 0) {
+            $line = "{$key}=" . (strpos($value, ' ') !== false ? "\"{$value}\"" : $value);
+            $updated = true;
+            break;
+        }
+    }
+
+    if (!$updated) {
+        // Append the new key-value pair to the file if the key does not exist
+        $lines[] = "{$key}=" . (strpos($value, ' ') !== false ? "\"{$value}\"" : $value);
+    }
+
+    // Write back the updated content safely, preserving empty lines and comments
+    $newContent = implode(PHP_EOL, $lines) . PHP_EOL;
+    file_put_contents($path, $newContent);
+
+    return response()->json(['success' => true]);
+}
+
+
+
+    // Helper function to update .env variables
+    protected function setEnvVariable($key, $value)
+    {
+        $envPath = base_path('.env');
+        $lockPath = base_path('.env.backup');
+
+        // Check if .env exists
+        if (!file_exists($envPath)) {
+            throw new \Exception("The .env file does not exist.");
+        }
+
+        // Create .env-lock if it doesn't exist (backup the current .env)
+        if (!file_exists($lockPath)) {
+            copy($envPath, $lockPath);
+        }
+
+        // Read the current .env content
+        $content = file_get_contents($envPath);
+
+        // Ensure the value is quoted if it contains spaces or special characters
+        $value = strpos($value, ' ') !== false ? '"' . addslashes($value) . '"' : $value;
+
+        // Check if the key exists
+        if (preg_match("/^{$key}=.*/m", $content)) {
+            // Replace the existing key's value
+            $content = preg_replace(
+                "/^{$key}=.*/m",
+                "{$key}={$value}",
+                $content
+            );
+        } else {
+            // Append the new key-value pair to the file
+            $content .= "\n{$key}={$value}";
+        }
+
+        // Write the updated content back to the .env file
+        file_put_contents($envPath, $content);
     }
 
 

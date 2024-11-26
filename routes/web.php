@@ -92,7 +92,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('/visitors', [AdminController::class, 'visitors'])->name('admin.visitors');
         Route::get('/visitors/{id}', [AdminController::class, 'visitorDetails'])->name('admin.visitor.details');
-        Route::get('/admin/visitors', [AdminController::class, 'visitors'])->name('admin.visitors');
 
         Route::post('/admin/addIp', [AdminController::class, 'addIp'])->name('admin.addIp');
         // In routes/web.php
@@ -110,6 +109,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('/inbox', [AdminController::class, 'inbox'])->name('admin.inbox');
         Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
+
+        Route::get('/settings', [AdminController::class, 'settings'])->name('admin.settings');
+        Route::post('/settings', [AdminController::class, 'updateSettings'])->name('admin.updateSettings');
 
     });
 

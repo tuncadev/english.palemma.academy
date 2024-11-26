@@ -4,6 +4,9 @@ $locale = session('locale', 'uk');
 
 @extends('layouts.admin.layout')
     @section('content')
+    <x-admin.header>
+        Admin Dashboard
+    </x-admin.header>
     <div class="p-4">
         <div class="p-4  rounded-lg dark:border-gray-700">
            <div class="grid grid-cols-3 gap-4 mb-4">

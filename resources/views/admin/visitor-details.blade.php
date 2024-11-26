@@ -4,11 +4,9 @@ $locale = session('locale', 'uk');
 @extends('layouts.admin.layout')
 
 @section('content')
-    <header class="bg-gray-100 border-b">
-        <h1 class="text-3xl font-bold text-sky-700">
-            Visitor Details
-        </h1>
-    </header>
+    <x-admin.header>
+        Visitor Details
+    </x-admin.header>
     <div class="mt-6 container py-6">
         <!-- Visitor Information -->
         <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
