@@ -13,6 +13,18 @@ use Illuminate\Support\Facades\Log;
 
 class VisitorTrackingMiddleware
 {
+    private $botIpRanges = [
+        // Googlebot
+        '66.249.*.*',
+        // Facebook Crawler
+        '31.13.*.*',
+        '69.63.*.*',
+        // Bingbot
+        '13.66.*.*',
+        '157.55.*.*',
+        // Add more known bot IP ranges as needed
+    ];
+
     public function handle(Request $request, Closure $next)
     {
         // Step 1: Get IP address
@@ -81,6 +93,13 @@ class VisitorTrackingMiddleware
             }
         }
 
+        foreach ($this->botIpRanges as $range) {
+            if ($this->ipMatchesPattern($ipAddress, $range)) {
+                #Log::info("Bot IP detected and excluded: {$ipAddress} matches {$range}");
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -108,19 +127,15 @@ class VisitorTrackingMiddleware
      */
     private function ipMatchesPattern($ipAddress, $pattern)
     {
-        if (!$pattern) {
-            return false; // Gracefully handle invalid patterns
+        if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            // Convert IPv4 pattern to regex
+            $regex = '/^' . str_replace(['.', '*'], ['\.', '[0-9]+'], $pattern) . '$/';
+        } elseif (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            // Convert IPv6 pattern to regex
+            $regex = '/^' . str_replace([':', '*'], ['\:', '[a-fA-F0-9]{1,4}'], $pattern) . '$/';
+        } else {
+            return false; // Invalid IP format
         }
-
-        // Convert pattern to a regex (e.g., 192.168.*.* -> 192\.168\.[0-9]+\.[0-9]+)
-        $regex = '/^' . str_replace(['.', '*'], ['\.', '[0-9]+'], $pattern) . '$/';
-
-        // Log for debugging
-       /* Log::debug("Checking IP address against range", [
-            'ip_address' => $ipAddress,
-            'pattern' => $pattern,
-            'regex' => $regex,
-        ]); */
 
         return preg_match($regex, $ipAddress);
     }
