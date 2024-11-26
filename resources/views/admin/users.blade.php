@@ -9,7 +9,7 @@ $locale = session('locale', 'uk');
         <div class="flex mt-6">
             <div class="container py-6">
                 <div class="overflow-x-auto shadow-lg rounded-lg">
-                    <table class="min-w-full bg-white border border-gray-200">
+                    <table class="hidden sm:block min-w-full bg-white border border-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="py-3 px-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User ID</th>
@@ -45,6 +45,61 @@ $locale = session('locale', 'uk');
                             @endforeach
                         </tbody>
                     </table>
+                    <!-- Card layout for mobile -->
+                    <div class="sm:hidden space-y-4">
+                        @foreach ($users as $user)
+                            <div class="bg-white border border-gray-200 rounded shadow-md p-4">
+                                <!-- User Details -->
+                                <div class="flex flex-col space-y-2">
+                                    <div>
+                                        <span class="font-bold text-gray-700">User ID:</span>
+                                        <span class="text-gray-500">{{ $user->id }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="font-bold text-gray-700">Name:</span>
+                                        <span class="text-gray-500">{{ $user->name }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="font-bold text-gray-700">Email:</span>
+                                        <span class="text-gray-500">{{ $user->email }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="font-bold text-gray-700">Phone:</span>
+                                        <span class="text-gray-500">{{ $user->phone }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="font-bold text-gray-700">Email Verified:</span>
+                                        <span class="text-gray-500">{{ $user->email_verified_at }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="font-bold text-gray-700">Role:</span>
+                                        <span class="text-gray-500">{{ $user->role }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="font-bold text-gray-700">Status:</span>
+                                        <span class="text-gray-500">{{ $user->status }}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <span class="font-bold text-gray-700">Avatar:</span>
+                                        @if ($user->avatar)
+                                            <img class="w-12 h-12 ml-4 rounded-full object-cover" src="{{ asset('storage/' . $user->avatar) }}" alt="User Avatar">
+                                        @else
+                                            <span class="text-gray-500 ml-4">No Avatar</span>
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <span class="font-bold text-gray-700">Created:</span>
+                                        <span class="text-gray-500">{{ $user->created_at->format('Y-m-d H:i') }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="font-bold text-gray-700">Updated:</span>
+                                        <span class="text-gray-500">{{ $user->updated_at ? $user->updated_at->format('Y-m-d H:i') : "N/A" }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
                 </div>
             </div>
 

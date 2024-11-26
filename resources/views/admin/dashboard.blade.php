@@ -9,7 +9,7 @@ $locale = session('locale', 'uk');
     </x-admin.header>
     <div class="p-4">
         <div class="p-4  rounded-lg dark:border-gray-700">
-           <div class="grid grid-cols-3 gap-4 mb-4">
+           <div class="flex flex-col sm:grid sm:grid-cols-3 gap-4 mb-4">
                 <a href="{{ $message_count > 0 ?  route('admin.inbox') : "#" }}" class="{{ $message_count > 0 ? "pointer-events-auto group hover:cursor-pointer" : "pointer-events-none" }} ">
                     <div class="border-2 {{ $message_count > 0 ? "border-green-300" : "border-gray-300" }} group-hover:bg-green-200 border-dashed flex items-center justify-center h-28 rounded bg-gray-50 dark:bg-gray-800">
                         <p class="text-2xl text-gray-400 dark:text-gray-500 mr-4">
@@ -65,7 +65,7 @@ $locale = session('locale', 'uk');
 
            </div>
             <a href="{{ route('admin.visitors') }}" class="group hover:cursor-pointer">
-                <div class="border-2 {{ $visitor_count > 0 ? "border-teal-400" : "border-gray-300" }} group-hover:bg-teal-200 border-dashed  flex items-center justify-center h-48 mb-4 w-full text-left gap-10 rounded bg-gray-50 dark:bg-gray-800">
+                <div class="border-2 {{ $visitor_count > 0 ? "border-teal-400" : "border-gray-300" }} p-4 group-hover:bg-teal-200 border-dashed  flex items-center justify-center h-48 mb-4 w-full text-left gap-10 rounded bg-gray-50 dark:bg-gray-800">
                     <p class="text-2xl text-gray-400 dark:text-gray-500">
                         <i class="text-teal-800 fa-solid fa-people-arrows"></i>
                     </p>
@@ -84,7 +84,7 @@ $locale = session('locale', 'uk');
             </a>
            <div class="border-2 {{ $transaction_count > 0 ? "border-teal-400" : "border-gray-300" }} p-4 border-dashed  flex flex-col items-center justify-center   mb-4 w-full text-left gap-4 rounded bg-gray-50 dark:bg-gray-800">
             <span class="text-sky-700 {{ $transaction_count > 0 ? "font-bold " : "font-normal" }}">Last 3 Transactions: </span>
-            <table class="min-w-full bg-white border border-gray-200 border rounded overflow-hidden">
+            <table class="hidden sm:block min-w-full bg-white border border-gray-200 border rounded overflow-hidden">
                 <thead class="bg-gray-50  border rounded">
                     <tr class="">
                         <th class=" border rounded overflow-hidden bg-sky-300 py-3 px-2 text-left text-[10px] font-bold text-gray-500 uppercase tracking-wider">Status</th>
@@ -129,6 +129,34 @@ $locale = session('locale', 'uk');
                     @endforeach
                 </tbody>
             </table>
+            <!-- Card layout for mobile -->
+            <div class="sm:hidden space-y-4">
+                @foreach ($last_transactions as $last_transaction)
+                    <div class="bg-white border border-gray-200 rounded shadow-md p-4
+                    {{ $last_transaction->status === 'success' ? 'bg-green-400/50' : '' }}
+                    {{ $last_transaction->status === 'failure' ? 'bg-red-500/50' : '' }}
+                    {{ $last_transaction->status === 'pending' ? 'bg-amber-300/70' : '' }}">
+                        <div class="flex items-center mb-2">
+                            @if ($last_transaction->status === 'success')
+                                <i class="fa-solid fa-check text-xl text-green-700 mr-4"></i>
+                            @elseif ($last_transaction->status === 'failure')
+                                <i class="fa-solid fa-ban text-xl text-red-700 mr-4"></i>
+                            @elseif ($last_transaction->status === 'pending')
+                                <i class="fa-solid fa-spinner text-xl text-amber-700 mr-4"></i>
+                            @else
+                                <i class="fa-regular fa-circle-question text-xl text-gray-700 mr-4"></i>
+                            @endif
+                            <span class="font-bold text-gray-700">{{$last_transaction->status}}</span>
+                        </div>
+                        <div class="text-sm text-gray-600">
+                            <p><span class="font-bold">Email:</span> {{$last_transaction->email}}</p>
+                            <p><span class="font-bold">Amount:</span> {{$last_transaction->amount}}</p>
+                            <p><span class="font-bold">Discount:</span> {{$last_transaction->discount}}%</p>
+                            <p><span class="font-bold">Transaction Amount:</span> {{$last_transaction->transaction_amount}}</p>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
         @if ($transaction_count <= 0)
             <div class="text-xs text-left w-full px-2 text-red-700">No transactions</div>
         @endif

@@ -23,7 +23,7 @@
                                     @endforeach
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
+                            <tbody class="hidden sm:block bg-white divide-y divide-gray-200">
                                 @foreach ($transactions as $transaction)
                                     <tr class="hover:bg-gray-300 hover:text-gray-800 group hover:cursor-default text-[11px] text-center
                                         {{ $transaction->status == 'failure' ? 'bg-red-700/90 text-white ' : '' }}
@@ -82,6 +82,55 @@
 
 
                         </table>
+                        <!-- Card layout for mobile -->
+                        <div class="sm:hidden space-y-4">
+                            @foreach ($transactions as $transaction)
+                                <div class="bg-white border border-gray-200 rounded shadow-md p-4
+                                {{ $transaction->status == 'failure' ? 'bg-red-700/90 text-white' : '' }}
+                                {{ $transaction->status == 'pending' ? 'bg-red-200/90' : '' }}
+                                {{ $transaction->status == 'success' ? 'bg-green-200/90' : '' }}">
+                                    <!-- Transaction Details -->
+                                    <div class="text-sm text-gray-600 space-y-2">
+                                        @foreach ($transaction->getAttributes() as $column => $value)
+                                            @if ($column === 'last_name')
+                                                @continue <!-- Skip last_name -->
+                                            @endif
+
+                                            <div class="flex justify-between items-center">
+                                                <span class="font-bold capitalize">
+                                                    @if ($column === 'first_name')
+                                                        Full Name:
+                                                    @else
+                                                        {{ Str::headline(str_replace('_', ' ', $column)) }}:
+                                                    @endif
+                                                </span>
+
+                                                @if ($column === 'first_name')
+                                                    <span>{{ $transaction->first_name }} {{ $transaction->last_name }}</span>
+                                                @elseif ($column === 'created_at' || $column === 'updated_at')
+                                                    <span>{{ $value ? \Carbon\Carbon::parse($value)->format('Y-m-d H:i') : '' }}</span>
+                                                @elseif ($column === 'response' && is_array($value))
+                                                    <button class="text-[10px] bg-sky-400 border border-gray-200 hover:bg-sky-600 hover:text-white py-1 px-5 rounded-lg" data-modal-target="transaction{{ $id }}" data-modal-toggle="transaction{{ $id }}" href="javascript:void(0)">
+                                                        View Response
+                                                    </button>
+                                                    <x-admin.transaction-modal :id="$id" :data="$value" />
+                                                @elseif (in_array($column, ['invoice_id', 'transaction_id', 'email']))
+                                                    <div class="flex items-center">
+                                                        <input id="copy-{{ $id }}" type="text" class="bg-transparent border-none text-[10px] w-full" value="{{ $value }}" readonly>
+                                                        <button data-copy-to-clipboard-target="copy-{{ $id }}" class="ml-2 text-sm text-gray-500 hover:text-blue-600">
+                                                            <i class="fa-solid fa-copy"></i>
+                                                        </button>
+                                                    </div>
+                                                @else
+                                                    <span>{{ $value }}</span>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
                     </div>
                 @else
                     <div class="flex">

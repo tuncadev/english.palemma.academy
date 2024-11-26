@@ -31,7 +31,7 @@ $locale = session('locale', 'uk');
             <div class="container py-6">
                 @if ($visitors->isNotEmpty())
                     <div class="overflow-x-auto shadow-lg rounded-lg">
-                        <table class="min-w-full bg-white border border-gray-200">
+                        <table class="hidden sm:block min-w-full bg-white border border-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
                                     @foreach ($visitors->first()->getAttributes() as $column => $value)
@@ -65,6 +65,41 @@ $locale = session('locale', 'uk');
                                 @endforeach
                             </tbody>
                         </table>
+                        <!-- Card layout for mobile -->
+                        <div class="sm:hidden space-y-4">
+                            @foreach ($visitors as $visitor)
+                                <div class="bg-white border border-gray-200 rounded shadow-md p-4 hover:bg-gray-100 cursor-pointer" onclick="window.location='{{ route('admin.visitor.details', $visitor->id) }}'">
+                                    <!-- Visitor Details -->
+                                    <div class="flex flex-col space-y-2">
+                                        @foreach ($visitor->getAttributes() as $column => $value)
+                                            <div>
+                                                <span class="font-bold text-gray-700 capitalize">
+                                                    {{ Str::headline(str_replace('_', ' ', $column)) }}:
+                                                </span>
+                                                <span class="text-gray-500">
+                                                    @if ($column === 'created_at' || $column === 'updated_at')
+                                                        {{ $value ? \Carbon\Carbon::parse($value)->format('Y-m-d H:i') : '' }}
+                                                    @else
+                                                        {{ $value }}
+                                                    @endif
+                                                </span>
+                                            </div>
+                                        @endforeach
+                                        <!-- Action Buttons -->
+                                        <div class="mt-2 flex justify-end">
+                                            <form action="{{ route('admin.deleteVisitor') }}" method="POST" class="inline">
+                                                @csrf
+                                                <input name="visitorIp" type="hidden" value="{{ $visitor->id }}">
+                                                <button class="text-red-500 hover:text-red-700">
+                                                    <i class="fa-solid fa-trash"></i> Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
                     </div>
                     @else
                     <div class="flex">
