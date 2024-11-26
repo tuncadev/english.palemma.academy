@@ -97,6 +97,10 @@
             <a href="{{ route('admin.settings') }}" class="flex items-center p-2 text-white rounded-lg dark:text-white hover:text-sky-800 hover:bg-gray-100 dark:hover:bg-gray-700 group">
                 <i class="text-xl fa-solid fa-sliders"></i>
                <span class="flex-1 ms-3 whitespace-nowrap">Settings</span>
+               <span class=" text-white text-lg bg-red-600  font-bold inline-flex relative items-center justify-center w-3 h-3 p-3   group-hover:bg-sky-800 group-hover:text-white text-blue-800  rounded-full dark:bg-blue-900 dark:text-blue-300">
+                    !
+               </span>
+
             </a>
          </li>
        </ul>

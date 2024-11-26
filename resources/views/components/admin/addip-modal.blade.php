@@ -7,7 +7,7 @@
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                     Add IP Addresses
                 </h3>
-                <button id="closeIpModal" type="button"
+                <button id="closeIpModal" type="button" data-modal-hide="addip-modal"
                 class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                 >
                     <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -49,59 +49,63 @@
     </div>
 </div>
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('addipForm').addEventListener('submit', function (event) {
+   document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('addipForm').addEventListener('submit', function (event) {
+        event.preventDefault();
 
-            event.preventDefault();
+        const ipaddress = document.getElementById('ipaddress').value;
+        const button = event.target.querySelector('button[type="submit"]');
 
-            const ipaddress = document.getElementById('ipaddress').value;
-            const button = event.target.querySelector('button[type="submit"]');
+        // Regex for IPv4
+        const ipv4Regex = /^(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$/;
 
-            const ipRegex = /^(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$/;
+        // Regex for IPv6
+        const ipv6Regex = /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}(([0-9]{1,3}\.){3}[0-9]{1,3})|([0-9a-fA-F]{1,4}:){1,4}:(([0-9]{1,3}\.){3}[0-9]{1,3}))$/;
 
-            successComponent = document.getElementById('alert-success');
-            failureComponent = document.getElementById('alert-failure');
-            failureInner = document.getElementById('theFMsg');
-            // Hide both alerts initially
+        const successComponent = document.getElementById('alert-success');
+        const failureComponent = document.getElementById('alert-failure');
+        const failureInner = document.getElementById('theFMsg');
 
-            if (!ipRegex.test(ipaddress)) {
-                document.getElementById('alert-success').classList.add('hidden');
-                failureComponent.classList.remove('hidden');
-                failureInner.innerHTML = "Wrong IP Address Format! <br /> Example formats: 127.0.0.1 , 192.168.0.1"
-                return;
-            } else {
-                fetch('{{ route("admin.addIp") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    },
-                    body: JSON.stringify({ ipaddress }),
-                })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        if (data.success) {
-                            // Show success alert
-                            document.getElementById('alert-failure').classList.add('hidden');
-                            document.getElementById('alert-success').classList.remove('hidden');
+        // Hide both alerts initially
+        successComponent.classList.add('hidden');
+        failureComponent.classList.add('hidden');
 
-                            button.textContent = 'Add More IP';
+        // Validate IP address against both IPv4 and IPv6
+        if (!ipv4Regex.test(ipaddress) && !ipv6Regex.test(ipaddress)) {
+            failureComponent.classList.remove('hidden');
+            failureInner.innerHTML = "Wrong IP Address Format! <br /> Example formats: 127.0.0.1 (IPv4), 2a03:2880:10ff:3::face:b00c (IPv6)";
+            return;
+        }
 
-                        } else {
-                            // Show failure alert
-                            document.getElementById('alert-success').classList.add('hidden');
-                            document.getElementById('alert-failure').classList.remove('hidden');
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                        // Show failure alert for unexpected errors
-                        document.getElementById('alert-success').classList.add('hidden');
-                        failureComponent.classList.remove('hidden');
-                    });
+        // If valid, proceed with fetch
+        fetch('{{ route("admin.addIp") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            },
+            body: JSON.stringify({ ipaddress }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    // Show success alert
+                    failureComponent.classList.add('hidden');
+                    successComponent.classList.remove('hidden');
+                    button.textContent = 'Add More IP';
+                } else {
+                    // Show failure alert
+                    successComponent.classList.add('hidden');
+                    failureComponent.classList.remove('hidden');
                 }
-        });
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                // Show failure alert for unexpected errors
+                successComponent.classList.add('hidden');
+                failureComponent.classList.remove('hidden');
+            });
     });
-
+});
 
 </script>

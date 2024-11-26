@@ -4,9 +4,10 @@
 @endphp
 @extends('layouts.admin.layout')
     @section('content')
-        <x-admin.header>
-            Environment Settings
+        <x-admin.header class="py-4">
+            <i class="text-red-700 fa-solid fa-triangle-exclamation mr-2"></i> Environment Settings <i class="text-red-700 fa-solid fa-triangle-exclamation ml-2"></i>
         </x-admin.header>
+
         <div id="alert-border-2" class="max-w-4xl mt-6 flex items-center p-4 mb-2 text-red-800 border-t-4 border-red-300 bg-red-50 dark:text-red-400 dark:bg-gray-800 dark:border-red-800" role="alert">
             <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
               <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
