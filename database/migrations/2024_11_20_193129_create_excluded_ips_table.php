@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('excluded_ips', function (Blueprint $table) {
             $table->id(); // Primary key
+            $table->boolean('block_range')->default('false');
             $table->string('ip_address', 45)->unique(); // IP address to exclude
             $table->string('reason')->nullable(); // Optional reason for excluding this IP
             $table->timestamps(); // Created_at and updated_at

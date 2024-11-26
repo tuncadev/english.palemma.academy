@@ -7,6 +7,9 @@ $locale = session('locale', 'uk');
     <x-admin.header>
         Visitor Details
     </x-admin.header>
+    <div class="p-2 mt-2">
+        <a href="{{ route('admin.visitors') }}" class="bg-sky-300 text-sm rounded-lg px-3 py-2 border font-medium text-gray-600 hover:text-sky-800 hover:bg-white hover:border-sky-300">Back to Visitors</a>
+    </div>
     <div class="mt-6 container py-6">
         <!-- Visitor Information -->
         <div class="bg-white shadow-lg rounded-lg p-6 mb-6">

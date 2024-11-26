@@ -278,11 +278,15 @@ class AdminController extends Controller
     ###   ADD IP   ###
     public function addIp(Request $request)
     {
+
         try {
             $ipaddress = $request->get('ipaddress');
+            $block_range = $request->get('block_range');
 
             $addIP = new ExcludedIP();
             $addIP->ip_address = $ipaddress;
+            $addIP->block_range = $block_range;
+
 
             // Optional: Only add reason if provided
             if ($request->has('reason')) {
@@ -317,7 +321,7 @@ class AdminController extends Controller
     public function deleteVisitor(Request $request)
     {
 
-        Log::info(session()->all());
+        #Log::info(session()->all());
             $id = $request->get('visitorIp') ?? null;
 
         $removeVisitor = Visitor::find($id) ?? null;

@@ -18,7 +18,7 @@ class CheckSubscription
      */
     public function handle(Request $request, Closure $next)
     {
-        Log::info('CheckSubscription middleware executed.');
+       # Log::info('CheckSubscription middleware executed.');
 
         // Check if user is authenticated
         if (!Auth::check()) {
@@ -29,8 +29,8 @@ class CheckSubscription
         $user = Auth::user();
         $course_id = $request->route('course_id');
 
-        Log::info('Authenticated user ID: ' . $user->id);
-        Log::info('Course ID: ' . $course_id);
+      #  Log::info('Authenticated user ID: ' . $user->id);
+      #  Log::info('Course ID: ' . $course_id);
 
         // Check if the user has a subscription for the course
         $subscription = Subscribtion::where('user_id', $user->id)
@@ -38,13 +38,13 @@ class CheckSubscription
                                     ->first();
 
         if (!$subscription) {
-            Log::info('No subscription found.');
+        #    Log::info('No subscription found.');
         } else {
-            Log::info('Subscription found with payment status: ' . $subscription->payment_status);
+         #   Log::info('Subscription found with payment status: ' . $subscription->payment_status);
         }
 
         if (!$subscription || $subscription->payment_status !== 'complete') {
-            Log::info('User does not have a valid subscription.');
+         #   Log::info('User does not have a valid subscription.');
             return redirect()->route('home')->with('error', 'You need to subscribe to this course to access the content.');
         }
 

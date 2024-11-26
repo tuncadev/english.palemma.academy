@@ -30,7 +30,7 @@ class MailController extends Controller
      */
     public function sendForm(Request $request)
     {
-        Log::info("sendForm initiated", ['request_data' => $request->all()]);
+       # Log::info("sendForm initiated", ['request_data' => $request->all()]);
 
         $user_id = Auth::id() ?? "";
         $ipAddress = $request->ip();
@@ -46,17 +46,17 @@ class MailController extends Controller
 
         // Save form submission
         $saveMessage = FormSubmission::create($messageData);
-        Log::info("Form submission saved", ['message_data' => $messageData, 'saved' => $saveMessage]);
+       # Log::info("Form submission saved", ['message_data' => $messageData, 'saved' => $saveMessage]);
 
         // Send email notification to admin
         $sendEmail = $this->sendAdminNotificationEmail($messageData);
-        Log::info("Admin notification email send status", ['send_status' => $sendEmail]);
+       # Log::info("Admin notification email send status", ['send_status' => $sendEmail]);
 
         if ($saveMessage && $sendEmail) {
-            Log::info("Form submitted and email sent successfully");
+           # Log::info("Form submitted and email sent successfully");
             return response()->json(['status' => 'success', 'message' => 'Form submitted and email sent successfully.']);
         } else {
-            Log::error("Failed to submit form or send email", ['save_message' => $saveMessage, 'send_email' => $sendEmail]);
+          #  Log::error("Failed to submit form or send email", ['save_message' => $saveMessage, 'send_email' => $sendEmail]);
             return response()->json(['status' => 'error', 'message' => 'Failed to submit form or send email.'], 500);
         }
     }
@@ -100,11 +100,11 @@ class MailController extends Controller
 
     public function sendPaymentStatusEmail(Transactions $transaction, string $status, ?string $failureReason = null)
     {
-        Log::info("sendPaymentStatusEmail initiated", ['transaction_id' => $transaction->transaction_id, 'status' => $status]);
+       # Log::info("sendPaymentStatusEmail initiated", ['transaction_id' => $transaction->transaction_id, 'status' => $status]);
 
         $status = $transaction->status;
         $failureReason = $transaction->failure_reason;
-        Log::info("sendPaymentStatusEmail initiated", ['transaction_id' => $transaction->transaction_id, 'status' => $status]);
+       # Log::info("sendPaymentStatusEmail initiated", ['transaction_id' => $transaction->transaction_id, 'status' => $status]);
 
         $cryptData = [
             'email' => $transaction->email,
@@ -126,9 +126,9 @@ class MailController extends Controller
 
         try {
             Mail::to($transaction->email)->send(new PaymentStatusMail($emailData));
-            Log::info("Payment status email sent", ['email' => $transaction->email, 'status' => $status]);
+            #Log::info("Payment status email sent", ['email' => $transaction->email, 'status' => $status]);
         } catch (\Exception $e) {
-            Log::error("Failed to send payment status email", ['error' => $e->getMessage(), 'transaction_id' => $transaction->transaction_id]);
+           # Log::error("Failed to send payment status email", ['error' => $e->getMessage(), 'transaction_id' => $transaction->transaction_id]);
         }
     }
 }

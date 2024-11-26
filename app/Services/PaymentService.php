@@ -37,8 +37,7 @@ class PaymentService
             'redirectUrl' => $redirectUrl, // User will be redirected here after payment
         ];
 
-        // Log the request data (for debugging purposes)
-        Log::info('Sending request to Monobank', $requestData);
+
 
         // Send the request to Monobank API
         $response = Http::withToken($this->token)

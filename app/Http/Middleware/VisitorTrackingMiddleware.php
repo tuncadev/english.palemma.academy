@@ -14,53 +14,120 @@ use Illuminate\Support\Facades\Log;
 class VisitorTrackingMiddleware
 {
     public function handle(Request $request, Closure $next)
-{
-    // Step 1: Exclude certain IPs from tracking
-    $ipAddress = $request->ip();
+    {
+        // Step 1: Get IP address
+        $ipAddress = $request->ip();
 
-    // Validate IP format
-    if (!filter_var($ipAddress, FILTER_VALIDATE_IP)) {
-        // Log and ignore invalid IP addresses
-        Log::warning("Invalid IP format ignored: $ipAddress");
-        return $next($request); // Skip tracking for invalid IPs
+        // Validate IP format
+        if (!filter_var($ipAddress, FILTER_VALIDATE_IP)) {
+
+            return $next($request); // Skip tracking for invalid IPs
+        }
+
+        // Step 2: Check if the IP address is excluded
+        if ($this->isExcludedIp($ipAddress)) {
+
+            return $next($request);
+        }
+
+        // Step 3: Identify visitor
+        $visitorToken = $request->cookie('visitor_token') ?? (string) Str::uuid();
+        $visitor = Visitor::firstOrCreate(
+            ['visitor_token' => $visitorToken],
+            ['ip_address' => $ipAddress, 'user_agent' => $request->userAgent()]
+        );
+
+        // Step 4: Log raw page view
+        PageView::create([
+            'visitor_id' => $visitor->id,
+            'url' => $request->fullUrl(),
+            'referrer_url' => $request->headers->get('referer'),
+            'device' => $this->getDeviceType($request->userAgent()),
+            'browser' => $this->getBrowser($request->userAgent()),
+            'os' => $this->getOperatingSystem($request->userAgent()),
+        ]);
+
+        // Step 5: Update aggregated visit count
+        $pageVisitCount = PageVisitCount::firstOrNew([
+            'visitor_id' => $visitor->id,
+            'url' => $request->fullUrl(),
+        ]);
+        $pageVisitCount->visit_count++;
+        $pageVisitCount->last_visited_at = now();
+        $pageVisitCount->save();
+
+        // Step 6: Set visitor token cookie
+        return $next($request)->cookie('visitor_token', $visitorToken, 525600); // 1 year
     }
 
-    // Check if IP address is excluded
-    if (ExcludedIP::where('ip_address', $ipAddress)->exists()) {
-        return $next($request);
+    /**
+     * Check if the IP address is excluded (exact match or range).
+     */
+    private function isExcludedIp($ipAddress)
+    {
+        // Step 1: Check for exact matches where block_range is false
+        if (ExcludedIP::where('ip_address', $ipAddress)->where('block_range', false)->exists()) {
+            return true;
+        }
+
+        // Step 2: Dynamically generate ranges for block_range = true
+        $excludedRanges = ExcludedIP::where('block_range', true)->pluck('ip_address');
+
+        foreach ($excludedRanges as $baseIp) {
+            $rangePattern = $this->generateRangePattern($baseIp); // Generate range from IP
+            if ($this->ipMatchesPattern($ipAddress, $rangePattern)) {
+                Log::info("Excluded IP range detected: $ipAddress");
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    // Step 2: Identify visitor
-    $visitorToken = $request->cookie('visitor_token') ?? (string) Str::uuid();
-    $visitor = Visitor::firstOrCreate(
-        ['visitor_token' => $visitorToken],
-        ['ip_address' => $ipAddress, 'user_agent' => $request->userAgent()]
-    );
+    private function generateRangePattern($ipAddress)
+    {
+        $segments = explode('.', $ipAddress);
 
-    // Step 3: Log raw page view
-    PageView::create([
-        'visitor_id' => $visitor->id,
-        'url' => $request->fullUrl(),
-        'referrer_url' => $request->headers->get('referer'),
-        'device' => $this->getDeviceType($request->userAgent()),
-        'browser' => $this->getBrowser($request->userAgent()),
-        'os' => $this->getOperatingSystem($request->userAgent()),
-    ]);
+        // Ensure it's a valid IPv4 address with four segments
+        if (count($segments) !== 4) {
+            return null; // Invalid input, handle gracefully
+        }
 
-    // Step 4: Update aggregated visit count
-    $pageVisitCount = PageVisitCount::firstOrNew([
-        'visitor_id' => $visitor->id,
-        'url' => $request->fullUrl(),
-    ]);
-    $pageVisitCount->visit_count++;
-    $pageVisitCount->last_visited_at = now();
-    $pageVisitCount->save();
+        // Replace the last two segments with wildcards
+        $segments[2] = '*';
+        $segments[3] = '*';
 
-    // Step 5: Set visitor token cookie
-    return $next($request)->cookie('visitor_token', $visitorToken, 525600); // 1 year
-}
+        // Return the generated range pattern
+        return implode('.', $segments);
+    }
 
-    // Utility methods for parsing user-agent (from the controller)
+
+
+    /**
+     * Check if an IP address matches a range pattern.
+     */
+    private function ipMatchesPattern($ipAddress, $pattern)
+    {
+        if (!$pattern) {
+            return false; // Gracefully handle invalid patterns
+        }
+
+        // Convert pattern to a regex (e.g., 192.168.*.* -> 192\.168\.[0-9]+\.[0-9]+)
+        $regex = '/^' . str_replace(['.', '*'], ['\.', '[0-9]+'], $pattern) . '$/';
+
+        // Log for debugging
+       /* Log::debug("Checking IP address against range", [
+            'ip_address' => $ipAddress,
+            'pattern' => $pattern,
+            'regex' => $regex,
+        ]); */
+
+        return preg_match($regex, $ipAddress);
+    }
+
+
+    // Utility methods for parsing user-agent (unchanged)
+
     private function getDeviceType($userAgent)
     {
         if (stripos($userAgent, 'mobile') !== false) {

@@ -30,6 +30,10 @@
                             placeholder="127.0.0.1"
                             required
                         />
+                        <select name="block_range" id="block_range" class="mt-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <option value="1">True</option>
+                            <option value="0" selected>False</option>
+                        </select>
                     </div>
                     <button
                         type="submit"
@@ -51,10 +55,12 @@
 <script>
    document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('addipForm').addEventListener('submit', function (event) {
+        console.log()
         event.preventDefault();
 
         const ipaddress = document.getElementById('ipaddress').value;
         const button = event.target.querySelector('button[type="submit"]');
+        const blockRange = document.querySelector('select[name="block_range"]').value; // Get the value of the select input
 
         // Regex for IPv4
         const ipv4Regex = /^(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$/;
@@ -84,7 +90,7 @@
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
             },
-            body: JSON.stringify({ ipaddress }),
+            body: JSON.stringify({ ipaddress, block_range: blockRange }),
         })
             .then((response) => response.json())
             .then((data) => {

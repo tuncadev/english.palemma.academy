@@ -141,7 +141,7 @@ class PaymentController extends Controller
                     'status' => $status,
                     'expiration' => now()->addDay(),
                 ]);
-                Log::info("Created Pending User");
+                #Log::info("Created Pending User");
                 return true; // Created
             } else {
                 Log::warning("Not created exists");
@@ -391,7 +391,7 @@ class PaymentController extends Controller
 
             if ($transaction) {
                 $this->createPendingUser($transaction);
-                Log::info("Here");
+
                 Transactions::where('invoice_id', $invoiceNumber)->update([
                     'type' => TYPE::DIRECT_PAYMENT->value,
                 ]);
@@ -432,8 +432,7 @@ class PaymentController extends Controller
             $data = $request->json();
 
             if ($data) {
-                Log::info("Invoice ID: " . $data->get('invoiceId'));
-                Log::info("Status: " . $data->get('status'));
+
                 $invoice_id = $data->get('invoiceId');
                 $failure_reason = $data->get('failureReason', null);
                 $status = $data->get('status') ?? Status::PENDING->value;
