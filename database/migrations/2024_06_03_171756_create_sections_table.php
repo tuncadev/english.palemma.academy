@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('section_name_uk')->nullable();
             $table->text('section_name_ru')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->nullable();
 
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
         });

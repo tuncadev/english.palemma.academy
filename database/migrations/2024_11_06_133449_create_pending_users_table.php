@@ -12,13 +12,15 @@ return new class extends Migration
      */
     public function up(): void
     {
+        $tomorrow = now()->addDay();
+
         Schema::create('pending_users', function (Blueprint $table) {
             $table->id();
             $table->string('invoice_id')->unique();
             $table->string('transaction_id');
             $table->string('email');
             $table->integer('status')->default(1); // 'pending - 1', 'complete - 0'
-            $table->timestamp('expiration')->default(DB::raw("(DATETIME(CURRENT_TIMESTAMP, '+1 day'))"));
+            $table->timestamp('expiration')->nullable();
             $table->timestamps();
 
         });

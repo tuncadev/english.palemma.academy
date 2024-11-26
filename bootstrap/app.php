@@ -12,12 +12,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->web(append:[
+        $middleware->web(append: [
+            Illuminate\Session\Middleware\StartSession::class, // Move this line to the top
+            App\Http\Middleware\VisitorTrackingMiddleware::class,
+            App\Http\Middleware\MaintenanceModeMiddleware::class,
             App\Http\Middleware\LocalizationMiddleware::class,
-            App\Http\Middleware\TrackUserActivity::class,
-          ]);
-          $middleware->validateCsrfTokens(except: [
-            'payment/webhook',  // Add your webhook route here
         ]);
 
 

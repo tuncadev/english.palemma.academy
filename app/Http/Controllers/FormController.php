@@ -38,6 +38,7 @@ class FormController extends Controller
             'email' => $request->email,
             'subject' => $request->subject,
             'userMessage' => $request->userMessage, // Use 'message' here
+            'is_read' => false,
         ];
 
 

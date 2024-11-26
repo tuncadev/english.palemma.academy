@@ -10,6 +10,7 @@ class Transactions extends Model
 
     use HasFactory;
 
+
     protected $fillable = [
         'type',
         'invoice_id',

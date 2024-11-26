@@ -1,22 +1,27 @@
 <?php
 
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\FormController;
 use App\Http\Controllers\LocaleController;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\CheckSubscription;
-use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\MailController;
-use App\Http\Controllers\WebhookController;
-use App\Http\Controllers\PortmoneController;
+use App\Http\Controllers\MessageController;
 
 use App\Models\Course;
+use App\Models\User;
+use App\Models\ExcludedIP;
+
+
+Route::get('/bebacksoon', function () {
+    return view('bebacksoon');
+})->name('maintenance');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('locale/{lang}', [LocaleController::class, 'setLocale'])->name('setLocale');
@@ -49,6 +54,68 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/course/{course_id}/videotutorials', [CourseController::class, 'tutorials'])->name('course.tutorials');
     Route::get('/course/{course_id}/finished', [CourseController::class, 'finished'])->name('course.finished');
+
+
+    /* ************* */
+    /*  Admin Area   */
+    /* ************* */
+
+    Route::prefix('admin')->group(function () {
+
+        Route::get('/dashboard', function () {
+            $user_id = Auth::id();
+
+            // Check if user is authenticated
+            if (!$user_id) {
+                return redirect('/'); // Redirect if not authenticated
+            }
+
+            // Get the user's role
+            $user_role = User::where('id', $user_id)->value('role');
+
+            // Check if the role is "sudo"
+            if ($user_role === "sudo") {
+                // If user has "sudo" role, call the dashboard method on AdminController
+                return app(AdminController::class)->dashboard();
+            } else {
+                // Redirect non-sudo users to the homepage
+                return redirect('/');
+            }
+        })->name('admin.dashboard');
+
+        Route::get('/courses/{course_id}', [AdminController::class, 'courses'])->name('admin.courses');
+        Route::get('/course/{course_id}/sections/{section_id}', [AdminController::class, 'sections'])->name('admin.sections');
+        Route::get('/course/{course_id}/sections/{section_id}/phrases', [AdminController::class, 'phrases'])->name('admin.phrases');
+        Route::get('/course/{course_id}/sections/{section_id}/practice', [AdminController::class, 'practice'])->name('admin.practice');
+        Route::get('/course/{course_id}/sections/{section_id}/quiz', [AdminController::class, 'quiz'])->name('admin.quiz');
+        Route::get('/transactions', [AdminController::class, 'transactions'])->name('admin.transactions');
+
+        Route::get('/visitors', [AdminController::class, 'visitors'])->name('admin.visitors');
+        Route::get('/visitors/{id}', [AdminController::class, 'visitorDetails'])->name('admin.visitor.details');
+        Route::get('/admin/visitors', [AdminController::class, 'visitors'])->name('admin.visitors');
+
+        Route::post('/admin/addIp', [AdminController::class, 'addIp'])->name('admin.addIp');
+        // In routes/web.php
+        Route::get('/admin/excluded-ips', function () {
+            return response()->json(ExcludedIP::paginate(10));
+        })->name('excluded-ips');
+
+        Route::get('/unread-messages', [MessageController::class, 'countUnreadMessages']);
+        Route::post('/mark-read', [MessageController::class, 'markAsRead']);
+
+        Route::post('/admin/update/{id}/{model}', [AdminController::class, 'update'])->name('admin.update');
+
+        Route::post('admin/deleteip', [AdminController::class, 'deleteIp'])->name('admin.deleteip');
+        Route::post('admin/deleteVisitor', [AdminController::class, 'deleteVisitor'])->name('admin.deleteVisitor');
+
+        Route::get('/inbox', [AdminController::class, 'inbox'])->name('admin.inbox');
+        Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
+
+    });
+
+    /* ****************** */
+    /*   End Admin Area   */
+    /* ****************** */
 });
 
 //Route::get('/dashboard/paid/courses', [DashboardController::class, 'subscribtions'])->middleware(['auth', 'verified'])->name('dashboard.paid_courses');

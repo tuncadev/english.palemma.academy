@@ -112,8 +112,8 @@ $currentLocale = session('locale', 'uk');
 @else
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-        const modal = new Modal(document.getElementById('authentication-modal'));
-        modal.show();
+            const modal = new Modal(document.getElementById('authentication-modal'));
+            modal.show();
         });
     </script>
 @endauth

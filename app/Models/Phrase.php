@@ -10,11 +10,16 @@ class Phrase extends Model
     use HasFactory;
 
     protected $fillable = [
-        'course_id', 'section_id', 'phrase_en', 'phrase_uk', 'phrase_ru'
+        'phrase_en', 'phrase_ru', 'phrase_uk'
     ];
 
     public function section()
     {
         return $this->belongsTo(Section::class);
+    }
+    public function updateFields(array $data)
+    {
+        // Update the model
+        return $this->update($data);
     }
 }

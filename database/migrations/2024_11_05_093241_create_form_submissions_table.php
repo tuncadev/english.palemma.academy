@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('user_id')->nullable();
             $table->string('ip')->nullable();
             $table->string('name'); // For quiz inputs
+            $table->boolean('is_read')->nullable()->index();
             $table->string('email');
             $table->string('subject');
             $table->string('userMessage');

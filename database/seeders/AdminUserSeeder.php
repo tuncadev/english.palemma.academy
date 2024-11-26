@@ -17,18 +17,24 @@ class AdminUserSeeder extends Seeder
         User::create([
             'name' => 'Emma',
             'email' => 'emma@palemma.academy',
+            'email_verified_at' => now(),
+            'status' => 'complete',
             'password' => Hash::make('Z8Er!YN4@pE#5Dq&P'),
-            'role' => 'admin',
+            'role' => 'sudo',
         ]);
         User::create([
             'name' => 'Administrator',
             'email' => 'tunca.development@gmail.com',
+            'email_verified_at' => now(),
+            'status' => 'complete',
             'password' => Hash::make('Kf06091991'),
-            'role' => 'admin',
+            'role' => 'sudo',
         ]);
         User::create([
             'name' => 'Subscriber',
             'email' => 'info@palemma.academy',
+            'email_verified_at' => now(),
+            'status' => 'complete',
             'password' => Hash::make('omt183200**'),
             'role' => 'subscriber',
         ]);

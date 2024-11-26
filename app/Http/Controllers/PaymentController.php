@@ -139,6 +139,7 @@ class PaymentController extends Controller
                     'invoice_id' => $invoice_id,
                     'transaction_id' => $transaction_id,
                     'status' => $status,
+                    'expiration' => now()->addDay(),
                 ]);
                 Log::info("Created Pending User");
                 return true; // Created

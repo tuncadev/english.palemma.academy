@@ -36,7 +36,7 @@ class DashboardController extends Controller
     public function subscribtions() {
         $user_id = Auth::id();
 
-        $courses = Course::get();
+        $courses = Course::where('active', true)->get();
 
         $locale = session('locale', config('app.locale'));
         $pageTitle = match ($locale) {

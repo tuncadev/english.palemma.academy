@@ -1,6 +1,10 @@
 <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
   <x-switch-language :currentLocale="$currentLocale" />
   @auth
+    @php
+        $user_id = Auth::id();
+        $user_role = App\Models\User::where('id', $user_id)->value('role');
+    @endphp
     <button type="button" style="margin-left: 0px !important; margin-right: 0px !important; --tw-space-x-reverse: none;" class="flex text-sm bg-gray-800 rounded-full  focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
         <span class="sr-only">
         @lang('general.openusermenu')
@@ -22,18 +26,28 @@
         </span>
         </div>
         <ul class="py-2" aria-labelledby="user-menu-button">
-        <li>
-            <a href="{{ route('dashboard.courses') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-fuchsia-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                <i class="fa-solid fa-person-chalkboard text-fuchsia-800 mr-1"></i>
-                @lang('usermenu.mycourses')
-            </a>
-        </li>
-        <li>
-            <a href="{{ route('profile.edit')}}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-fuchsia-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                <i class="fa-solid fa-gears text-fuchsia-800 mr-1"></i>
-                @lang('usermenu.profilesettings')
-            </a>
-        </li>
+            @if ($user_role && $user_role === "sudo")
+                <li class="bg-teal-100">
+                    <a href="{{ route('admin.dashboard')}}" class="group block px-4 py-2 text-sm text-gray-700 border border-y-teal-300 hover:bg-teal-300 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                        <i class="text-teal-400 fa-solid fa-user-tie mr-1 group-hover:text-teal-700"></i>
+                        Administration
+                    </a>
+                </li>
+            @endif
+            <li>
+                <a href="{{ route('dashboard.courses') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-fuchsia-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                    <i class="fa-solid fa-person-chalkboard text-fuchsia-800 mr-1"></i>
+                    @lang('usermenu.mycourses')
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('profile.edit')}}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-fuchsia-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                    <i class="fa-solid fa-gears text-fuchsia-800 mr-1"></i>
+                    @lang('usermenu.profilesettings')
+                </a>
+            </li>
+
+
         {{--
         <li>
             <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-fuchsia-100 dark:hover:bg-fuchsia-600 dark:text-gray-200 dark:hover:text-white">

@@ -22,7 +22,7 @@ class HomeController extends Controller
     {
         $pageTitle = "English with Emma";
         $courses = Course::all();
-        Log::info($courses);
+        //Log::info($courses);
         $locale = App::getLocale(); // Get the current locale
         $courses->transform(function($course) {
             $totalPhrases = Phrase::where('course_id', $course->id)->count();

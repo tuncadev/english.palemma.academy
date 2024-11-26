@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Validator;
 
 
 class Course extends Model
@@ -22,5 +23,11 @@ class Course extends Model
   {
       return $this->hasMany(Subscribtion::class);
   }
+  public function updateFields(array $data)
+    {
+        // Update the model
+        return $this->update($data);
+    }
+
 }
 
