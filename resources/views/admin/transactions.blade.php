@@ -11,7 +11,7 @@
             <div class="container py-6">
                 @if ($transactions->isNotEmpty())
                     <div class="overflow-x-auto shadow-lg rounded-lg">
-                        <table class="min-w-full bg-white border border-gray-200">
+                        <table class="hidden sm:table min-w-full bg-white border border-gray-200">
                             <thead class="bg-gray-50">
                                 <tr class="text-center">
                                     @foreach ($transactions->first()->getAttributes() as $column => $value)
@@ -23,7 +23,7 @@
                                     @endforeach
                                 </tr>
                             </thead>
-                            <tbody class="hidden sm:table bg-white divide-y divide-gray-200">
+                            <tbody class=" bg-white divide-y divide-gray-200">
                                 @foreach ($transactions as $transaction)
                                     <tr class="hover:bg-gray-300 hover:text-gray-800 group hover:cursor-default text-[11px] text-center
                                         {{ $transaction->status == 'failure' ? 'bg-red-700/90 text-white ' : '' }}
