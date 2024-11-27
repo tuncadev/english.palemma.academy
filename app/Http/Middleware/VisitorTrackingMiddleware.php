@@ -14,15 +14,25 @@ use Illuminate\Support\Facades\Log;
 class VisitorTrackingMiddleware
 {
     private $botIpRanges = [
-        // Googlebot
-        '66.249.*.*',
-        // Facebook Crawler
-        '31.13.*.*',
-        '69.63.*.*',
-        // Bingbot
-        '13.66.*.*',
-        '157.55.*.*',
-        // Add more known bot IP ranges as needed
+        '66.249.*.*', // Googlebot
+        '31.13.*.*',  // Facebook Crawler
+        '69.63.*.*',  // Facebook Crawler
+        '13.66.*.*',  // Bingbot
+        '157.55.*.*', // Bingbot
+    ];
+
+    private $botUserAgents = [
+        'facebookexternalhit',
+        'bingbot',
+        'Googlebot',
+        'YandexBot',
+        'DuckDuckBot',
+        'Slurp', // Yahoo bot
+        'Baiduspider',
+        'Sogou',
+        'Exabot',
+        'ia_archiver', // Alexa crawler
+        // Add more known bot identifiers as needed
     ];
 
     public function handle(Request $request, Closure $next)
@@ -32,13 +42,11 @@ class VisitorTrackingMiddleware
 
         // Validate IP format
         if (!filter_var($ipAddress, FILTER_VALIDATE_IP)) {
-
             return $next($request); // Skip tracking for invalid IPs
         }
 
-        // Step 2: Check if the IP address is excluded
-        if ($this->isExcludedIp($ipAddress)) {
-
+        // Step 2: Check if the IP address or user-agent is excluded
+        if ($this->isExcludedIp($ipAddress) || $this->isBotUserAgent($request->userAgent())) {
             return $next($request);
         }
 
@@ -86,7 +94,7 @@ class VisitorTrackingMiddleware
         $excludedRanges = ExcludedIP::where('block_range', true)->pluck('ip_address');
 
         foreach ($excludedRanges as $baseIp) {
-            $rangePattern = $this->generateRangePattern($baseIp); // Generate range from IP
+            $rangePattern = $this->generateRangePattern($baseIp);
             if ($this->ipMatchesPattern($ipAddress, $rangePattern)) {
                 Log::info("Excluded IP range detected: $ipAddress");
                 return true;
@@ -95,7 +103,21 @@ class VisitorTrackingMiddleware
 
         foreach ($this->botIpRanges as $range) {
             if ($this->ipMatchesPattern($ipAddress, $range)) {
-                #Log::info("Bot IP detected and excluded: {$ipAddress} matches {$range}");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if the user-agent matches known bot user-agents.
+     */
+    private function isBotUserAgent($userAgent)
+    {
+        foreach ($this->botUserAgents as $bot) {
+            if (stripos($userAgent, $bot) !== false) {
+                Log::info("Bot user-agent detected and excluded: {$userAgent}");
                 return true;
             }
         }
@@ -120,11 +142,6 @@ class VisitorTrackingMiddleware
         return implode('.', $segments);
     }
 
-
-
-    /**
-     * Check if an IP address matches a range pattern.
-     */
     private function ipMatchesPattern($ipAddress, $pattern)
     {
         if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
@@ -139,9 +156,6 @@ class VisitorTrackingMiddleware
 
         return preg_match($regex, $ipAddress);
     }
-
-
-    // Utility methods for parsing user-agent (unchanged)
 
     private function getDeviceType($userAgent)
     {

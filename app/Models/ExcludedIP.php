@@ -9,5 +9,5 @@ class ExcludedIP extends Model
 {
     use HasFactory;
     protected $table = 'excluded_ips';
-    protected $fillable = ['ip_address', 'reason'];
+    protected $fillable = ['ip_address', 'reason', 'block_range'];
 }
