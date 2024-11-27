@@ -1,7 +1,11 @@
 <!DOCTYPE html>
+@php
+    $locale = session('locale', 'uk');
+    $currentLocale = session('locale', 'uk');
+@endphp
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
-        <x-meta-section :title="$pageTitle ?? 'English with Emma'" />
+        <x-meta-section :title="$pageTitle ?? 'English with Emma'" :locale="$locale" robots="index, follow" />
         <meta name="csrf-token" content="{{ csrf_token() }}">
     </head>
     <body class="bg-gray-100 p-0 m-0 relative flex flex-col h-screen justify-between">
