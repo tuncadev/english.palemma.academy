@@ -174,6 +174,23 @@ class AdminController extends Controller
         return view('admin.inbox', compact('messages'));
     }
 
+    public function deleteMessage(Request $request) {
+
+        $id = $request->get('messageID');
+        $deleteMessage = FormSubmission::find($id);
+
+        if ($deleteMessage) {
+            $deleteMessage->delete();
+            Log::info("Deleted: " . $deleteMessage);
+            return redirect()->back()->with('success', 'Message Deleted from Database');
+        } else {
+            Log::info("Can not be deleted: " . $deleteMessage);
+            return redirect()->back()->with('success', 'Something happened during DB interaction. Check log');
+         }
+
+
+    }
+
 
     ###   COURSES   ###
     public function courses($course_id) {

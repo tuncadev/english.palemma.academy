@@ -108,6 +108,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('admin/deleteVisitor', [AdminController::class, 'deleteVisitor'])->name('admin.deleteVisitor');
 
         Route::get('/inbox', [AdminController::class, 'inbox'])->name('admin.inbox');
+        Route::post('/inbox/delete', [AdminController::class, 'deleteMessage'])->name('admin.deleteMessage');
         Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
 
         Route::get('/settings', [AdminController::class, 'settings'])->name('admin.settings');

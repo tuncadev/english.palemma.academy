@@ -11,6 +11,13 @@
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                         Message
                     </h3>
+                    <form action="{{route('admin.deleteMessage')}}" name="deleteMsg" id="deleteMsg" method="POST">
+                        @csrf
+                        <input name="messageID" type="hidden" value="{{$data['id']}}">
+                        <button>
+                            <i class="ml-4 text-red-500 hover:text-red-700 fa-solid fa-trash"></i>
+                        </button>
+                    </form>
                     <button type="button" id="close_modal{{$id}}"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                         data-modal-toggle="message{{$id}}">

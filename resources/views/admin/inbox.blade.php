@@ -7,6 +7,7 @@ $id = 1;
         <x-admin.header>
             Messages
         </x-admin.header>
+
         <div class="flex mt-6">
             <div class="container py-6">
                 <div class="flex mt-6">
@@ -22,10 +23,12 @@ $id = 1;
                                                 @endif
                                                 <th class="bg-sky-300 py-3 px-2 text-left text-[10px] font-medium text-gray-500 uppercase tracking-wider">{{ $column }}</th>
                                             @endforeach
+
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">
                                         @foreach ($messages as $message)
+
                                             @php
                                                 $data = [
                                                     'id' => $message['id'],
@@ -37,20 +40,20 @@ $id = 1;
                                                 ]
                                             @endphp
                                             <tr class="hover:bg-gray-200 hover:cursor-pointer text-[11px] text-left" onClick="markMessageAsRead({{ $id }})" data-modal-target="message{{$id}}" data-modal-toggle="message{{$id}}">
-
+                                                <div class=""></div>
                                                 @foreach ($message->getAttributes() as $column => $value)
-                                                @if ($column === "is_read" || $column === "updated_at")
-                                                    @continue
-                                                @endif
-                                                    <td class="py-4 px-2 {{ !$message->is_read ? "font-bold" : "font-normal" }} text-gray-500">
+                                                    @if ($column === "is_read" || $column === "updated_at")
+                                                        @continue
+                                                    @endif
+                                                        <td class="py-4 px-2 {{ !$message->is_read ? "font-bold" : "font-normal" }} text-gray-500">
 
-                                                        @if ($column === 'created_at' || $column === 'updated_at')
-                                                            {{ $value ? \Carbon\Carbon::parse($value)->format('Y-m-d H:i') : '' }}
-                                                        @else
-                                                            {{ $value }}
-                                                        @endif
+                                                            @if ($column === 'created_at' || $column === 'updated_at')
+                                                                {{ $value ? \Carbon\Carbon::parse($value)->format('Y-m-d H:i') : '' }}
+                                                            @else
+                                                                {{ $value }}
+                                                            @endif
 
-                                                    </td>
+                                                        </td>
 
                                                 @endforeach
                                             </tr>
