@@ -23,7 +23,7 @@
                                     @endforeach
                                 </tr>
                             </thead>
-                            <tbody class="hidden sm:block bg-white divide-y divide-gray-200">
+                            <tbody class="hidden sm:table bg-white divide-y divide-gray-200">
                                 @foreach ($transactions as $transaction)
                                     <tr class="hover:bg-gray-300 hover:text-gray-800 group hover:cursor-default text-[11px] text-center
                                         {{ $transaction->status == 'failure' ? 'bg-red-700/90 text-white ' : '' }}

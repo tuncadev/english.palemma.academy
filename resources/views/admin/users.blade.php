@@ -9,7 +9,7 @@ $locale = session('locale', 'uk');
         <div class="flex mt-6">
             <div class="container py-6">
                 <div class="overflow-x-auto shadow-lg rounded-lg">
-                    <table class="hidden sm:block min-w-full bg-white border border-gray-200">
+                    <table class="hidden sm:table min-w-full bg-white border border-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="py-3 px-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User ID</th>

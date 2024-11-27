@@ -31,7 +31,7 @@ $locale = session('locale', 'uk');
             <div class="container py-6">
                 @if ($visitors->isNotEmpty())
                     <div class="overflow-x-auto shadow-lg rounded-lg">
-                        <table class="hidden sm:block min-w-full bg-white border border-gray-200">
+                        <table class="hidden sm:table min-w-full bg-white border border-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
                                     @foreach ($visitors->first()->getAttributes() as $column => $value)

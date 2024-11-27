@@ -13,7 +13,7 @@ $id = 1;
                     <div class="container py-6">
                         @if ($messages->isNotEmpty())
                             <div class="overflow-x-auto shadow-lg rounded-lg">
-                                <table class="hidden sm:block min-w-full bg-white border border-gray-200">
+                                <table class="hidden sm:table min-w-full bg-white border border-gray-200">
                                     <thead class="bg-gray-50">
                                         <tr>
                                             @foreach ($messages->first()->getAttributes() as $column => $value)

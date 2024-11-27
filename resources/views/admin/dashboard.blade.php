@@ -84,7 +84,7 @@ $locale = session('locale', 'uk');
             </a>
            <div class="border-2 {{ $transaction_count > 0 ? "border-teal-400" : "border-gray-300" }} p-4 border-dashed  flex flex-col items-center justify-center   mb-4 w-full text-left gap-4 rounded bg-gray-50 dark:bg-gray-800">
             <span class="text-sky-700 {{ $transaction_count > 0 ? "font-bold " : "font-normal" }}">Last 3 Transactions: </span>
-            <table class="hidden sm:block min-w-full bg-white border border-gray-200 border rounded overflow-hidden">
+            <table class="hidden sm:table min-w-full bg-white border border-gray-200 border rounded overflow-hidden">
                 <thead class="bg-gray-50  border rounded">
                     <tr class="">
                         <th class=" border rounded overflow-hidden bg-sky-300 py-3 px-2 text-left text-[10px] font-bold text-gray-500 uppercase tracking-wider">Status</th>
