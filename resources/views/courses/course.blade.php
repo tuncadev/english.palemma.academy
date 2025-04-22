@@ -135,7 +135,7 @@ $currentLocale = session('locale', 'uk');
             @lang('course1.course_name')
         </h2>
         <div class="absolute right-2">
-           <img class="max-w-24 sm:max-w-40 absolute -right-2 top-20" src="{{asset('images/discount--60.png')}}" alt="discount %{{ $course->course_discount }}">
+           <img class="max-w-24 sm:max-w-40 absolute right-0 top-20" src="{{asset('images/discount--60.png')}}" alt="discount %{{ $course->course_discount }}">
         </div>
 
         <ul class="ml-6 mt-6">
